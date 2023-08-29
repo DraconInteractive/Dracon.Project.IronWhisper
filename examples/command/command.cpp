@@ -9,7 +9,9 @@
 #include "common.h"
 #include "common-sdl.h"
 #include "whisper.h"
+#include "NBTCPServer.h"
 
+#include <iostream>
 #include <sstream>
 #include <cassert>
 #include <cstdio>
@@ -44,9 +46,19 @@ struct whisper_params {
     std::string fname_out;
     std::string commands;
     std::string prompt;
+    std::string open_gate;
+    std::string close_gate;
 };
 
+NonBlockingTCPServer server;
+
 void whisper_print_usage(int argc, char ** argv, const whisper_params & params);
+
+void socket_tick() {
+    server.acceptConnections();
+    server.sendDataToClients();
+    server.receiveDataFromClients();
+}
 
 bool whisper_params_parse(int argc, char ** argv, whisper_params & params) {
     for (int i = 1; i < argc; i++) {
@@ -73,6 +85,8 @@ bool whisper_params_parse(int argc, char ** argv, whisper_params & params) {
         else if (arg == "-f"   || arg == "--file")          { params.fname_out     = argv[++i]; }
         else if (arg == "-cmd" || arg == "--commands")      { params.commands      = argv[++i]; }
         else if (arg == "-p"   || arg == "--prompt")        { params.prompt        = argv[++i]; }
+        else if (arg == "-og"  || arg == "--open-gate")    { params.open_gate     = argv[i++]; }
+        else if (arg == "-cg"  || arg == "--close-gate")   { params.close_gate    = argv[i++]; }
         else {
             fprintf(stderr, "error: unknown argument: %s\n", arg.c_str());
             whisper_print_usage(argc, argv, params);
@@ -472,9 +486,16 @@ int always_prompt_transcription(struct whisper_context * ctx, audio_async & audi
 
                 //debug
                 //fprintf(stdout, "command size: %i\n", command_length);
-
+                // Instead of getting sim of entire thing, just do caseless comparison against first
                 if ((sim > 0.7f) && (command.size() > 0)) {
                     fprintf(stdout, "%s: Command '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", command.c_str(), "\033[0m", (int) t_ms);
+                }
+                else
+                {
+                    fprintf(stdout, "Txt: %s\n", txt.c_str());
+                    fprintf(stdout, "Prompt: %s\n", prompt.c_str());
+                    fprintf(stdout, "KPrompt: %s\n", k_prompt.c_str());
+                    fprintf(stdout, "Sim: %f\n", sim);
                 }
 
                 fprintf(stdout, "\n");
@@ -489,7 +510,7 @@ int always_prompt_transcription(struct whisper_context * ctx, audio_async & audi
 
 // general-purpose mode
 // freely transcribe the voice into text
-int process_general_transcription(struct whisper_context * ctx, audio_async &audio, const whisper_params &params) {
+int process_gated_transcription(struct whisper_context * ctx, audio_async &audio, const whisper_params &params) {
     bool is_running  = true;
     bool have_prompt = false;
     bool ask_prompt  = true;
@@ -503,7 +524,7 @@ int process_general_transcription(struct whisper_context * ctx, audio_async &aud
     const std::string k_prompt = "Ok Whisper, start listening for commands.";
 
     fprintf(stderr, "\n");
-    fprintf(stderr, "%s: general-purpose mode\n", __func__);
+    fprintf(stderr, "%s: gated mode\n", __func__);
 
     // main loop
     while (is_running) {
@@ -595,6 +616,52 @@ int process_general_transcription(struct whisper_context * ctx, audio_async &aud
     return 0;
 }
 
+int process_general_transcription(struct whisper_context * ctx, audio_async &audio, const whisper_params &params) {
+    bool is_running  = true;
+
+    float prob0 = 0.0f;
+    float prob  = 0.0f;
+
+    std::vector<float> pcmf32_cur;
+
+    fprintf(stderr, "\n");
+    fprintf(stderr, "%s: general-purpose mode\n", __func__);
+
+    // main loop
+    while (is_running) {
+        // handle Ctrl + C
+        is_running = sdl_poll_events();
+
+        // delay
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        audio.get(2000, pcmf32_cur);
+
+        if (::vad_simple(pcmf32_cur, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, params.print_energy)) {
+            fprintf(stdout, "%s: Speech detected! Processing ...\n", __func__);
+
+            int64_t t_ms = 0;
+
+            
+            // we have heard the activation phrase, now detect the commands
+            audio.get(params.command_ms, pcmf32_cur);
+
+            const auto txt = ::trim(::transcribe(ctx, params, pcmf32_cur, prob, t_ms));
+
+            prob = 100.0f*(prob - prob0);
+
+            fprintf(stdout, "%s: Heard: '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", txt.c_str(), "\033[0m", (int) t_ms);
+            fprintf(stdout, "\n");
+            
+
+            audio.clear();
+        }
+        
+    }
+
+    return 0;
+}
+
 int main(int argc, char ** argv) {
     whisper_params params;
 
@@ -607,6 +674,9 @@ int main(int argc, char ** argv) {
         whisper_print_usage(argc, argv, params);
         exit(0);
     }
+
+    // socket init
+    server.setupServer(31050);
 
     // whisper init
 
@@ -652,6 +722,8 @@ int main(int argc, char ** argv) {
         ret_val = process_command_list(ctx, audio, params);
     } else if (!params.prompt.empty()) {
         ret_val = always_prompt_transcription(ctx, audio, params);
+    } else if (!params.open_gate.empty() && !params.close_gate.empty()) {
+        ret_val = process_gated_transcription(ctx, audio, params);
     } else {
         ret_val = process_general_transcription(ctx, audio, params);
     }
@@ -660,6 +732,7 @@ int main(int argc, char ** argv) {
 
     whisper_print_timings(ctx);
     whisper_free(ctx);
-
+    server.closeServer();
+    fprintf(stderr, "server closed successfully\n");
     return ret_val;
 }
