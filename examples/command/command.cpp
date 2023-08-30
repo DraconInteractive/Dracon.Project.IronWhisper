@@ -9,7 +9,7 @@
 #include "common.h"
 #include "common-sdl.h"
 #include "whisper.h"
-#include "NBTCPServer.h"
+#include "NonBlockingTCPServer.h"
 
 #include <iostream>
 #include <sstream>
@@ -51,12 +51,20 @@ struct whisper_params {
 };
 
 NonBlockingTCPServer server;
+std::string lastHeard;
+std::string lastSent;
 
 void whisper_print_usage(int argc, char ** argv, const whisper_params & params);
 
 void socket_tick() {
     server.acceptConnections();
-    server.sendDataToClients();
+    // This function only gets called when something is heard, this is just making sure
+    if (!lastHeard.empty() && lastHeard != lastSent)
+    {
+        lastSent = lastHeard;
+        server.sendDataToClients(lastHeard.c_str());
+    }
+    
     server.receiveDataFromClients();
 }
 
@@ -508,8 +516,7 @@ int always_prompt_transcription(struct whisper_context * ctx, audio_async & audi
     return 0;
 }
 
-// general-purpose mode
-// freely transcribe the voice into text
+// Gated - transcribe the voice into text
 int process_gated_transcription(struct whisper_context * ctx, audio_async &audio, const whisper_params &params) {
     bool is_running  = true;
     bool have_prompt = false;
@@ -616,6 +623,7 @@ int process_gated_transcription(struct whisper_context * ctx, audio_async &audio
     return 0;
 }
 
+// Freely transcribe
 int process_general_transcription(struct whisper_context * ctx, audio_async &audio, const whisper_params &params) {
     bool is_running  = true;
 
@@ -652,7 +660,11 @@ int process_general_transcription(struct whisper_context * ctx, audio_async &aud
 
             fprintf(stdout, "%s: Heard: '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", txt.c_str(), "\033[0m", (int) t_ms);
             fprintf(stdout, "\n");
-            
+                
+            lastHeard = txt;
+
+            // Send / Recieve data
+            socket_tick();
 
             audio.clear();
         }
@@ -677,7 +689,7 @@ int main(int argc, char ** argv) {
 
     // socket init
     server.setupServer(31050);
-
+    fprintf(stderr, "Server socket opened. Port: 31050\n");
     // whisper init
 
     struct whisper_context * ctx = whisper_init_from_file(params.model.c_str());

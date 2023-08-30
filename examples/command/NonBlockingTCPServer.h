@@ -3,6 +3,7 @@
 
 #include <set>
 #include <ctime>
+#include <sys/select.h>
 
 class NonBlockingTCPServer {
 private:
@@ -17,7 +18,7 @@ public:
 
     void setupServer(int port);
     void acceptConnections();
-    void sendDataToClients();
+    void sendDataToClients(const char* messageToSend);
     void receiveDataFromClients();
     void closeServer();
 };
