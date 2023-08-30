@@ -57,15 +57,22 @@ std::string lastSent;
 void whisper_print_usage(int argc, char ** argv, const whisper_params & params);
 
 void socket_tick() {
+    fprintf(stdout, "Accepting socket connections...\n");
     server.acceptConnections();
+    fprintf(stdout, "Checking for new data to send...\n");
+    fflush(stdout);
     // This function only gets called when something is heard, this is just making sure
     if (!lastHeard.empty() && lastHeard != lastSent)
     {
+        fprintf(stdout, "Sending data...\n");
         lastSent = lastHeard;
         server.sendDataToClients(lastHeard.c_str());
     }
-    
+    fprintf(stdout, "Receiving data...\n");
+
     server.receiveDataFromClients();
+    fprintf(stdout, "Server tick complete\n");
+    fflush(stdout);
 }
 
 bool whisper_params_parse(int argc, char ** argv, whisper_params & params) {
@@ -518,7 +525,7 @@ int always_prompt_transcription(struct whisper_context * ctx, audio_async & audi
 
 // Gated - transcribe the voice into text
 int process_gated_transcription(struct whisper_context * ctx, audio_async &audio, const whisper_params &params) {
-    bool is_running  = true;
+    bool is_running  = true; 
     bool have_prompt = false;
     bool ask_prompt  = true;
 
@@ -660,13 +667,15 @@ int process_general_transcription(struct whisper_context * ctx, audio_async &aud
 
             fprintf(stdout, "%s: Heard: '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", txt.c_str(), "\033[0m", (int) t_ms);
             fprintf(stdout, "\n");
-                
+            fflush(stdout);
+
             lastHeard = txt;
+            audio.clear();
 
             // Send / Recieve data
+            fprintf(stdout, "Starting server tick\n");
             socket_tick();
-
-            audio.clear();
+            fprintf(stdout, "end\n");
         }
         
     }
@@ -687,10 +696,10 @@ int main(int argc, char ** argv) {
         exit(0);
     }
 
-    // socket init
-    server.setupServer(31050);
-    fprintf(stderr, "Server socket opened. Port: 31050\n");
-    // whisper init
+    // socket init  
+    server.setupServer(31050); 
+    fprintf(stderr, "[socket] communication opened. Port: 31050\n");
+    // whisper init  
 
     struct whisper_context * ctx = whisper_init_from_file(params.model.c_str());
 
@@ -745,6 +754,6 @@ int main(int argc, char ** argv) {
     whisper_print_timings(ctx);
     whisper_free(ctx);
     server.closeServer();
-    fprintf(stderr, "server closed successfully\n");
+    fprintf(stderr, "[socket] closed successfully\n");
     return ret_val;
 }
