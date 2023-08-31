@@ -55,10 +55,11 @@ std::string lastSent;
 
 void whisper_print_usage(int argc, char ** argv, const whisper_params & params);
 
-void socket_tick() {
+void socket_tick(bool sendData) {
     server.acceptConnections();
-    // This function only gets called when something is heard, this is just making sure
-    if (!lastHeard.empty() && lastHeard != lastSent) 
+
+    // This function only gets called when something is heard and the gate complies
+    if (!lastHeard.empty() && lastHeard != lastSent && sendData) 
     {
         lastSent = lastHeard;
         server.sendDataToClients(lastHeard.c_str());
@@ -196,250 +197,154 @@ std::vector<std::string> get_words(const std::string &txt) {
     return words;
 }
 
-// always-prompt mode
-// transcribe the voice into text after valid prompt
-int always_prompt_transcription(struct whisper_context * ctx, audio_async & audio, const whisper_params & params) {
-    bool is_running = true;
-    bool ask_prompt = true;
+// Function to process general transcription using Whisper AI
+int process_general_transcription(struct whisper_context *ctx, audio_async &audio, const whisper_params &params) {
+    bool is_running = true;  // Flag to control the main loop
+    bool require_prompt = true;
 
-    float prob = 0.0f;
+    const std::string k_prompt = params.prompt;  // Predefined prompt
+    const int k_prompt_length = get_words(k_prompt).size();  // Number of words in the prompt
 
-    std::vector<float> pcmf32_cur;
+    float prob0 = 0.0f;  // Initial probability value
+    float prob = 0.0f;   // Current probability value
 
-    const std::string k_prompt = params.prompt;
-
-    const int k_prompt_length = get_words(k_prompt).size();
-
-    fprintf(stderr, "\n");
-    fprintf(stderr, "%s: always-prompt mode\n", __func__);
-
-    // main loop
-    while (is_running) {
-        // handle Ctrl + C
-        is_running = sdl_poll_events();
-
-        // delay
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-        if (ask_prompt) {
-            fprintf(stdout, "\n");
-            fprintf(stdout, "%s: The prompt is: '%s%s%s'\n", __func__, "\033[1m", k_prompt.c_str(), "\033[0m");
-            fprintf(stdout, "\n");
-
-            ask_prompt = false;
-        }
-
-        {
-            audio.get(2000, pcmf32_cur);
-
-            if (::vad_simple(pcmf32_cur, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, params.print_energy)) {
-                fprintf(stdout, "%s: Speech detected! Processing ...\n", __func__);
-
-                int64_t t_ms = 0;
-
-                // detect the commands
-                audio.get(params.command_ms, pcmf32_cur);
-
-                const auto txt = ::trim(::transcribe(ctx, params, pcmf32_cur, prob, t_ms));
-
-                const auto words = get_words(txt);
-
-                std::string prompt;
-                std::string command;
-
-                for (int i = 0; i < (int) words.size(); ++i) {
-                    if (i < k_prompt_length) {
-                        prompt += words[i] + " ";
-                    } else {
-                        command += words[i] + " ";
-                    }
-                }
-
-                const float sim = similarity(prompt, k_prompt);
-
-                //debug
-                //fprintf(stdout, "command size: %i\n", command_length);
-                // Instead of getting sim of entire thing, just do caseless comparison against first
-                if ((sim > 0.7f) && (command.size() > 0)) {
-                    fprintf(stdout, "%s: Command '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", command.c_str(), "\033[0m", (int) t_ms);
-                }
-                else
-                {
-                    fprintf(stdout, "Txt: %s\n", txt.c_str());
-                    fprintf(stdout, "Prompt: %s\n", prompt.c_str());
-                    fprintf(stdout, "KPrompt: %s\n", k_prompt.c_str());
-                    fprintf(stdout, "Sim: %f\n", sim);
-                }
-
-                fprintf(stdout, "\n");
-
-                audio.clear();
-            }
-        }
-    }
-
-    return 0;
-}
-
-// Gated - transcribe the voice into text
-int process_gated_transcription(struct whisper_context * ctx, audio_async &audio, const whisper_params &params) {
-    bool is_running  = true; 
-    bool have_prompt = false;
-    bool ask_prompt  = true;
-
-    float prob0 = 0.0f;
-    float prob  = 0.0f;
-
-    std::vector<float> pcmf32_cur;
-    std::vector<float> pcmf32_prompt;
-
-    const std::string k_prompt = "Ok Whisper, start listening for commands.";
-
-    fprintf(stderr, "\n");
-    fprintf(stderr, "%s: gated mode\n", __func__);
-
-    // main loop
-    while (is_running) {
-        // handle Ctrl + C
-        is_running = sdl_poll_events();
-
-        // delay
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-        if (ask_prompt) {
-            fprintf(stdout, "\n");
-            fprintf(stdout, "%s: Say the following phrase: '%s%s%s'\n", __func__, "\033[1m", k_prompt.c_str(), "\033[0m");
-            fprintf(stdout, "\n");
-
-            ask_prompt = false;
-        }
-
-        {
-            audio.get(2000, pcmf32_cur);
-
-            if (::vad_simple(pcmf32_cur, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, params.print_energy)) {
-                fprintf(stdout, "%s: Speech detected! Processing ...\n", __func__);
-
-                int64_t t_ms = 0;
-
-                if (!have_prompt) {
-                    // wait for activation phrase
-                    audio.get(params.prompt_ms, pcmf32_cur);
-
-                    const auto txt = ::trim(::transcribe(ctx, params, pcmf32_cur, prob0, t_ms));
-
-                    fprintf(stdout, "%s: Heard '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", txt.c_str(), "\033[0m", (int) t_ms);
-
-                    const float sim = similarity(txt, k_prompt);
-
-                    if (txt.length() < 0.8*k_prompt.length() || txt.length() > 1.2*k_prompt.length() || sim < 0.8f) {
-                        fprintf(stdout, "%s: WARNING: prompt not recognized, try again\n", __func__);
-                        ask_prompt = true;
-                    } else {
-                        fprintf(stdout, "\n");
-                        fprintf(stdout, "%s: The prompt has been recognized!\n", __func__);
-                        fprintf(stdout, "%s: Waiting for voice commands ...\n", __func__);
-                        fprintf(stdout, "\n");
-
-                        // save the audio for the prompt
-                        pcmf32_prompt = pcmf32_cur;
-                        have_prompt = true;
-                    }
-                } else {
-                    // we have heard the activation phrase, now detect the commands
-                    audio.get(params.command_ms, pcmf32_cur);
-
-                    // prepend the prompt audio
-                    pcmf32_cur.insert(pcmf32_cur.begin(), pcmf32_prompt.begin(), pcmf32_prompt.end());
-
-                    const auto txt = ::trim(::transcribe(ctx, params, pcmf32_cur, prob, t_ms));
-
-                    prob = 100.0f*(prob - prob0);
-
-                    //fprintf(stdout, "%s: heard '%s'\n", __func__, txt.c_str());
-
-                    // find the prompt in the text
-                    float best_sim = 0.0f;
-                    size_t best_len = 0;
-                    for (int n = 0.8*k_prompt.size(); n <= 1.2*k_prompt.size(); ++n) {
-                        const auto prompt = txt.substr(0, n);
-
-                        const float sim = similarity(prompt, k_prompt);
-
-                        //fprintf(stderr, "%s: prompt = '%s', sim = %f\n", __func__, prompt.c_str(), sim);
-
-                        if (sim > best_sim) {
-                            best_sim = sim;
-                            best_len = n;
-                        }
-                    }
-
-                    const std::string command = ::trim(txt.substr(best_len));
-
-                    fprintf(stdout, "%s: Command '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", command.c_str(), "\033[0m", (int) t_ms);
-                    fprintf(stdout, "\n");
-                }
-
-                audio.clear();
-            }
-        }
-    }
-
-    return 0;
-}
-
-// Freely transcribe
-int process_general_transcription(struct whisper_context * ctx, audio_async &audio, const whisper_params &params) {
-    bool is_running  = true;
-
-    float prob0 = 0.0f;
-    float prob  = 0.0f;
-
-    std::vector<float> pcmf32_cur;
+    std::vector<float> pcmf32_cur;  // Container for audio data
 
     fprintf(stderr, "\n");
     fprintf(stderr, "%s: general-purpose mode\n", __func__);
 
-    // main loop
+    // Main loop
     while (is_running) {
-        // handle Ctrl + C
+        // Check for Ctrl + C input to exit the loop
         is_running = sdl_poll_events();
 
-        // delay
+        // Introduce a delay to control loop frequency
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
+        // Retrieve audio data into pcmf32_cur vector
         audio.get(2000, pcmf32_cur);
 
+        // Perform voice activity detection (VAD) on the audio data
         if (::vad_simple(pcmf32_cur, WHISPER_SAMPLE_RATE, 1000, params.vad_thold, params.freq_thold, params.print_energy)) {
             fprintf(stdout, "%s: Speech detected! Processing ...\n", __func__);
 
-            int64_t t_ms = 0;
+            int64_t t_ms = 0;  // Timestamp in milliseconds
 
-            
-            // we have heard the activation phrase, now detect the commands
+            // Capture audio after activation phrase for command processing
             audio.get(params.command_ms, pcmf32_cur);
 
+            // Perform transcription and obtain transcribed text
             const auto txt = ::trim(::transcribe(ctx, params, pcmf32_cur, prob, t_ms));
+            
 
-            prob = 100.0f*(prob - prob0);
+            // Calculate and update the confidence probability
+            prob = 100.0f * (prob - prob0);
 
+            // Display the transcribed text and timestamp
             fprintf(stdout, "%s: Heard: '%s%s%s', (t = %d ms)\n", __func__, "\033[1m", txt.c_str(), "\033[0m", (int) t_ms);
             fprintf(stdout, "\n");
             fflush(stdout);
 
+            // Store the last heard text
             lastHeard = txt;
+
+            // Clear the audio buffer
             audio.clear();
 
-            // Send / Recieve data
+            // The following section detected whether a prompt was provided. 
+            // This is required regardless of require_prompt, as the close gate also requires a prompt to enact. 
+            const auto words = get_words(txt);
+
+            std::string prompt;
+            std::string command;
+
+            // Separate words into prompt and command parts
+            for (int i = 0; i < (int) words.size(); ++i)
+            {
+                if (i < k_prompt_length)
+                {
+                    prompt += words[i] + " ";
+                }
+                else {
+                    command += words[i] + " ";
+                }
+            }
+
+            // Calculate similarity between prompt and predefined prompt
+            const float sim = similarity(prompt, k_prompt);
+
+            // TODO store 0.7f as threshold variable
+            bool prompt_detected = (sim > 0.7f);
+            bool sendCommand = false;
+            
+            // Gate closed, all messages require the starting phrase
+            if (require_prompt)
+            {
+                // Starting phrase detected, will definitely send messasge to server
+                if (prompt_detected)
+                {
+                    sendCommand = true;
+
+                    // Command detected
+                    if (command.size() > 0)
+                    {
+                        // If the command matches the prompt to open gate, send prestructured packet. 
+                        // Else, send command verbatim
+                        if (command.c_str() == params.open_gate)
+                        {
+                            fprintf(stdout, "Prompt detected. Command approved: [GATE_OPEN]\n");
+                            require_prompt = false;
+                            command = "[GATE_OPEN]";
+                        }
+                        else 
+                        {
+                            fprintf(stdout, "Prompt detected. Command approved: %s\n", command.c_str());
+                        }
+                    }
+                    else 
+                    {
+                        // No command detected, so send a prestructured help command to advise client. 
+                        fprintf(stdout, "Solo prompt detected. Command approved: ?\n");
+                        command = "?";
+                    }
+                }
+                else
+                {
+                    // Gate is closed, no prompt so no packet sent. 
+                    fprintf(stdout, "No prompt detected. \n");
+                }
+            }
+            else 
+            {
+                // Gate is open, by default all text is transmitted
+                if (prompt_detected)
+                {
+                    // If prompt is detected, check for close gate command. 
+                    if (command.c_str() == params.close_gate)
+                    {
+                        // Close gate, and send a packet to the client to advise them
+                        require_prompt = true;
+                        command = "[GATE_CLOSE]";
+                        sendCommand = true;
+                    }
+                }
+            }
+            
+            // Communication using sockets (send/receive data)
+            // Use gate to determine whether data should be sent
+            bool sendData = ((require_prompt && sendCommand) || !require_prompt);
+
             fprintf(stdout, "Starting server tick\n");
-            socket_tick();
-            fprintf(stdout, "end\n");
+            socket_tick(sendData);
+
+            fprintf(stdout, "Complete\n");
+            fflush(stdout);
         }
-        
     }
 
-    return 0;
+    return 0;  // Return success
 }
+
 
 int main(int argc, char ** argv) {
     whisper_params params;
@@ -457,7 +362,7 @@ int main(int argc, char ** argv) {
     // socket init  
     server.setupServer(31050); 
     fprintf(stderr, "[socket] communication opened. Port: 31050\n");
-    
+
     // whisper init   
 
     struct whisper_context * ctx = whisper_init_from_file(params.model.c_str());
@@ -497,14 +402,7 @@ int main(int argc, char ** argv) {
     audio.clear();
 
     int  ret_val = 0;
-
-    if (!params.prompt.empty()) {
-        ret_val = always_prompt_transcription(ctx, audio, params);
-    } else if (!params.open_gate.empty() && !params.close_gate.empty()) {
-        ret_val = process_gated_transcription(ctx, audio, params);
-    } else {
-        ret_val = process_general_transcription(ctx, audio, params);
-    }
+    ret_val = process_general_transcription(ctx, audio, params);
 
     audio.pause();
 
