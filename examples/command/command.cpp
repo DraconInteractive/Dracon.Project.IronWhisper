@@ -92,8 +92,8 @@ bool whisper_params_parse(int argc, char ** argv, whisper_params & params) {
         else if (arg == "-m"   || arg == "--model")         { params.model         = argv[++i]; }
         else if (arg == "-f"   || arg == "--file")          { params.fname_out     = argv[++i]; }
         else if (arg == "-p"   || arg == "--prompt")        { params.prompt        = argv[++i]; }
-        else if (arg == "-og"  || arg == "--open-gate")    { params.open_gate     = argv[i++]; }
-        else if (arg == "-cg"  || arg == "--close-gate")   { params.close_gate    = argv[i++]; }
+        else if (arg == "-og"  || arg == "--open-gate")     { params.open_gate     = argv[++i]; }
+        else if (arg == "-cg"  || arg == "--close-gate")    { params.close_gate    = argv[++i]; }
         else {
             fprintf(stderr, "error: unknown argument: %s\n", arg.c_str());
             whisper_print_usage(argc, argv, params);
@@ -290,28 +290,29 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
                     {
                         // If the command matches the prompt to open gate, send prestructured packet. 
                         // Else, send command verbatim
-                        if (command.c_str() == params.open_gate)
+                        if (command == params.open_gate)
                         {
-                            fprintf(stdout, "Prompt detected. Command approved: [GATE_OPEN]\n");
+                            fprintf(stdout, "\nPrompt detected. Command approved: [GATE_OPEN]\n");
                             require_prompt = false;
                             command = "[GATE_OPEN]";
                         }
                         else 
                         {
-                            fprintf(stdout, "Prompt detected. Command approved: %s\n", command.c_str());
+                            fprintf(stdout, "\nPrompt detected. Command approved: %s\n", command.c_str());
+                            fprintf(stdout, "Compare: %s\n", params.open_gate.c_str());
                         }
                     }
                     else 
                     {
                         // No command detected, so send a prestructured help command to advise client. 
-                        fprintf(stdout, "Solo prompt detected. Command approved: ?\n");
+                        fprintf(stdout, "\nSolo prompt detected. Command approved: ?\n");
                         command = "?";
                     }
                 }
                 else
                 {
                     // Gate is closed, no prompt so no packet sent. 
-                    fprintf(stdout, "No prompt detected. \n");
+                    fprintf(stdout, "\nNo prompt detected. \n");
                 }
             }
             else 
@@ -320,12 +321,13 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
                 if (prompt_detected)
                 {
                     // If prompt is detected, check for close gate command. 
-                    if (command.c_str() == params.close_gate)
+                    if (command == params.close_gate)
                     {
                         // Close gate, and send a packet to the client to advise them
                         require_prompt = true;
                         command = "[GATE_CLOSE]";
                         sendCommand = true;
+                        fprintf(stdout, "\nPrompt detected. Command approved: [GATE_CLOSE]\n");
                     }
                 }
             }
