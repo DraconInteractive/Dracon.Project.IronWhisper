@@ -20,3 +20,7 @@ Work on the action processor has begun as part of that, and thats about where im
 
 Note to self: spacy TODO
 https://catherinebreslin.medium.com/text-classification-with-spacy-3-0-d945e2e8fc44
+
+Note to self: annotation
+label-studio start
+localhost:8080
