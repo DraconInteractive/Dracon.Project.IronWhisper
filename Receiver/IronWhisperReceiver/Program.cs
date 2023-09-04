@@ -15,15 +15,20 @@ class Program
 class Core
 {
     public SocketController socketController;
+    public ActionsController actionsController;
 
     public void Run ()
     {
         socketController = new SocketController();
+        actionsController = new ActionsController();
+
         socketController.Connect();
         socketController.StartStream();
         while (true)
         {
             socketController.SocketTick();
         }
+
+
     }
 }

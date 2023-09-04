@@ -44,9 +44,6 @@ struct whisper_params {
     std::string language  = "en";
     std::string model     = "models/ggml-base.en.bin";
     std::string fname_out;
-    std::string prompt;
-    std::string open_gate;
-    std::string close_gate;
 };
 
 NonBlockingTCPServer server;
@@ -91,9 +88,6 @@ bool whisper_params_parse(int argc, char ** argv, whisper_params & params) {
         else if (arg == "-l"   || arg == "--language")      { params.language      = argv[++i]; }
         else if (arg == "-m"   || arg == "--model")         { params.model         = argv[++i]; }
         else if (arg == "-f"   || arg == "--file")          { params.fname_out     = argv[++i]; }
-        else if (arg == "-p"   || arg == "--prompt")        { params.prompt        = argv[++i]; }
-        else if (arg == "-og"  || arg == "--open-gate")     { params.open_gate     = argv[++i]; }
-        else if (arg == "-cg"  || arg == "--close-gate")    { params.close_gate    = argv[++i]; }
         else {
             fprintf(stderr, "error: unknown argument: %s\n", arg.c_str());
             whisper_print_usage(argc, argv, params);
@@ -125,9 +119,6 @@ void whisper_print_usage(int /*argc*/, char ** argv, const whisper_params & para
     fprintf(stderr, "  -l LANG,    --language LANG  [%-7s] spoken language\n",                             params.language.c_str());
     fprintf(stderr, "  -m FNAME,   --model FNAME    [%-7s] model path\n",                                  params.model.c_str());
     fprintf(stderr, "  -f FNAME,   --file FNAME     [%-7s] text output file name\n",                       params.fname_out.c_str());
-    fprintf(stderr, "  -p,         --prompt         [%-7s] single use activation prompt\n"  ,              params.prompt.c_str());
-    fprintf(stderr, "  -og,        --open-gate      [%-7s] enter command mode prompt\n",                   params.open_gate.c_str());
-    fprintf(stderr, "  cd,         --close-gate     [%-7s] exit command mode prompt\n",                    params.close_gate.c_str());
     fprintf(stderr, "\n");
 }
 
@@ -199,19 +190,14 @@ std::vector<std::string> get_words(const std::string &txt) {
 
 // Function to process general transcription using Whisper AI
 int process_general_transcription(struct whisper_context *ctx, audio_async &audio, const whisper_params &params) {
-    bool is_running = true;  // Flag to control the main loop
-    bool require_prompt = true;
-
-    const std::string k_prompt = params.prompt;  // Predefined prompt
-    const int k_prompt_length = get_words(k_prompt).size();  // Number of words in the prompt
-
+    bool is_running = true;
     float prob0 = 0.0f;  // Initial probability value
     float prob = 0.0f;   // Current probability value
 
     std::vector<float> pcmf32_cur;  // Container for audio data
 
     fprintf(stderr, "\n");
-    fprintf(stderr, "%s: general-purpose mode\n", __func__);
+    fprintf(stderr, "%s: transcript-socket mode\n", __func__);
 
     // Main loop
     while (is_running) {
@@ -236,7 +222,6 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
             // Perform transcription and obtain transcribed text
             const auto txt = ::trim(::transcribe(ctx, params, pcmf32_cur, prob, t_ms));
             
-
             // Calculate and update the confidence probability
             prob = 100.0f * (prob - prob0);
 
@@ -251,95 +236,8 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
             // Clear the audio buffer
             audio.clear();
 
-            // The following section detected whether a prompt was provided. 
-            // This is required regardless of require_prompt, as the close gate also requires a prompt to enact. 
-            const auto words = get_words(txt);
+            socket_tick(true);
 
-            std::string prompt;
-            std::string command;
-
-            // Separate words into prompt and command parts
-            for (int i = 0; i < (int) words.size(); ++i)
-            {
-                if (i < k_prompt_length)
-                {
-                    prompt += words[i] + " ";
-                }
-                else {
-                    command += words[i] + " ";
-                }
-            }
-
-            // Calculate similarity between prompt and predefined prompt
-            const float sim = similarity(prompt, k_prompt);
-
-            // TODO store 0.7f as threshold variable
-            bool prompt_detected = (sim > 0.7f);
-            bool sendCommand = false;
-            
-            // Gate closed, all messages require the starting phrase
-            if (require_prompt)
-            {
-                // Starting phrase detected, will definitely send messasge to server
-                if (prompt_detected)
-                {
-                    sendCommand = true;
-
-                    // Command detected
-                    if (command.size() > 0)
-                    {
-                        // If the command matches the prompt to open gate, send prestructured packet. 
-                        // Else, send command verbatim
-                        if (command == params.open_gate)
-                        {
-                            fprintf(stdout, "\nPrompt detected. Command approved: [GATE_OPEN]\n");
-                            require_prompt = false;
-                            command = "[GATE_OPEN]";
-                        }
-                        else 
-                        {
-                            fprintf(stdout, "\nPrompt detected. Command approved: %s\n", command.c_str());
-                            fprintf(stdout, "Compare: %s\n", params.open_gate.c_str());
-                        }
-                    }
-                    else 
-                    {
-                        // No command detected, so send a prestructured help command to advise client. 
-                        fprintf(stdout, "\nSolo prompt detected. Command approved: ?\n");
-                        command = "?";
-                    }
-                }
-                else
-                {
-                    // Gate is closed, no prompt so no packet sent. 
-                    fprintf(stdout, "\nNo prompt detected. \n");
-                }
-            }
-            else 
-            {
-                // Gate is open, by default all text is transmitted
-                if (prompt_detected)
-                {
-                    // If prompt is detected, check for close gate command. 
-                    if (command == params.close_gate)
-                    {
-                        // Close gate, and send a packet to the client to advise them
-                        require_prompt = true;
-                        command = "[GATE_CLOSE]";
-                        sendCommand = true;
-                        fprintf(stdout, "\nPrompt detected. Command approved: [GATE_CLOSE]\n");
-                    }
-                }
-            }
-            
-            // Communication using sockets (send/receive data)
-            // Use gate to determine whether data should be sent
-            bool sendData = ((require_prompt && sendCommand) || !require_prompt);
-
-            fprintf(stdout, "Starting server tick\n");
-            socket_tick(sendData);
-
-            fprintf(stdout, "Complete\n");
             fflush(stdout);
         }
     }
