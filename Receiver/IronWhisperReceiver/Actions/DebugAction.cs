@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IronWhisperReceiver.Actions
 {
-    internal class ADebug : CoreAction
+    internal class DebugAction : CoreAction
     {
         public override CoreAction Init()
         {
@@ -16,9 +16,9 @@ namespace IronWhisperReceiver.Actions
             return this;
         }
 
-        protected override void InternalRun(string message, params object[] parameters)
+        protected override async Task InternalRun(TCommand command)
         {
-            OutputMessage = message;
+            OutputMessage = command.Message;
         }
     }
 }

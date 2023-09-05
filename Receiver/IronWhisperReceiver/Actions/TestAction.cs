@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IronWhisperReceiver.Actions
 {
-    internal class ATest : CoreAction
+    internal class TestAction : CoreAction
     {
         public override CoreAction Init()
         {
@@ -22,7 +22,7 @@ namespace IronWhisperReceiver.Actions
             return this;
         }
 
-        protected override void InternalRun(string message, params object[] parameters)
+        protected override async Task InternalRun(TCommand command)
         {
             Console.WriteLine("Running a test!");
         }

@@ -19,13 +19,18 @@ namespace IronWhisperReceiver.Actions
             return this;
         }
 
-        public void Run(string message, params object[] parameters)
+        public virtual bool Evaluate (TCommand command)
         {
-            InternalRun(message, parameters);
+            return (Phrases.Contains(command.Command));
+        }
+
+        public async Task Run(TCommand command)
+        {
+            await InternalRun(command);
             InternalOutput();
         }
 
-        protected virtual void InternalRun(string message, params object[] parameters)
+        protected virtual async Task InternalRun(TCommand command)
         {
             
         }

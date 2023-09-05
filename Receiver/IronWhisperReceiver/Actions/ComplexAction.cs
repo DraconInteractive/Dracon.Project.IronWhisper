@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IronWhisperReceiver.Actions
 {
-    internal class AComplex : CoreAction
+    internal class ComplexAction : CoreAction
     {
         public override CoreAction Init()
         {
@@ -17,10 +17,12 @@ namespace IronWhisperReceiver.Actions
             return this;
         }
 
-        protected override void InternalRun(string message, params object[] parameters)
+        protected override async Task InternalRun(TCommand command)
         {
             Console.WriteLine(">> Connecting to server...");
+            await Task.Delay(100);
             Console.WriteLine(">> Downloading file...");
+            await Task.Delay(100);
             Console.WriteLine(">> File downloaded. Assigning file to action output");
             Console.WriteLine();
             OutputMessage = ComplexFile.GetTest();
@@ -37,7 +39,7 @@ namespace IronWhisperReceiver.Actions
         {
             var c = new ComplexFile()
             {
-                ID = System.Guid.NewGuid().ToString(),
+                ID = Guid.NewGuid().ToString(),
                 Attributes = new string[] {
                     "ONLINE",
                     "STATUS_ACTIVE",

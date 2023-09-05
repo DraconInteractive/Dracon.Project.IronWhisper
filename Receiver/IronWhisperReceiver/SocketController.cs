@@ -14,12 +14,9 @@ namespace IronWhisperReceiver
         readonly string serverIP = "172.28.31.175"; // Change this to the server's IP address
         readonly int serverPort = 31050;            // Change this to the server's port number
         readonly string voicePrompt = "Okay,";
-        string lastReceived = "";
 
         TcpClient client;
         NetworkStream stream;
-
-        public Action<string, string> commandReceived;
 
         public SocketController()
         {
@@ -60,8 +57,9 @@ namespace IronWhisperReceiver
             stream = client.GetStream();
         }
 
-        public void SocketTick ()
+        public TCommand SocketTick ()
         {
+            // TODO - add | onto end of each command to allow for delayed commands to be separated
             try
             {
                 if (stream.DataAvailable)
@@ -70,16 +68,15 @@ namespace IronWhisperReceiver
                     byte[] buffer = new byte[1024];
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
                     string response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                    Console.WriteLine($"Transcript received: {response}");
-                    string command = response.Replace(voicePrompt, "").ToLower();
-                    commandReceived?.Invoke(response.Trim(), command.Trim());
-                    lastReceived = response;
+
+                    return new TCommand(voicePrompt, response);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Socket error occurred: {ex.Message}\n{ex.StackTrace}");
             }
+            return null;
         }
 
         public void CloseStream ()
@@ -92,6 +89,28 @@ namespace IronWhisperReceiver
         {
             CloseStream();
             client.Close();
+        }
+    }
+
+    public class TCommand
+    {
+        private string[] _punctuation = new string[] { ",", ".", ":", "?", "!" };
+
+        public string Message;
+        public string Command;
+
+        public TCommand (string prompt, string message)
+        {
+            Message = message;
+            Command = message.Replace(prompt, "").ToLower();
+
+            foreach (var p in _punctuation)
+            {
+                Command = Command.Replace(p, "");
+            }
+
+            Message = Message.Trim();
+            Command = Command.Trim();
         }
     }
 }
