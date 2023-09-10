@@ -17,9 +17,19 @@ Status:
 Steps 1&2 have gone well! While im looking into the viablility of using spacy for command extraction, i'm using more strict keywording where each command has an array of possible inputs, and will only accept one of those. 
 Work on the action processor has begun as part of that, and thats about where im up to. 
 
+Notes:
 
-Note to self: spacy TODO
-https://catherinebreslin.medium.com/text-classification-with-spacy-3-0-d945e2e8fc44
+Resource Registry
+- Track projects, files and other resources
+- Track access points
+- Tag system that assigns capabilities and systems associated with resources
+- Modular data association combined with tags. E.g, HasDataStorage+HasProjectData will have associated ProjectData which contains a json structure with a list of projects, file locations etc).
+- Systems that have storage and internet capacity will have structures for global download location etc
+- Operations will also be modular, such as DownloadGlobal which will download a file through the supplied URI to the global download location. This is compared to DownloadRelative, which would download to the current 'focus' location, but thats more difficult. 
+
+
+TTS:
+http://festvox.org/festival/
 
 Note to self: annotation
 label-studio start
