@@ -4,6 +4,8 @@
 #include <set>
 #include <ctime>
 #include <sys/select.h>
+#include <vector>
+#include <cstdint>
 
 class NonBlockingTCPServer {
 private:
@@ -19,6 +21,7 @@ public:
     void setupServer(int port);
     void acceptConnections();
     void sendDataToClients(const char* messageToSend);
+    void sendDataToClients(const std::vector<uint8_t>& serializedData);
     void receiveDataFromClients();
     void closeServer();
 };

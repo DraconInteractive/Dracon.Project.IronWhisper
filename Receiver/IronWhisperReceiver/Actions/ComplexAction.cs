@@ -9,12 +9,11 @@ namespace IronWhisperReceiver.Actions
 {
     internal class ComplexAction : CoreAction
     {
-        public override CoreAction Init()
+        protected override void InternalInit()
         {
             Name = "Complex";
             AlwaysRun = false;
             Phrases = new string[] {"run a more complex action", "fetch my remote configuration file"};
-            return this;
         }
 
         protected override async Task InternalRun(TCommand command)

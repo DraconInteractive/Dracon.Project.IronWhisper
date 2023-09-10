@@ -8,12 +8,11 @@ namespace IronWhisperReceiver.Actions
 {
     internal class DebugAction : CoreAction
     {
-        public override CoreAction Init()
+        protected override void InternalInit()
         {
             Name = "Debug";
             AlwaysRun = true;
             Phrases = Array.Empty<string>();
-            return this;
         }
 
         protected override async Task InternalRun(TCommand command)

@@ -14,14 +14,43 @@ namespace IronWhisperReceiver.Actions
         public bool AlwaysRun;
         public int Priority = 0;
 
-        public virtual CoreAction Init ()
+        public CoreAction Init ()
         {
+            InternalInit();
+            for (int i = 0; i < Phrases.Length; i++)
+            {
+                Phrases[i] = Phrases[i].ToLower().Trim();
+            }
             return this;
+        }
+
+        protected virtual void InternalInit ()
+        {
+
         }
 
         public virtual bool Evaluate (TCommand command)
         {
             return (Phrases.Contains(command.Command));
+        }
+
+        protected bool PhrasesContainsFull(TCommand command)
+        {
+            return (Phrases.Contains(command.Command.ToLower()));
+        }
+
+        protected bool PhrasesContainsPartial(TCommand command)
+        {
+            bool match = false;
+            foreach (var phrase in Phrases)
+            {
+                if (command.Message.ToLower().Contains(phrase))
+                {
+                    match = true;
+                    break;
+                }
+            }
+            return match;
         }
 
         public async Task Run(TCommand command)

@@ -22,6 +22,7 @@
 #include <thread>
 #include <vector>
 #include <map>
+#include <spacy/spacy>
 
 // command-line parameters
 struct whisper_params {
@@ -52,16 +53,28 @@ std::string lastSent;
 
 void whisper_print_usage(int argc, char ** argv, const whisper_params & params);
 
-void socket_tick(bool sendData) {
-    server.acceptConnections();
+std::string serialize_token(const Spacy::Token& token)
+{
+    std::ostringstream oss;
+    oss << token.text() << '|'
+        << token.lemma_() << '|'
+        << token.pos_();
+    return oss.str();
+}
 
-    // This function only gets called when something is heard and the gate complies
-    if (!lastHeard.empty() && lastHeard != lastSent && sendData) 
+std::vector<uint8_t> serialize_tokens(const std::vector<Spacy::Token>& tokens)
+{
+    std::string serialized_data;
+    for (const auto& token : tokens)
     {
-        lastSent = lastHeard;
-        server.sendDataToClients(lastHeard.c_str());
+        serialized_data += serialize_token(token) + "&";
     }
 
+    return std::vector<uint8_t>(serialized_data.begin(), serialized_data.end());
+}
+
+void socket_tick() {
+    server.acceptConnections();
     server.receiveDataFromClients(); 
 }
 
@@ -236,7 +249,21 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
             // Clear the audio buffer
             audio.clear();
 
-            socket_tick(true);
+            // Spacy parse
+            Spacy::Spacy spacy;
+            auto nlp = spacy.load("en_core_web_sm");
+            auto doc = nlp.parse(txt);
+            /*
+            for (auto& token : doc.tokens())
+                std::cout << token.text() << " [" << token.pos_() << "]\n";
+            */
+            std::vector<Spacy::Token> tokens = doc.tokens();
+            for (const Spacy::Token& token : tokens)
+            {
+                fprintf(stdout, "T: %s, %s, [%s]\n", token.text().c_str(), token.lemma_().c_str(), token.pos_().c_str());
+            }
+            socket_tick();
+            server.sendDataToClients(serialize_tokens(tokens));
 
             fflush(stdout);
         }

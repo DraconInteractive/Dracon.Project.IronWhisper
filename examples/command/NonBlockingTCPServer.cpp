@@ -153,6 +153,23 @@ void NonBlockingTCPServer::sendDataToClients(const char* messageToSend) {
     }
 }
 
+// TODO make these have a shared root
+void NonBlockingTCPServer::sendDataToClients(const std::vector<uint8_t>& serializedData) {
+
+    // Iterate through each client socket in the collection
+    for (int clientSocket : clientSockets) {
+        // Send the message to the client
+        ssize_t bytesSent = send(clientSocket, serializedData.data(), serializedData.size(), 0);
+        fprintf(stdout, "sent %zd bytes\n", bytesSent);
+        if (bytesSent == -1)
+        {
+            fprintf(stderr, "[socket] error sending packet to client: %d\n", clientSocket);
+            perror("send");
+        }
+    }
+}
+
+
 void NonBlockingTCPServer::receiveDataFromClients() {
     // Iterate through each client socket in the collection
     for (int clientSocket : clientSockets) {

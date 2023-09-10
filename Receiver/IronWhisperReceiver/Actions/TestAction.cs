@@ -8,7 +8,7 @@ namespace IronWhisperReceiver.Actions
 {
     internal class TestAction : CoreAction
     {
-        public override CoreAction Init()
+        protected override void InternalInit()
         {
             Name = "Test";
             AlwaysRun = false;
@@ -19,7 +19,6 @@ namespace IronWhisperReceiver.Actions
                 ", do a test",
                 ", run a test"
             };
-            return this;
         }
 
         protected override async Task InternalRun(TCommand command)

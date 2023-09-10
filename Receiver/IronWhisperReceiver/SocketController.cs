@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -7,7 +8,14 @@ using System.Threading.Tasks;
 
 namespace IronWhisperReceiver
 {
-    internal class SocketController
+    public class Token
+    {
+        public string Text;
+        public string Lemma;
+        public string Pos;
+    }
+
+    public class SocketController
     {
         public static SocketController Instance;
 
@@ -67,9 +75,12 @@ namespace IronWhisperReceiver
                     // Receive and display the response from the server
                     byte[] buffer = new byte[1024];
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                    var tokens = DeserializeTokens(buffer);
+                    Console.WriteLine($"Deserialized Token Data:\n{JsonConvert.SerializeObject(tokens, Formatting.Indented)}\n");
+
                     string response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
 
-                    return new TCommand(voicePrompt, response);
+                    return new TCommand(voicePrompt, response, tokens.ToArray());
                 }
             }
             catch (Exception ex)
@@ -90,6 +101,37 @@ namespace IronWhisperReceiver
             CloseStream();
             client.Close();
         }
+
+        public static List<Token> DeserializeTokens(byte[] serializedData)
+        {
+            string serializedString = Encoding.UTF8.GetString(serializedData);
+            string[] tokenStrings = serializedString.Split('&');
+            List<Token> tokens = new List<Token>();
+
+            foreach (string tokenString in tokenStrings)
+            {
+                if (string.IsNullOrEmpty(tokenString))
+                {
+                    continue;
+                }
+
+                string[] fields = tokenString.Split('|');
+                if (fields.Length < 3)
+                {
+                    // Not enough fields
+                    continue;
+                }
+
+                Token token = new Token
+                {
+                    Text = fields[0],
+                    Lemma = fields[1],
+                    Pos = fields[2],
+                };
+                tokens.Add(token);
+            }
+            return tokens;
+        }
     }
 
     public class TCommand
@@ -99,7 +141,9 @@ namespace IronWhisperReceiver
         public string Message;
         public string Command;
 
-        public TCommand (string prompt, string message)
+        public Token[] tokens;
+
+        public TCommand (string prompt, string message, Token[] _tokens = null)
         {
             Message = message;
             Command = message.Replace(prompt, "").ToLower();
@@ -111,6 +155,15 @@ namespace IronWhisperReceiver
 
             Message = Message.Trim();
             Command = Command.Trim();
+
+            if (_tokens != null)
+            {
+                tokens = _tokens;
+            }
+            else
+            {
+                tokens = Array.Empty<Token>();
+            }
         }
     }
 }

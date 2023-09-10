@@ -9,26 +9,16 @@ namespace IronWhisperReceiver.Actions
 {
     internal class TimerAction : CoreAction
     {
-        public override CoreAction Init()
+        protected override void InternalInit()
         {
             Name = "Timer";
             AlwaysRun = false;
             Phrases = new string[] { "set a timer for", "start a timer for", "run a timer for" };
-            return this;
         }
 
         public override bool Evaluate(TCommand command)
         {
-            bool match = false;
-            foreach (var phrase in Phrases)
-            {
-                if (command.Message.ToLower().Contains(phrase))
-                {
-                    match = true;
-                    break;
-                }
-            }
-            return match;
+            return PhrasesContainsPartial(command);
         }
 
         protected override async Task InternalRun(TCommand command)
