@@ -62,15 +62,36 @@ std::string serialize_token(const Spacy::Token& token)
     return oss.str();
 }
 
-std::vector<uint8_t> serialize_tokens(const std::vector<Spacy::Token>& tokens)
+std::vector<uint8_t> serialize_tokens(const std::string &txt, const std::vector<Spacy::Token>& tokens)
 {
     std::string serialized_data;
+    serialized_data += txt + ">>";
     for (const auto& token : tokens)
     {
         serialized_data += serialize_token(token) + "&";
     }
-
+    fprintf(stdout, "Sending data: %s", serialized_data.c_str());
     return std::vector<uint8_t>(serialized_data.begin(), serialized_data.end());
+}
+
+std::vector<uint8_t> spacy_process(const std::string &txt)
+{
+    // Spacy parse
+    Spacy::Spacy spacy;
+    auto nlp = spacy.load("en_core_web_sm");
+    auto doc = nlp.parse(txt);
+    /*
+    for (auto& token : doc.tokens())
+        std::cout << token.text() << " [" << token.pos_() << "]\n";
+    */
+    /*
+    std::vector<Spacy::Token> tokens = doc.tokens();
+    for (const Spacy::Token& token : tokens)
+    {
+        fprintf(stdout, "T: %s, %s, [%s]\n", token.text().c_str(), token.lemma_().c_str(), token.pos_().c_str());
+    }
+    */
+    return serialize_tokens(txt, doc.tokens());
 }
 
 void socket_tick() {
@@ -249,21 +270,8 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
             // Clear the audio buffer
             audio.clear();
 
-            // Spacy parse
-            Spacy::Spacy spacy;
-            auto nlp = spacy.load("en_core_web_sm");
-            auto doc = nlp.parse(txt);
-            /*
-            for (auto& token : doc.tokens())
-                std::cout << token.text() << " [" << token.pos_() << "]\n";
-            */
-            std::vector<Spacy::Token> tokens = doc.tokens();
-            for (const Spacy::Token& token : tokens)
-            {
-                fprintf(stdout, "T: %s, %s, [%s]\n", token.text().c_str(), token.lemma_().c_str(), token.pos_().c_str());
-            }
             socket_tick();
-            server.sendDataToClients(serialize_tokens(tokens));
+            server.sendDataToClients(spacy_process(txt));
 
             fflush(stdout);
         }

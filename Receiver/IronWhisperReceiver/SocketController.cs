@@ -75,12 +75,10 @@ namespace IronWhisperReceiver
                     // Receive and display the response from the server
                     byte[] buffer = new byte[1024];
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                    var tokens = DeserializeTokens(buffer);
-                    Console.WriteLine($"Deserialized Token Data:\n{JsonConvert.SerializeObject(tokens, Formatting.Indented)}\n");
-
-                    string response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-
-                    return new TCommand(voicePrompt, response, tokens.ToArray());
+                    //string response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                    var command = DeserializeData(buffer);
+                    Console.WriteLine($"Deserialized Command:\n{JsonConvert.SerializeObject(command, Formatting.Indented)}\n");
+                    return command;
                 }
             }
             catch (Exception ex)
@@ -102,10 +100,11 @@ namespace IronWhisperReceiver
             client.Close();
         }
 
-        public static List<Token> DeserializeTokens(byte[] serializedData)
+        public TCommand DeserializeData(byte[] serializedData)
         {
             string serializedString = Encoding.UTF8.GetString(serializedData);
-            string[] tokenStrings = serializedString.Split('&');
+            string[] messageSplit = serializedString.Split(">>");
+            string[] tokenStrings = messageSplit[1].Split('&');
             List<Token> tokens = new List<Token>();
 
             foreach (string tokenString in tokenStrings)
@@ -130,7 +129,9 @@ namespace IronWhisperReceiver
                 };
                 tokens.Add(token);
             }
-            return tokens;
+            TCommand command = new TCommand(voicePrompt, messageSplit[0], tokens.ToArray());
+            return command;
+
         }
     }
 
