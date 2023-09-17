@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IronWhisperReceiver.Networking;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,6 @@ namespace IronWhisperReceiver.Actions
         protected override void InternalInit()
         {
             Name = "Test";
-            AlwaysRun = false;
             Phrases = new string[]
             {
                 "do a test",
@@ -21,9 +21,10 @@ namespace IronWhisperReceiver.Actions
             };
         }
 
-        protected override async Task InternalRun(TCommand command)
+        protected override async Task InternalRun(TSpeech command)
         {
-            Console.WriteLine("Running a test!");
+            InternalMessage = "Running a test";
+            ExternalMessage = "Test!";
         }
     }
 }

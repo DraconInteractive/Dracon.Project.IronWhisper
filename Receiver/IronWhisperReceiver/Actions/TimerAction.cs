@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IronWhisperReceiver.Networking;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,18 +13,18 @@ namespace IronWhisperReceiver.Actions
         protected override void InternalInit()
         {
             Name = "Timer";
-            AlwaysRun = false;
             Phrases = new string[] { "set a timer for", "start a timer for", "run a timer for" };
         }
 
-        public override bool Evaluate(TCommand command)
+        public override bool Evaluate(TSpeech command)
         {
             return PhrasesContainsPartial(command);
         }
 
-        protected override async Task InternalRun(TCommand command)
+        protected override async Task InternalRun(TSpeech command)
         {
-            string message = command.Message;
+            string message = Utilities.ExtractNumberFromText(command.Message).Item1;
+            // TODO: get the semantic of the number
             Regex regex = new Regex(@"(\d+)\s*(second|minute|hour)(?:s)?", RegexOptions.IgnoreCase);
             Match match = regex.Match(message);
 
@@ -47,13 +48,15 @@ namespace IronWhisperReceiver.Actions
                         break;
                 }
                 TimeSpan _timerDuration = TimeSpan.FromSeconds(secondsToWait);
-                OutputMessage = $"Timer set for {_timerDuration.TotalMinutes} minutes.";
+                InternalMessage = "Beginning delayed event call";
+                ExternalMessage = $"Timer set for {_timerDuration.TotalMinutes} minutes.";
                 // Discarded as we want the action to finish after setting the timer, not to wait until the timer is complete. 
                 _ = WaitForTimer(_timerDuration);
             }
             else
             {
-                OutputMessage = "I'm sorry, I didn't understand that. If you want to set a timer, say \"Set a timer for 10 minutes\"";
+                InternalMessage = "Regex match for numerals and modifier failed";
+                ExternalMessage = "I'm sorry, I didn't understand that. If you want to set a timer, say \"Set a timer for 10 minutes\"";
             }
 
         }

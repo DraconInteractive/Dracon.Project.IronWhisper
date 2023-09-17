@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using IronWhisperReceiver.Networking;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +13,18 @@ namespace IronWhisperReceiver.Actions
         protected override void InternalInit()
         {
             Name = "Complex";
-            AlwaysRun = false;
             Phrases = new string[] {"run a more complex action", "fetch my remote configuration file"};
         }
 
-        protected override async Task InternalRun(TCommand command)
+        protected override async Task InternalRun(TSpeech command)
         {
             Console.WriteLine(">> Connecting to server...");
             await Task.Delay(100);
             Console.WriteLine(">> Downloading file...");
             await Task.Delay(100);
-            Console.WriteLine(">> File downloaded. Assigning file to action output");
             Console.WriteLine();
-            OutputMessage = ComplexFile.GetTest();
+            InternalMessage = "File downloaded. Assigning file to external output";
+            ExternalMessage = ComplexFile.GetTest();
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using IronWhisperReceiver.Registry;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,19 +7,19 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver
+namespace IronWhisperReceiver.Networking
 {
     public class Token
     {
         public string Text;
         public string Lemma;
         public string Pos;
+        public string Dep;
     }
 
     public class SocketController
     {
         public static SocketController Instance;
-
         readonly string serverIP = "172.28.31.175"; // Change this to the server's IP address
         readonly int serverPort = 31050;            // Change this to the server's port number
         readonly string voicePrompt = "Okay,";
@@ -28,11 +29,11 @@ namespace IronWhisperReceiver
 
         public SocketController()
         {
-            client = new TcpClient();
             Instance = this;
+            client = new TcpClient();
         }
 
-        public bool TryConnect ()
+        public bool TryConnect()
         {
             try
             {
@@ -45,7 +46,7 @@ namespace IronWhisperReceiver
             }
         }
 
-        public void Connect ()
+        public void Connect()
         {
             while (!client.Connected)
             {
@@ -60,12 +61,12 @@ namespace IronWhisperReceiver
             Console.WriteLine();
         }
 
-        public void StartStream ()
+        public void StartStream()
         {
             stream = client.GetStream();
         }
 
-        public TCommand SocketTick ()
+        public TSpeech SocketTick()
         {
             // TODO - add | onto end of each command to allow for delayed commands to be separated
             try
@@ -77,30 +78,29 @@ namespace IronWhisperReceiver
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
                     //string response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                     var command = DeserializeData(buffer);
-                    Console.WriteLine($"Deserialized Command:\n{JsonConvert.SerializeObject(command, Formatting.Indented)}\n");
                     return command;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Socket error occurred: {ex.Message}\n{ex.StackTrace}");
+                Console.WriteLine($"[Socket] error occurred: {ex.Message}\n{ex.StackTrace}");
             }
             return null;
         }
 
-        public void CloseStream ()
+        public void CloseStream()
         {
             stream.Close();
             stream.Dispose();
         }
 
-        public void Cleanup ()
+        public void Cleanup()
         {
             CloseStream();
             client.Close();
         }
 
-        public TCommand DeserializeData(byte[] serializedData)
+        public TSpeech DeserializeData(byte[] serializedData)
         {
             string serializedString = Encoding.UTF8.GetString(serializedData);
             string[] messageSplit = serializedString.Split(">>");
@@ -115,7 +115,7 @@ namespace IronWhisperReceiver
                 }
 
                 string[] fields = tokenString.Split('|');
-                if (fields.Length < 3)
+                if (fields.Length < 4)
                 {
                     // Not enough fields
                     continue;
@@ -126,45 +126,15 @@ namespace IronWhisperReceiver
                     Text = fields[0],
                     Lemma = fields[1],
                     Pos = fields[2],
+                    Dep = fields[3]
                 };
                 tokens.Add(token);
             }
-            TCommand command = new TCommand(voicePrompt, messageSplit[0], tokens.ToArray());
+            TSpeech command = new TSpeech(voicePrompt, messageSplit[0], tokens.ToArray());
             return command;
 
         }
     }
 
-    public class TCommand
-    {
-        private string[] _punctuation = new string[] { ",", ".", ":", "?", "!" };
-
-        public string Message;
-        public string Command;
-
-        public Token[] tokens;
-
-        public TCommand (string prompt, string message, Token[] _tokens = null)
-        {
-            Message = message;
-            Command = message.Replace(prompt, "").ToLower();
-
-            foreach (var p in _punctuation)
-            {
-                Command = Command.Replace(p, "");
-            }
-
-            Message = Message.Trim();
-            Command = Command.Trim();
-
-            if (_tokens != null)
-            {
-                tokens = _tokens;
-            }
-            else
-            {
-                tokens = Array.Empty<Token>();
-            }
-        }
-    }
+    
 }

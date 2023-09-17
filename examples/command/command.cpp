@@ -6,8 +6,8 @@
 // ref: https://github.com/ggerganov/whisper.cpp/issues/171
 //
 
-#include "common.h"
 #include "common-sdl.h"
+#include "common.h"
 #include "whisper.h"
 #include "NonBlockingTCPServer.h"
 
@@ -23,6 +23,8 @@
 #include <vector>
 #include <map>
 #include <spacy/spacy>
+#include<signal.h>
+#include<unistd.h>
 
 // command-line parameters
 struct whisper_params {
@@ -51,6 +53,12 @@ NonBlockingTCPServer server;
 std::string lastHeard;
 std::string lastSent;
 
+volatile sig_atomic_t flag = 0;
+
+void handle_signal(int sig){
+    flag = 1;
+}
+
 void whisper_print_usage(int argc, char ** argv, const whisper_params & params);
 
 std::string serialize_token(const Spacy::Token& token)
@@ -58,7 +66,8 @@ std::string serialize_token(const Spacy::Token& token)
     std::ostringstream oss;
     oss << token.text() << '|'
         << token.lemma_() << '|'
-        << token.pos_();
+        << token.pos_() << '|'
+        << token.dep_();
     return oss.str();
 }
 
@@ -70,15 +79,14 @@ std::vector<uint8_t> serialize_tokens(const std::string &txt, const std::vector<
     {
         serialized_data += serialize_token(token) + "&";
     }
-    fprintf(stdout, "Sending data: %s", serialized_data.c_str());
+    fprintf(stdout, "Sending data: %s\n", serialized_data.c_str());
     return std::vector<uint8_t>(serialized_data.begin(), serialized_data.end());
 }
 
-std::vector<uint8_t> spacy_process(const std::string &txt)
+std::vector<uint8_t> spacy_process(const std::string &txt, const Spacy::Nlp &nlp)
 {
+    fprintf(stderr, "%s\n", "Loading spacy parse");
     // Spacy parse
-    Spacy::Spacy spacy;
-    auto nlp = spacy.load("en_core_web_sm");
     auto doc = nlp.parse(txt);
     /*
     for (auto& token : doc.tokens())
@@ -157,6 +165,7 @@ void whisper_print_usage(int /*argc*/, char ** argv, const whisper_params & para
 }
 
 std::string transcribe(whisper_context * ctx, const whisper_params & params, const std::vector<float> & pcmf32, float & prob, int64_t & t_ms) {
+    fprintf(stdout, "%s\n", "Transcribing...");
     const auto t_start = std::chrono::high_resolution_clock::now();
 
     prob = 0.0f;
@@ -223,7 +232,7 @@ std::vector<std::string> get_words(const std::string &txt) {
 }
 
 // Function to process general transcription using Whisper AI
-int process_general_transcription(struct whisper_context *ctx, audio_async &audio, const whisper_params &params) {
+int process_general_transcription(struct whisper_context *ctx, audio_async &audio, const whisper_params &params, const Spacy::Nlp &nlp) {
     bool is_running = true;
     float prob0 = 0.0f;  // Initial probability value
     float prob = 0.0f;   // Current probability value
@@ -234,7 +243,7 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
     fprintf(stderr, "%s: transcript-socket mode\n", __func__);
 
     // Main loop
-    while (is_running) {
+    while (!flag) {
         // Check for Ctrl + C input to exit the loop
         is_running = sdl_poll_events();
 
@@ -271,7 +280,7 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
             audio.clear();
 
             socket_tick();
-            server.sendDataToClients(spacy_process(txt));
+            server.sendDataToClients(spacy_process(txt, nlp));
 
             fflush(stdout);
         }
@@ -282,6 +291,8 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
 
 
 int main(int argc, char ** argv) {
+    fprintf(stdout, "%s\n", "Registering signal.");
+    signal(SIGINT, handle_signal);
     whisper_params params;
 
     if (whisper_params_parse(argc, argv, params) == false) {
@@ -293,6 +304,10 @@ int main(int argc, char ** argv) {
         whisper_print_usage(argc, argv, params);
         exit(0);
     }
+
+    // spacy init
+    Spacy::Spacy spacy;
+    auto nlp = spacy.load("en_core_web_sm");
 
     // socket init  
     server.setupServer(31050); 
@@ -337,7 +352,7 @@ int main(int argc, char ** argv) {
     audio.clear();
 
     int  ret_val = 0;
-    ret_val = process_general_transcription(ctx, audio, params);
+    ret_val = process_general_transcription(ctx, audio, params, nlp);
 
     audio.pause();
 

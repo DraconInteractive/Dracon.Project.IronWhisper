@@ -1,4 +1,5 @@
 ﻿using IronWhisperReceiver.Actions;
+using IronWhisperReceiver.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,25 +9,26 @@ using System.Threading.Tasks;
 
 namespace IronWhisperReceiver
 {
-    internal class ActionsController
+    public class ActionManager
     {
-        public static ActionsController Instance;
+        public static ActionManager Instance;
         public List<CoreAction> Actions;
 
-        
-        public ActionsController()
+        public ActionManager()
         {
-            Actions = new List<CoreAction>()
-            {
-                new DebugAction().Init(),
-                new TestAction().Init(),
-                new ComplexAction().Init(),
-                new TimerAction().Init()
-            };
             Instance = this;
+            Actions = new List<CoreAction>();
+
+            foreach (Type type in GetActionArchetypes())
+            {
+                if (Activator.CreateInstance(type) is CoreAction instance)
+                {
+                    Actions.Add(instance);
+                }
+            }
         }
 
-        public async Task ParseCommand (TCommand command)
+        public async Task ParseCommand (TSpeech command)
         {
             List<CoreAction> actionsToRun = new List<CoreAction>();
 
@@ -48,6 +50,22 @@ namespace IronWhisperReceiver
                 }
                 await instance.Run(command);
             }
+        }
+
+        List<Type> GetActionArchetypes()
+        {
+            List<Type> archetypes = new List<Type>();
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (Type type in assembly.GetTypes())
+                {
+                    if (type.IsSubclassOf(typeof(CoreAction)))
+                    {
+                        archetypes.Add(type);
+                    }
+                }
+            }
+            return archetypes;
         }
     }
 }

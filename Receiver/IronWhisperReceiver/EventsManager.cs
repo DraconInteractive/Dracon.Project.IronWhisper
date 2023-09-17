@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace IronWhisperReceiver
 {
-    internal class EventsManager
+    public class EventsManager
     {
         public static EventsManager Instance;
-
         public Queue<CoreEvent> eventQueue;
 
         public EventsManager()
@@ -47,7 +46,8 @@ namespace IronWhisperReceiver
         public TimeSpan duration;
         public override async Task Consume()
         {
-            Console.WriteLine($"Your {duration.TotalMinutes} timer is finished!");
+            string plural = duration.TotalMinutes > 0 ? "minutes" : "minute";
+            Console.WriteLine($"Your {duration.TotalMinutes} {plural} timer is finished!");
         }
     }
 }

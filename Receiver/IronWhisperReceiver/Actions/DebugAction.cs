@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IronWhisperReceiver.Networking;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,13 +13,22 @@ namespace IronWhisperReceiver.Actions
         protected override void InternalInit()
         {
             Name = "Debug";
-            AlwaysRun = true;
             Phrases = Array.Empty<string>();
+            AlwaysRun = true;
         }
 
-        protected override async Task InternalRun(TCommand command)
+        protected override async Task InternalRun(TSpeech command)
         {
-            OutputMessage = command.Message;
+            string verboseOutput = "Command Data:\n\n"
+                + $"{JsonConvert.SerializeObject(command, Formatting.Indented)}\n\n";
+
+            switch (Core.Verbosity)
+            {
+                case 2:
+                    InternalMessage = verboseOutput;
+                    break;
+            }
+            ExternalMessage = ">> " + command.Message;
         }
     }
 }

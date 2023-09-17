@@ -4,18 +4,20 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace IronWhisperReceiver
+namespace IronWhisperReceiver.Networking
 {
     public class APIManager
     {
+        public static APIManager Instance;
         private readonly HttpClient _httpClient;
 
-        public APIManager()
+        public APIManager() : base()
         {
             _httpClient = new HttpClient();
+            Instance = this;
         }
 
-        public APIManager(string baseAddress)
+        public APIManager(string baseAddress) : base()
         {
             _httpClient = new HttpClient { BaseAddress = new Uri(baseAddress) };
         }
