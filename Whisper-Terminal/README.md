@@ -37,3 +37,7 @@ http://festvox.org/festival/
 Note to self: annotation
 label-studio start
 localhost:8080
+
+vicuna prompt template: A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: {prompt} ASSISTANT:
+
+
