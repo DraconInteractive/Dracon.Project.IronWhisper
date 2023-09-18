@@ -33,6 +33,7 @@ Resource Registry / Permissions
 
 TTS:
 http://festvox.org/festival/
+https://github.com/festvox/festival/blob/master/INSTALL
 
 Note to self: annotation
 label-studio start
