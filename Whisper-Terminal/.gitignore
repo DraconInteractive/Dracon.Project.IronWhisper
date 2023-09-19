@@ -1,6 +1,3 @@
-*.o
-*.a
-.cache/
 .coreml/
 .test/
 .vs/
@@ -19,18 +16,11 @@ build-sanitize-thread/
 
 /main
 /stream
-/command
 /talk
 /talk-llama
 /bench
 /quantize
 /lsp
-
-arm_neon.h
-sync.sh
-libwhisper.a
-libwhisper.so
-compile_commands.json
 
 examples/arm_neon.h
 examples/whisper.objc/whisper.objc.xcodeproj/xcshareddata
