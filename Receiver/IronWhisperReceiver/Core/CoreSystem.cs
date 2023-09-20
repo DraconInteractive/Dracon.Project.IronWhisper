@@ -35,10 +35,10 @@ namespace IronWhisperReceiver.Core
             var apiManager = new APIManager();
             var networkManager = new NetworkManager();
             var eventsManager = new EventsManager();
-            //var registry = new Registry().Load();
+            var registry = new RegistryCore().Load();
 
-            var registry = RegistryCore.CreateDefault();
-            registry.Save();
+            //var registry = RegistryCore.CreateDefault();
+            //registry.Save();
 
             if (ListenUDP)
             {

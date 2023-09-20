@@ -56,7 +56,7 @@ namespace IronWhisperReceiver.Core.Networking
             int x = 0; 
             foreach (var device in devices)
             {
-                if (Registry.RegistryCore.Instance.IsRegisteredNetworkDevice(device.HostName))
+                if (Registry.RegistryCore.Instance.IsRegisteredNetworkDevice(hostname: device.HostName))
                 {
                     x++;
                 }
