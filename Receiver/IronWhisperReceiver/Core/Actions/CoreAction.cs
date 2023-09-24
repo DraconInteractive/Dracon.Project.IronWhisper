@@ -30,17 +30,17 @@ namespace IronWhisperReceiver.Core.Actions
 
         }
 
-        public virtual bool Evaluate (TSpeech command)
+        public virtual bool Evaluate (CoreSpeech command)
         {
             return (Phrases.Contains(command.Command));
         }
 
-        protected bool PhrasesContainsFull(TSpeech command)
+        protected bool PhrasesContainsFull(CoreSpeech command)
         {
             return (Phrases.Contains(command.Command.ToLower()));
         }
 
-        protected bool PhrasesContainsPartial(TSpeech command)
+        protected bool PhrasesContainsPartial(CoreSpeech command)
         {
             bool match = false;
             foreach (var phrase in Phrases)
@@ -54,7 +54,7 @@ namespace IronWhisperReceiver.Core.Actions
             return match;
         }
 
-        public async Task Run(TSpeech command)
+        public async Task Run(CoreSpeech command)
         {
             await InternalRun(command);
             if (CoreSystem.Verbosity >= 1)
@@ -64,7 +64,7 @@ namespace IronWhisperReceiver.Core.Actions
             ExternalOutput();
         }
 
-        protected virtual async Task InternalRun(TSpeech command)
+        protected virtual async Task InternalRun(CoreSpeech command)
         {
             
         }

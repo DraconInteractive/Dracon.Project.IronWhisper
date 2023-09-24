@@ -16,7 +16,7 @@ namespace IronWhisperReceiver.Core.Actions
             Phrases = new string[] {"run a more complex action", "fetch my remote configuration file"};
         }
 
-        protected override async Task InternalRun(TSpeech command)
+        protected override async Task InternalRun(CoreSpeech command)
         {
             Console.WriteLine(">> Connecting to server...");
             await Task.Delay(100);

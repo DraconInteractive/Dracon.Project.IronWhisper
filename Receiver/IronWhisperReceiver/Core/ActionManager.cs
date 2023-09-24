@@ -28,7 +28,7 @@ namespace IronWhisperReceiver.Core
             }
         }
 
-        public async Task ParseCommand(TSpeech command)
+        public async Task ParseCommand(CoreSpeech command)
         {
             List<CoreAction> actionsToRun = new List<CoreAction>();
 

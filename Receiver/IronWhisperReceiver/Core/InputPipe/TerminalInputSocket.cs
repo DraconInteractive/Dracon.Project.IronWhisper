@@ -81,7 +81,7 @@ namespace IronWhisperReceiver.Core.InputPipe
             stream = client.GetStream();
         }
 
-        public TSpeech SocketTick()
+        public CoreSpeech SocketTick()
         {
             // TODO - add | onto end of each command to allow for delayed commands to be separated
             try
@@ -115,39 +115,52 @@ namespace IronWhisperReceiver.Core.InputPipe
             client.Close();
         }
 
-        public TSpeech DeserializeData(byte[] serializedData)
+        public CoreSpeech DeserializeData(byte[] serializedData)
         {
             string serializedString = Encoding.UTF8.GetString(serializedData);
-            string[] messageSplit = serializedString.Split(">>");
-            string[] tokenStrings = messageSplit[1].Split('&');
-            List<Token> tokens = new List<Token>();
+            string[] identifierSplit = serializedString.Split("**");
+            string[] messageSplit = identifierSplit[1].Split(">>");
 
-            foreach (string tokenString in tokenStrings)
+
+            string id = identifierSplit[0];
+            if (id == "NS")
             {
-                if (string.IsNullOrEmpty(tokenString))
-                {
-                    continue;
-                }
-
-                string[] fields = tokenString.Split('|');
-                if (fields.Length < 4)
-                {
-                    // Not enough fields
-                    continue;
-                }
-
-                Token token = new Token
-                {
-                    Text = fields[0],
-                    Lemma = fields[1],
-                    Pos = fields[2],
-                    Dep = fields[3]
-                };
-                tokens.Add(token);
+                return new CoreSpeech(voicePrompt, messageSplit[0]);
             }
-            TSpeech command = new TSpeech(voicePrompt, messageSplit[0], tokens.ToArray());
-            return command;
+            else if (id == "SP")
+            {
+                string[] tokenStrings = messageSplit[1].Split('&');
+                List<Token> tokens = new List<Token>();
 
+                foreach (string tokenString in tokenStrings)
+                {
+                    if (string.IsNullOrEmpty(tokenString))
+                    {
+                        continue;
+                    }
+
+                    string[] fields = tokenString.Split('|');
+                    if (fields.Length < 4)
+                    {
+                        // Not enough fields
+                        continue;
+                    }
+
+                    Token token = new Token
+                    {
+                        Text = fields[0],
+                        Lemma = fields[1],
+                        Pos = fields[2],
+                        Dep = fields[3]
+                    };
+                    tokens.Add(token);
+                }
+
+
+                return new TokenSpeech(voicePrompt, messageSplit[0], tokens.ToArray());
+            }
+
+            return null;
         }
 
         public static string FindWSLInternalIP ()

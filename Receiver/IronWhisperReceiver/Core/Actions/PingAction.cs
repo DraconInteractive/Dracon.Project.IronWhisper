@@ -9,7 +9,7 @@ namespace IronWhisperReceiver.Core.Actions
 {
     public class PingAction : CoreAction
     {
-        public override bool Evaluate(TSpeech command)
+        public override bool Evaluate(CoreSpeech command)
         {
             return PhrasesContainsPartial(command);
         }
@@ -25,7 +25,7 @@ namespace IronWhisperReceiver.Core.Actions
             };
         }
 
-        protected override async Task InternalRun(TSpeech command)
+        protected override async Task InternalRun(CoreSpeech command)
         {
             NetworkManager.Instance.PingNetworkAsync();
         }

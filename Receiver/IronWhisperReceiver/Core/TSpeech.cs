@@ -8,18 +8,15 @@ using IronWhisperReceiver.Core.InputPipe;
 
 namespace IronWhisperReceiver.Core
 {
-    public class TSpeech
+    public class CoreSpeech
     {
         private string[] _punctuation = new string[] { ",", ".", ":", "?", "!" };
 
         public string Message;
         public string Command;
-
-        public Token[] tokens;
-
         public RegCore[] Entities;
 
-        public TSpeech(string prompt, string message, Token[] _tokens = null)
+        public CoreSpeech (string prompt, string message)
         {
             Message = message;
             Command = message.Replace(prompt, "").ToLower();
@@ -32,15 +29,18 @@ namespace IronWhisperReceiver.Core
             Message = Message.Trim();
             Command = Command.Trim();
 
-            if (_tokens != null)
-            {
-                tokens = _tokens;
-            }
-            else
-            {
-                tokens = Array.Empty<Token>();
-            }
-            Entities = Registry.RegistryCore.Instance.ParseEntities(Command).ToArray();
+            Entities = RegistryCore.Instance.ParseEntities(Command).ToArray();
+        }
+    }
+
+    public class TokenSpeech : CoreSpeech
+    {
+        public Token[] tokens;
+
+
+        public TokenSpeech(string prompt, string message, Token[] _tokens = null) : base (prompt, message)
+        {
+            tokens = _tokens;
         }
     }
 }

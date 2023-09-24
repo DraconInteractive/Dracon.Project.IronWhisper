@@ -14,7 +14,10 @@ namespace IronWhisperReceiver.Core.Registry
         public RegDevice () : base()
         {
             deviceID = "TEMP";
-            networkDevice = new Networking.NetworkDevice();
+            networkDevice = new Networking.NetworkDevice
+            {
+                lastUpdateTime = DateTime.Now
+            };
         }
     }
 }

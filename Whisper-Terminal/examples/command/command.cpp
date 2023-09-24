@@ -22,9 +22,12 @@
 #include <thread>
 #include <vector>
 #include <map>
-#include <spacy/spacy>
 #include<signal.h>
 #include<unistd.h>
+
+#ifdef CSPACY
+#include <spacy/spacy>
+#endif
 
 // command-line parameters
 struct whisper_params {
@@ -61,7 +64,8 @@ void handle_signal(int sig){
 
 void whisper_print_usage(int argc, char ** argv, const whisper_params & params);
 
-std::string serialize_token(const Spacy::Token& token)
+#ifdef CSPACY
+std::string serialize_spacy_token(const Spacy::Token& token)
 {
     std::ostringstream oss;
     oss << token.text() << '|'
@@ -71,13 +75,13 @@ std::string serialize_token(const Spacy::Token& token)
     return oss.str();
 }
 
-std::vector<uint8_t> serialize_tokens(const std::string &txt, const std::vector<Spacy::Token>& tokens)
+std::vector<uint8_t> serialize_spacy_tokens(const std::string &txt, const std::vector<Spacy::Token>& tokens)
 {
     std::string serialized_data;
-    serialized_data += txt + ">>";
+    serialized_data += "SP**" + txt + ">>";
     for (const auto& token : tokens)
     {
-        serialized_data += serialize_token(token) + "&";
+        serialized_data += serialize_spacy_token(token) + "&";
     }
     fprintf(stdout, "Sending data: %s\n", serialized_data.c_str());
     return std::vector<uint8_t>(serialized_data.begin(), serialized_data.end());
@@ -99,8 +103,9 @@ std::vector<uint8_t> spacy_process(const std::string &txt, const Spacy::Nlp &nlp
         fprintf(stdout, "T: %s, %s, [%s]\n", token.text().c_str(), token.lemma_().c_str(), token.pos_().c_str());
     }
     */
-    return serialize_tokens(txt, doc.tokens());
+    return serialize_spacy_tokens(txt, doc.tokens());
 }
+#endif
 
 void socket_tick() {
     server.acceptConnections();
@@ -231,8 +236,13 @@ std::vector<std::string> get_words(const std::string &txt) {
     return words;
 }
 
+#ifdef CSPACY
 // Function to process general transcription using Whisper AI
 int process_general_transcription(struct whisper_context *ctx, audio_async &audio, const whisper_params &params, const Spacy::Nlp &nlp) {
+#else
+int process_general_transcription(struct whisper_context *ctx, audio_async &audio, const whisper_params &params) {
+#endif
+
     bool is_running = true;
     float prob0 = 0.0f;  // Initial probability value
     float prob = 0.0f;   // Current probability value
@@ -280,12 +290,18 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
             audio.clear();
 
             socket_tick();
-            server.sendDataToClients(spacy_process(txt, nlp));
+            #ifdef CSPACY
+                server.sendDataToClients(spacy_process(txt, nlp));
+            #else
+                std::string d = "NS**" + txt;
+                fprintf(stdout, "Sending data: %s\n", d.c_str());
+                server.sendDataToClients(d.c_str());
+            #endif
 
             fflush(stdout);
         }
     }
-
+ 
     return 0;  // Return success
 }
 
@@ -305,9 +321,12 @@ int main(int argc, char ** argv) {
         exit(0);
     }
 
+#ifdef CSPACY
     // spacy init
     Spacy::Spacy spacy;
     auto nlp = spacy.load("en_core_web_sm");
+    fprintf(stdout, "spacy loaded\n");
+#endif
 
     // socket init  
     server.setupServer(31050); 
@@ -352,7 +371,12 @@ int main(int argc, char ** argv) {
     audio.clear();
 
     int  ret_val = 0;
+
+    #ifdef CSPACY
     ret_val = process_general_transcription(ctx, audio, params, nlp);
+    #else
+    ret_val = process_general_transcription(ctx, audio, params);
+    #endif
 
     audio.pause();
 

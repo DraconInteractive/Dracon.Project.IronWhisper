@@ -10,9 +10,33 @@ namespace IronWhisperReceiver.Core.Networking
     {
         public string Address;
         public string HostName;
-        public string MACAddress;
         public string Port;
+        public DateTime lastUpdateTime;
+        public bool Online => (DateTime.Now - lastUpdateTime).TotalMinutes < 5;
+
+        public void UpdateDetails(NetworkDevice details)
+        {
+            if (!string.IsNullOrEmpty(details.Address))
+            {
+                Address = details.Address;
+            }
+            if (!string.IsNullOrEmpty(details.HostName))
+            {
+                HostName = details.HostName;
+            }
+            if (!string.IsNullOrEmpty(details.Port))
+            {
+                Port = details.Port;
+            }
+            lastUpdateTime = DateTime.Now;
+        }
+
+        public NetworkDevice()
+        {
+
+        }
     }
+
     public class NetworkManager
     {
         public static NetworkManager Instance;

@@ -42,8 +42,7 @@ namespace IronWhisperReceiver.Core.Registry
                     "Spacy"
                 },
                 SpeechTags = new List<string>() { "home terminal" },
-                //deviceID = "TERMINAL_HOME_MAIN"
-                deviceID = "DeviceID_1"
+                deviceID = "TERMINAL_HOME_MAIN"
             };
 
             RegAccessPoint mainHomeAP = new()
@@ -306,6 +305,16 @@ namespace IronWhisperReceiver.Core.Registry
             return this;
         }
 
+        public void Debug_PrintLoad ()
+        {
+            if (ValidateFile())
+            {
+                CoreSystem.Log($"[Registry] Loading (non-alloc) from: {filePath}", 1);
+                string data = File.ReadAllText(filePath);
+                Console.WriteLine(data);
+            }
+        }
+
         private static bool ValidateFile()
         {
             var path = folderPath;
@@ -366,7 +375,13 @@ namespace IronWhisperReceiver.Core.Registry
             }
             return devices;
         }
-        public void UpdateNetworkDevice(string deviceID, string remoteAddress)
+
+        public List<RegDevice> OnlineDevices ()
+        {
+            return AllDevices().Where(x => x.networkDevice.Online).ToList();
+        }
+
+        public void UpdateNetworkDevice(string deviceID, string remoteAddress, Action deviceRecognised)
         {
             // TODO Add 'last packet received' to RegDevice, as well as 'Online => (DateTime.Now - LastPacketReceived).TotalMinutes <= 5'
             // TODO Actually use the device data to update the registry
@@ -374,18 +389,21 @@ namespace IronWhisperReceiver.Core.Registry
             {
                 if (device.deviceID == deviceID)
                 {
-                    var details = Networking.NetworkUtilities.GetDeviceDetails(remoteAddress);
-                    CoreSystem.Log("[Registry] Device info retreived: ", 1);
-                    CoreSystem.Log(JsonConvert.SerializeObject(details, Formatting.Indented), 1);
+                    CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} identified. Retrieving update.", 1);
+                    var hostname = Networking.NetworkUtilities.GetHostName(remoteAddress);
+                    device.networkDevice.UpdateDetails(new Networking.NetworkDevice () { Address = remoteAddress, HostName = hostname});
+                    CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} update complete.", 1);
+                    Save();
+                    deviceRecognised?.Invoke();
+                    return;
                 }
             }
         }
 
-        public bool IsRegisteredNetworkDevice(string ip = "", string hostname = "")
+        public bool IsRegisteredNetworkDevice(string ip = "", string hostname = "", string deviceID = "")
         {
-            bool ipMatch = AllDevices().Any(x => x.networkDevice.Address == ip);
-            bool hostnameMatch = AllDevices().Any(x => x.networkDevice.HostName == hostname);
-            return ipMatch || hostnameMatch;
+            bool match = AllDevices().Any(x => x.networkDevice.Address == ip || x.networkDevice.HostName == hostname || x.deviceID == deviceID);
+            return match;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace IronWhisperReceiver.Core.Actions
             AlwaysRun = true;
         }
 
-        protected override async Task InternalRun(TSpeech command)
+        protected override async Task InternalRun(CoreSpeech command)
         {
             string verboseOutput = "Command Data:\n\n"
                 + $"{JsonConvert.SerializeObject(command, Formatting.Indented)}\n\n";

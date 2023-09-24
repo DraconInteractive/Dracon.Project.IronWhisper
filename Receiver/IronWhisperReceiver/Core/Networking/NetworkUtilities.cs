@@ -19,17 +19,15 @@ namespace IronWhisperReceiver.Core.Networking
 
                     if (reply.Status == IPStatus.Success)
                     {
-                        string macAddress = GetMacAddress(address);
                         string hostname = GetHostName(address);
                         var device = new NetworkDevice()
                         {
                             Address = address,
-                            HostName = hostname,
-                            MACAddress = macAddress
+                            HostName = hostname
                         };
                         devices.Add(device);
 
-                        CoreSystem.Log($"[Ping] (A) {address} - (M) {macAddress} - (H) {GetHostName(address)}", 2);
+                        CoreSystem.Log($"[Ping] (A) {address} - (H) {GetHostName(address)}", 2);
                     }
                 }
                 catch (PingException e)
@@ -87,6 +85,7 @@ namespace IronWhisperReceiver.Core.Networking
             return r;
         }
 
+        // Keeping this here just for utilities sake.
         public static string GetMacAddress(string ipAddress)
         {
             System.Diagnostics.Process pProcess = new();
@@ -112,18 +111,6 @@ namespace IronWhisperReceiver.Core.Networking
             {
                 return "";
             }
-        }
-
-        public static NetworkDevice GetDeviceDetails(string ipAddress)
-        {
-            string hostName = GetHostName(ipAddress);
-            string mac = GetMacAddress(ipAddress);
-            return new NetworkDevice()
-            {
-                Address = ipAddress,
-                HostName = hostName,
-                MACAddress = mac
-            };
         }
     }
 }

@@ -16,19 +16,19 @@ namespace IronWhisperReceiver.Core.Actions
             Phrases = new string[] { "set a timer for", "start a timer for", "run a timer for" };
         }
 
-        public override bool Evaluate(TSpeech command)
+        public override bool Evaluate(CoreSpeech command)
         {
             return PhrasesContainsPartial(command);
         }
 
-        protected override async Task InternalRun(TSpeech command)
+        protected override async Task InternalRun(CoreSpeech command)
         {
             string message = Utilities.ExtractNumberFromText(command.Message).Item1;
-            // TODO: get the semantic of the number
+
             Regex regex = new Regex(@"(\d+)\s*(second|minute|hour)(?:s)?", RegexOptions.IgnoreCase);
             Match match = regex.Match(message);
 
-            Console.WriteLine("Timer action detected");
+            CoreSystem.Log("[Timer] Assessing...", 1);
 
             if (match.Success)
             {
