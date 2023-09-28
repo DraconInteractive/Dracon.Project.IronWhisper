@@ -1,0 +1,13 @@
+﻿Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.InstallLog
+No public installers with the RunInstallerAttribute.Yes attribute could be found in the C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe assembly.
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.InstallLog
+No public installers with the RunInstallerAttribute.Yes attribute could be found in the C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe assembly.
+Remove InstallState file because there are no installers.

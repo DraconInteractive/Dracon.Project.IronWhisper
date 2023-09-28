@@ -1,0 +1,186 @@
+﻿Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+No public installers with the RunInstallerAttribute.Yes attribute could be found in the C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe assembly.
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+No public installers with the RunInstallerAttribute.Yes attribute could be found in the C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe assembly.
+Remove InstallState file because there are no installers.
+Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+No public installers with the RunInstallerAttribute.Yes attribute could be found in the C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe assembly.
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+No public installers with the RunInstallerAttribute.Yes attribute could be found in the C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe assembly.
+Remove InstallState file because there are no installers.
+Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Installing service IronWhisperBroadcast...
+Service IronWhisperBroadcast has been successfully installed.
+Creating EventLog source IronWhisperBroadcast in log Application...
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Uninstalling assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Removing EventLog source IronWhisperBroadcast.
+Service IronWhisperBroadcast is being removed from the system...
+Service IronWhisperBroadcast was successfully removed from the system.
+Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Installing service IronWhisperBroadcast...
+Service IronWhisperBroadcast has been successfully installed.
+Creating EventLog source IronWhisperBroadcast in log Application...
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Uninstalling assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Removing EventLog source IronWhisperBroadcast.
+Service IronWhisperBroadcast is being removed from the system...
+Service IronWhisperBroadcast was successfully removed from the system.
+Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Installing service IronWhisperBroadcast...
+Service IronWhisperBroadcast has been successfully installed.
+Creating EventLog source IronWhisperBroadcast in log Application...
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Uninstalling assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Removing EventLog source IronWhisperBroadcast.
+Service IronWhisperBroadcast is being removed from the system...
+Service IronWhisperBroadcast was successfully removed from the system.
+Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Installing service IronWhisperBroadcast...
+Service IronWhisperBroadcast has been successfully installed.
+Creating EventLog source IronWhisperBroadcast in log Application...
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Uninstalling assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Removing EventLog source IronWhisperBroadcast.
+Service IronWhisperBroadcast is being removed from the system...
+Service IronWhisperBroadcast was successfully removed from the system.
+Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Installing service IronWhisperBroadcast...
+Service IronWhisperBroadcast has been successfully installed.
+Creating EventLog source IronWhisperBroadcast in log Application...
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Uninstalling assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Removing EventLog source IronWhisperBroadcast.
+Service IronWhisperBroadcast is being removed from the system...
+Service IronWhisperBroadcast was successfully removed from the system.
+Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Installing service IronWhisperBroadcast...
+Service IronWhisperBroadcast has been successfully installed.
+Creating EventLog source IronWhisperBroadcast in log Application...
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Uninstalling assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Removing EventLog source IronWhisperBroadcast.
+Service IronWhisperBroadcast is being removed from the system...
+Service IronWhisperBroadcast was successfully removed from the system.
+Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Installing service IronWhisperBroadcast...
+Service IronWhisperBroadcast has been successfully installed.
+Creating EventLog source IronWhisperBroadcast in log Application...
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Uninstalling assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Removing EventLog source IronWhisperBroadcast.
+Service IronWhisperBroadcast is being removed from the system...
+Service IronWhisperBroadcast was successfully removed from the system.
+Installing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog
+Installing service IronWhisperBroadcast...
+Service IronWhisperBroadcast has been successfully installed.
+Creating EventLog source IronWhisperBroadcast in log Application...
+Committing assembly 'C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe'.
+Affected parameters are:
+   logtoconsole = 
+   assemblypath = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+   logfile = C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.InstallLog

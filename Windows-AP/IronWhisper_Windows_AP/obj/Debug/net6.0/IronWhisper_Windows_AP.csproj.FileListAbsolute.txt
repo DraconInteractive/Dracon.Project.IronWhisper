@@ -1,0 +1,15 @@
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\bin\Debug\net6.0\IronWhisper_Windows_AP.exe
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\bin\Debug\net6.0\IronWhisper_Windows_AP.deps.json
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\bin\Debug\net6.0\IronWhisper_Windows_AP.runtimeconfig.json
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\bin\Debug\net6.0\IronWhisper_Windows_AP.dll
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\bin\Debug\net6.0\IronWhisper_Windows_AP.pdb
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\IronWhisper_Windows_AP.csproj.AssemblyReference.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\IronWhisper_Windows_AP.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\IronWhisper_Windows_AP.AssemblyInfoInputs.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\IronWhisper_Windows_AP.AssemblyInfo.cs
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\IronWhisper_Windows_AP.csproj.CoreCompileInputs.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\IronWhisper_Windows_AP.dll
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\refint\IronWhisper_Windows_AP.dll
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\IronWhisper_Windows_AP.pdb
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\IronWhisper_Windows_AP.genruntimeconfig.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\IronWhisper_Windows_AP\obj\Debug\net6.0\ref\IronWhisper_Windows_AP.dll

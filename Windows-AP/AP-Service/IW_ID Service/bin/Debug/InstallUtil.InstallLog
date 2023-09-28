@@ -1,0 +1,14 @@
+﻿
+Running a transacted installation.
+
+Beginning the Install phase of the installation.
+See the contents of the log file for the C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe assembly's progress.
+The file is located at C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.InstallLog.
+
+The Install phase completed successfully, and the Commit phase is beginning.
+See the contents of the log file for the C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe assembly's progress.
+The file is located at C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.InstallLog.
+
+The Commit phase completed successfully.
+
+The transacted install has completed.

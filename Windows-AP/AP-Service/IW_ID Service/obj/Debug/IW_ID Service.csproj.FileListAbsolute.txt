@@ -1,0 +1,8 @@
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe.config
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.exe
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Debug\IW_ID Service.pdb
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Debug\IW_ID Service.csproj.AssemblyReference.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Debug\IW_ID Service.csproj.SuggestedBindingRedirects.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Debug\IW_ID Service.csproj.CoreCompileInputs.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Debug\IW_ID Service.exe
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Debug\IW_ID Service.pdb

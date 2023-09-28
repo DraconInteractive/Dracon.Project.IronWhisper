@@ -1,0 +1,10 @@
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe.config
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.exe
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\bin\Release\IronWhisperBroadcast.pdb
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Release\IW_ID Service.csproj.AssemblyReference.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Release\IW_ID Service.csproj.SuggestedBindingRedirects.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Release\IW_ID Service.csproj.CoreCompileInputs.cache
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Release\IronWhisperBroadcast.exe
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Release\IronWhisperBroadcast.pdb
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Release\IW_ID_Service.ProjectInstaller.resources
+C:\Users\pmc10\Documents\IronWhisper\Windows-AP\AP-Service\IW_ID Service\obj\Release\IW_ID Service.csproj.GenerateResource.cache

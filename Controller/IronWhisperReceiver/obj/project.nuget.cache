@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "97On4b/IW2rikSgwNYpBZlaeHQ+uLo5nkkz8Jhhvkh8trDeczNGvxmmlzW1/Q1exoycxsIsorfvLCHWopYFsBg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\pmc10\\Documents\\IronWhisper\\Receiver\\IronWhisperReceiver\\IronWhisper_CentralController.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\pmc10\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -15,6 +15,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -27,6 +28,7 @@ public class UDPSenderService extends Service {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final int interval = 30 * 1000; // seconds to milliseconds
+    private final AtomicBoolean isOnlineUpdateRunning = new AtomicBoolean(false);
 
     @Override
     public IBinder onBind(Intent intent)
@@ -44,8 +46,8 @@ public class UDPSenderService extends Service {
             @Override
             public void onAvailable(@NonNull Network network) {
                 super.onAvailable(network);
-                // Run your function here when the device connects to a network.
-                //yourFunction();
+                handler.removeCallbacks(onlineUpdate);
+                handler.post(onlineUpdate);
             }
         };
 
@@ -97,15 +99,16 @@ public class UDPSenderService extends Service {
     private final Runnable onlineUpdate = new Runnable() {
         @Override
         public void run() {
-            DeviceIDUtil.sendUDPBroadcast(DeviceIDUtil.getCustomDeviceId(UDPSenderService.this), 9876);
-            handler.postDelayed(this, interval);
-        }
-    };
-
-    private final Runnable initialID = new Runnable() {
-        @Override
-        public void run() {
-            DeviceIDUtil.sendUDPBroadcast(DeviceIDUtil.getCustomDeviceId(UDPSenderService.this), 9876);
+            if (isOnlineUpdateRunning.compareAndSet(false, true))
+            {
+                try
+                {
+                    //DeviceIDUtil.sendUDPBroadcast(DeviceIDUtil.getCustomDeviceId(UDPSenderService.this), 9876);
+                }
+                finally {
+                    isOnlineUpdateRunning.set(false);
+                }
+            }
             handler.postDelayed(this, interval);
         }
     };
