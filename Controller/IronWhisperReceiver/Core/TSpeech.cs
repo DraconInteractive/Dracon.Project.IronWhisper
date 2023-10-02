@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IronWhisperReceiver.Core.Registry;
-using IronWhisperReceiver.Core.InputPipe;
+using IronWhisper_CentralController.Core.Registry;
+using IronWhisper_CentralController.Core.InputPipe;
 
-namespace IronWhisperReceiver.Core
+namespace IronWhisper_CentralController.Core
 {
     public class CoreSpeech
     {

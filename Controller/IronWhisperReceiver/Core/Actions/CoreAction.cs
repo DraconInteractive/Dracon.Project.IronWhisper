@@ -1,11 +1,11 @@
-﻿using IronWhisperReceiver.Core.Networking;
+﻿using IronWhisper_CentralController.Core.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core.Actions
+namespace IronWhisper_CentralController.Core.Actions
 {
     public class CoreAction
     {
@@ -15,9 +15,11 @@ namespace IronWhisperReceiver.Core.Actions
         protected string ExternalMessage;
         public bool AlwaysRun = false;
         public int Priority = 0;
+        public List<Type> ContextOptions;
 
         public CoreAction()
         {
+            ContextOptions = new List<Type>();
             InternalInit();
             for (int i = 0; i < Phrases.Length; i++)
             {
@@ -54,35 +56,14 @@ namespace IronWhisperReceiver.Core.Actions
             return match;
         }
 
-        public async Task Run(CoreSpeech command)
+        public async Task Run(CoreSpeech command, CoreAction ctx = null)
         {
-            await InternalRun(command);
-            if (CoreSystem.Verbosity >= 1)
-            {
-                InternalOutput();
-            }
-            ExternalOutput();
+            await InternalRun(command, ctx);
         }
 
-        protected virtual async Task InternalRun(CoreSpeech command)
+        protected virtual async Task InternalRun(CoreSpeech command, CoreAction ctx)
         {
             
-        }
-
-        protected void InternalOutput()
-        {
-            if (string.IsNullOrEmpty(InternalMessage)) { return; }
-
-            Console.WriteLine($"[{Priority}] [{Name}] {InternalMessage}");
-            Console.WriteLine();
-        }
-
-        protected void ExternalOutput()
-        {
-            if (string.IsNullOrEmpty(ExternalMessage)) { return; }
-
-            Console.WriteLine($"[{Name}] {ExternalMessage}");
-            Console.WriteLine();
         }
     }
 }

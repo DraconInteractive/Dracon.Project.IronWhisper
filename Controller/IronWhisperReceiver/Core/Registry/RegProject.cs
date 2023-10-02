@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core.Registry
+namespace IronWhisper_CentralController.Core.Registry
 {
     public class RegProject : RegCore
     {

@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Util = IronWhisperReceiver.Core.Networking.NetworkUtilities;
+using Util = IronWhisper_CentralController.Core.Networking.NetworkUtilities;
 
-namespace IronWhisperReceiver.Core.Networking
+namespace IronWhisper_CentralController.Core.Networking
 {
     public class NetworkDevice
     {

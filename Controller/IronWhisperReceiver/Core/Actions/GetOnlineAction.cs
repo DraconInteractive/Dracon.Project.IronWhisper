@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core.Actions
+namespace IronWhisper_CentralController.Core.Actions
 {
     public class GetOnlineAction : CoreAction
     {
@@ -24,7 +24,7 @@ namespace IronWhisperReceiver.Core.Actions
             };
         }
 
-        protected override async Task InternalRun(CoreSpeech command)
+        protected override async Task InternalRun(CoreSpeech command, CoreAction ctx = null)
         {
             var onlineDevices = Registry.RegistryCore.Instance.OnlineDevices();
             string output = $"{onlineDevices.Count()} online devices:\n";

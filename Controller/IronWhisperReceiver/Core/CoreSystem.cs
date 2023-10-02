@@ -1,6 +1,7 @@
-﻿using IronWhisperReceiver.Core.InputPipe;
-using IronWhisperReceiver.Core.Networking;
-using IronWhisperReceiver.Core.Registry;
+﻿using IronWhisper_CentralController.Core.InputPipe;
+using IronWhisper_CentralController.Core.InputPipe;
+using IronWhisper_CentralController.Core.Networking;
+using IronWhisper_CentralController.Core.Registry;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core
+namespace IronWhisper_CentralController.Core
 {
     public class CoreSystem
     {
@@ -108,6 +109,9 @@ namespace IronWhisperReceiver.Core
                 Log();
             }
 
+            Log("Creating TCP Sender");
+            var tcpSender = new TCPSender();
+
             HandleSocket(terminalInputSocket, eventsManager, actionsController);
             
             while (true)
@@ -118,7 +122,7 @@ namespace IronWhisperReceiver.Core
 
         private async Task HandleSocket(TerminalInputSocket socket, EventsManager evt, ActionManager actions)
         {
-            Log("[Socket] Beginning connection process...");
+            Log("[Socket] Connecting to WSL2 terminal...");
             socket.Connect();
             socket.StartStream();
 

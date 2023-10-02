@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core.Registry
+namespace IronWhisper_CentralController.Core.Registry
 {
     public class RegistryCore
     {
@@ -275,7 +275,7 @@ namespace IronWhisperReceiver.Core.Registry
         {
             ValidateFile();
             string data = JsonConvert.SerializeObject(this, Formatting.Indented);
-            CoreSystem.Log("[Registry] Saving to: " + filePath, 1);
+            CoreSystem.Log("[Registry] Saving to: " + filePath, 2);
             File.WriteAllText(filePath, data);
         }
 
@@ -283,7 +283,7 @@ namespace IronWhisperReceiver.Core.Registry
         {
             if (ValidateFile())
             {
-                CoreSystem.Log($"[Registry] Loading from: {filePath}", 1);
+                CoreSystem.Log($"[Registry] Loading from: {filePath}", 2);
                 string data = File.ReadAllText(filePath);
                 var reg = JsonConvert.DeserializeObject<RegistryCore>(data);
                 AccessPoints = reg.AccessPoints;
@@ -298,7 +298,7 @@ namespace IronWhisperReceiver.Core.Registry
                 Projects = def.Projects;
             }
 
-            CoreSystem.Log($"[Registry] Loaded.\nTerminals:\t{Terminals.Count}\nAccess Points:\t{AccessPoints.Count}\nProjects:\t{Projects.Count}\n", 1);
+            CoreSystem.Log($"[Registry] Loaded.\nTerminals:\t{Terminals.Count}\nAccess Points:\t{AccessPoints.Count}\nProjects:\t{Projects.Count}\nOnline Devices:\t{OnlineDevices().Count}\n", 1);
             CoreSystem.Log(JsonConvert.SerializeObject(this, Formatting.Indented), 2);
             CoreSystem.Log(2);
 
@@ -383,16 +383,18 @@ namespace IronWhisperReceiver.Core.Registry
 
         public void UpdateNetworkDevice(string deviceID, string remoteAddress, Action deviceRecognised)
         {
-            // TODO Add 'last packet received' to RegDevice, as well as 'Online => (DateTime.Now - LastPacketReceived).TotalMinutes <= 5'
-            // TODO Actually use the device data to update the registry
             foreach (var device in AllDevices())
             {
                 if (device.deviceID == deviceID)
                 {
-                    CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} identified. Retrieving update.", 1);
+                    if (!device.networkDevice.Online)
+                    {
+                        CoreSystem.Log($"[UDP_ID] {deviceID} has come online", 1);
+                    }
+                    CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} identified. Retrieving update.", 2);
                     var hostname = Networking.NetworkUtilities.GetHostName(remoteAddress);
                     device.networkDevice.UpdateDetails(new Networking.NetworkDevice () { Address = remoteAddress, HostName = hostname});
-                    CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} update complete.", 1);
+                    CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} update complete.", 2);
                     Save();
                     deviceRecognised?.Invoke();
                     return;
@@ -404,6 +406,11 @@ namespace IronWhisperReceiver.Core.Registry
         {
             bool match = AllDevices().Any(x => x.networkDevice.Address == ip || x.networkDevice.HostName == hostname || x.deviceID == deviceID);
             return match;
+        }
+
+        public RegDevice GetDevice(string deviceID)
+        {
+            return AllDevices().FirstOrDefault(x => x.deviceID == deviceID);
         }
     }
 }

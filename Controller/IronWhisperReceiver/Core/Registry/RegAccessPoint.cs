@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core.Registry
+namespace IronWhisper_CentralController.Core.Registry
 {
     // An object capable of running operations
     // E.g, a computer, a microprocessor or a mobile device

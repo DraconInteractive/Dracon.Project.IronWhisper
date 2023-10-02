@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\pmc10\\Documents\\IronWhisper\\Receiver\\IronWhisperReceiver\\IronWhisper_CentralController.csproj": {}
+    "C:\\Users\\pmc10\\Documents\\IronWhisper\\Controller\\IronWhisperReceiver\\IronWhisper_CentralController.csproj": {}
   },
   "projects": {
-    "C:\\Users\\pmc10\\Documents\\IronWhisper\\Receiver\\IronWhisperReceiver\\IronWhisper_CentralController.csproj": {
+    "C:\\Users\\pmc10\\Documents\\IronWhisper\\Controller\\IronWhisperReceiver\\IronWhisper_CentralController.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\pmc10\\Documents\\IronWhisper\\Receiver\\IronWhisperReceiver\\IronWhisper_CentralController.csproj",
+        "projectUniqueName": "C:\\Users\\pmc10\\Documents\\IronWhisper\\Controller\\IronWhisperReceiver\\IronWhisper_CentralController.csproj",
         "projectName": "IronWhisper_CentralController",
-        "projectPath": "C:\\Users\\pmc10\\Documents\\IronWhisper\\Receiver\\IronWhisperReceiver\\IronWhisper_CentralController.csproj",
+        "projectPath": "C:\\Users\\pmc10\\Documents\\IronWhisper\\Controller\\IronWhisperReceiver\\IronWhisper_CentralController.csproj",
         "packagesPath": "C:\\Users\\pmc10\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\pmc10\\Documents\\IronWhisper\\Receiver\\IronWhisperReceiver\\obj\\",
+        "outputPath": "C:\\Users\\pmc10\\Documents\\IronWhisper\\Controller\\IronWhisperReceiver\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\pmc10\\AppData\\Roaming\\NuGet\\NuGet.Config",

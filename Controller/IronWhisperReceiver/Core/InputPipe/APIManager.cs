@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace IronWhisperReceiver.Core.InputPipe
+namespace IronWhisper_CentralController.Core.InputPipe
 {
     public class APIManager
     {

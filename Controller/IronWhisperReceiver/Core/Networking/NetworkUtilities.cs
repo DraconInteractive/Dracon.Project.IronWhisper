@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 
 
-namespace IronWhisperReceiver.Core.Networking
+namespace IronWhisper_CentralController.Core.Networking
 {
     public class NetworkUtilities
     {

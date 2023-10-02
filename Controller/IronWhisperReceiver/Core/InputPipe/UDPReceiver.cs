@@ -1,11 +1,11 @@
-﻿using IronWhisperReceiver.Core.Registry;
+﻿using IronWhisper_CentralController.Core.Registry;
 using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core.InputPipe
+namespace IronWhisper_CentralController.Core.InputPipe
 {
     public class UDPReceiver
     {
@@ -44,7 +44,7 @@ namespace IronWhisperReceiver.Core.InputPipe
                     byte[] bytes = result.Buffer;
                     string message = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
 
-                    CoreSystem.Log($"[UDP_ID] {result.RemoteEndPoint} : {message}", 2);
+                    //CoreSystem.Log($"[UDP_ID] {result.RemoteEndPoint} : {message}", 2);
                     RegistryCore.Instance.UpdateNetworkDevice(message, result.RemoteEndPoint.Address.ToString(), () =>
                     {
                         // Send response confirming ID received. 

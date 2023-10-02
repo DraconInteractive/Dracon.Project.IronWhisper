@@ -1,0 +1,17 @@
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0\IronWhisper_CentralController.exe
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0\IronWhisper_CentralController.deps.json
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0\IronWhisper_CentralController.runtimeconfig.json
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0\IronWhisper_CentralController.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0\IronWhisper_CentralController.pdb
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.csproj.AssemblyReference.cache
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.AssemblyInfoInputs.cache
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.AssemblyInfo.cs
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.csproj.CoreCompileInputs.cache
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.csproj.CopyComplete
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\refint\IronWhisper_CentralController.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.pdb
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.genruntimeconfig.cache
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\ref\IronWhisper_CentralController.dll

@@ -1,6 +1,6 @@
-﻿using IronWhisperReceiver.Core;
-using IronWhisperReceiver.Core.Networking;
-using IronWhisperReceiver.Core.Registry;
+﻿using IronWhisper_CentralController.Core;
+using IronWhisper_CentralController.Core.Networking;
+using IronWhisper_CentralController.Core.Registry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,14 @@ namespace IronWhisper_CentralController.Core.InputPipe
     {
         public static TCPSender Instance;
 
-        private const int targetPort = 65931;
+        private const int targetPort = 24765;
         private static CancellationTokenSource cts;
+        private const string Termination = "*&*";
 
+        public TCPSender ()
+        {
+            Instance = this;
+        }
 
         public async Task SendCommand(RegDevice rDevice, string command, Action<string> onCommandResult)
         {
@@ -25,6 +30,7 @@ namespace IronWhisper_CentralController.Core.InputPipe
 
         public async Task SendCommandAsync (RegDevice rDevice, string command, Action<string> onCommandResult)
         {
+            CoreSystem.Log("Sending async command");
             cts = new CancellationTokenSource();
             await SendCommandInternal(rDevice, command, onCommandResult, cts.Token);
         }
@@ -36,42 +42,54 @@ namespace IronWhisper_CentralController.Core.InputPipe
 
         private async Task SendCommandInternal(RegDevice rDevice, string command, Action<string> onCommandResult, CancellationToken cancellationToken)
         {
+            // Create tcp client
             TcpClient client = new TcpClient();
+            CoreSystem.Log("Connecting to access point...");
             client.Connect(rDevice.networkDevice.Address, targetPort);
 
+            // setup read/right
             NetworkStream stream = client.GetStream();
             StreamReader reader = new StreamReader(stream, Encoding.UTF8);
             StreamWriter writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = true };
 
-            writer.WriteLine(command);
-            writer.WriteLine("*FIN*");
+            CoreSystem.Log("Sending command...");
+
+            // send command and termination packet
+            await writer.WriteLineAsync(command + Termination);
+
+            CoreSystem.Log("Waiting for response...", writeLine: false);
 
             bool resultReceived = false;
             string message = "";
             try
             {
-                while (client.Connected && !cancellationToken.IsCancellationRequested)
+                // Wait for data from client
+                while (client.Connected && !cancellationToken.IsCancellationRequested && !resultReceived)
                 {
-                    if (stream.DataAvailable && !resultReceived)
+                    if (stream.DataAvailable)
                     {
+                        // When data received, get it
+                        // If its a message, add it to our total message
+                        // if its a termination packet, collate the message and invoke the event
                         string line = await reader.ReadLineAsync();
                         if (!string.IsNullOrEmpty(line))
                         {
-                            CoreSystem.Log($"[TCP] [{rDevice.DisplayName}] {line}", 1);
-                            if (line.ToLower() == "*FIN*")
+                            CoreSystem.Log($"\n[TCP] [{rDevice.DisplayName}] {line}", 1);
+                            message += line;
+                            if (message.Contains(Termination))
                             {
+                                message = message.Replace(Termination, "");
                                 resultReceived = true;
                                 onCommandResult?.Invoke(message);
-                            }
-                            else
-                            {
-                                message += line;
+                                break;
                             }
                         }
                     }
                     else
                     {
-                        await Task.Delay(100);
+                        CoreSystem.Log(".", writeLine: false);
+
+                        await Task.Delay(250);
                     }
                 }
             }
@@ -83,6 +101,7 @@ namespace IronWhisper_CentralController.Core.InputPipe
             {
                 client.Close();
             }
+            CoreSystem.Log("TCP client closed");
 
         }
     }

@@ -103,7 +103,7 @@ public class UDPSenderService extends Service {
             {
                 try
                 {
-                    //DeviceIDUtil.sendUDPBroadcast(DeviceIDUtil.getCustomDeviceId(UDPSenderService.this), 9876);
+                    DeviceIDUtil.sendUDPBroadcast(DeviceIDUtil.getCustomDeviceId(UDPSenderService.this), 9876);
                 }
                 finally {
                     isOnlineUpdateRunning.set(false);

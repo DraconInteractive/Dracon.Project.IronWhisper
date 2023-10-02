@@ -11,10 +11,11 @@ namespace IronWhisper_Windows_AP
     public class TCPServer
     {
         public static TCPServer Instance;
-        private const int Port = 65931;
+        private const int Port = 24765;
 
         private CancellationTokenSource cts;
 
+        private const string Termination = "*&*";
         public TCPServer()
         {
             Instance = this;
@@ -47,23 +48,23 @@ namespace IronWhisper_Windows_AP
                 NetworkStream stream = client.GetStream();
                 StreamReader reader = new StreamReader(stream, Encoding.UTF8);
                 StreamWriter writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = true };
-                string command = "";
+                string message = "";
                 bool messageReceived = false;
                 try
                 {
                     while (!messageReceived && !cancellationToken.IsCancellationRequested)
                     {
-                        string message = await reader.ReadLineAsync();
-
-                        if (message == "**FIN**")
+                        string line = await reader.ReadLineAsync();
+                        if (!string.IsNullOrEmpty(line))
                         {
-                            CoreSystem.Log($"[TCP] Received: {message}", 1);
-
-                            messageReceived = true;
-                        }
-                        else
-                        {
-                            command += message;
+                            CoreSystem.Log("[TCP] " + line);
+                            message += line;
+                            if (message.Contains(Termination))
+                            {
+                                message = message.Replace(Termination, "");
+                                messageReceived = true;
+                                CoreSystem.Log("Final Message: " + message);
+                            }
                         }
                     }
 
@@ -73,9 +74,19 @@ namespace IronWhisper_Windows_AP
                         return;
                     }
 
-                    string result = ProcessCommand(command);
-                    CoreSystem.Log($"[TCP] Command result: {result}\nSending result to central processor", 1);
-                    writer.WriteLine(result);
+                    string result = ProcessCommand(message);
+                    CoreSystem.Log($"[TCP] Command result: {result}", 1);
+                    CoreSystem.Log($"[TCP] Sending result to central processor...", 1);
+                    await writer.WriteLineAsync(result + Termination);
+                    /*
+                    int i = 0; 
+                    while (i < 1000)
+                    {
+                        i += 50;
+                        Thread.Sleep(50);
+                    }
+                    CoreSystem.Log("Finished waiting");
+                    */
                 }
                 catch (Exception ex)
                 {
@@ -85,6 +96,7 @@ namespace IronWhisper_Windows_AP
                 {
                     client.Close();
                 }
+                CoreSystem.Log("Complete");
             }
         }
 

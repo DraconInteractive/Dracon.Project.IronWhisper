@@ -1,4 +1,4 @@
-﻿using IronWhisperReceiver.Core;
+﻿using IronWhisper_CentralController.Core;
 
 class Program
 {

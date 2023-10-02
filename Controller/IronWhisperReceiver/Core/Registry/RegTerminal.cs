@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core.Registry
+namespace IronWhisper_CentralController.Core.Registry
 {
     // An AI processor, that parses commands and manages operations among access points. 
     // Currently tied 1-1 with an AccessPoint until a way of managing 'focus' can be found. 

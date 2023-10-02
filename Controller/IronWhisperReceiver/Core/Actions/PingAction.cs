@@ -1,11 +1,11 @@
-﻿using IronWhisperReceiver.Core.Networking;
+﻿using IronWhisper_CentralController.Core.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core.Actions
+namespace IronWhisper_CentralController.Core.Actions
 {
     public class PingAction : CoreAction
     {
@@ -25,7 +25,7 @@ namespace IronWhisperReceiver.Core.Actions
             };
         }
 
-        protected override async Task InternalRun(CoreSpeech command)
+        protected override async Task InternalRun(CoreSpeech command, CoreAction ctx = null)
         {
             NetworkManager.Instance.PingNetworkAsync();
         }

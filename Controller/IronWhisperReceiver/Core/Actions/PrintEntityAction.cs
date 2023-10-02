@@ -1,11 +1,11 @@
-﻿using IronWhisperReceiver.Core.Networking;
+﻿using IronWhisper_CentralController.Core.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisperReceiver.Core.Actions
+namespace IronWhisper_CentralController.Core.Actions
 {
     public class PrintEntityAction : CoreAction
     {
