@@ -23,7 +23,7 @@ namespace IronWhisper_CentralController.Core
 
             foreach (var p in _punctuation)
             {
-                Command = Command.Replace(p, "");
+                Command = Command.Replace(p, "").TrimEnd('\0');
             }
 
             Message = Message.Trim();
@@ -42,5 +42,13 @@ namespace IronWhisper_CentralController.Core
         {
             tokens = _tokens;
         }
+    }
+
+    public class Token
+    {
+        public string Text;
+        public string Lemma;
+        public string Pos;
+        public string Dep;
     }
 }

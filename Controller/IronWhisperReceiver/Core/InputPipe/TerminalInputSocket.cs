@@ -8,14 +8,6 @@ using System.Text;
 
 namespace IronWhisper_CentralController.Core.InputPipe
 {
-    public class Token
-    {
-        public string Text;
-        public string Lemma;
-        public string Pos;
-        public string Dep;
-    }
-
     public class TerminalInputSocket
     {
         public static TerminalInputSocket Instance;
@@ -71,9 +63,8 @@ namespace IronWhisper_CentralController.Core.InputPipe
                     Thread.Sleep(100);
                 }
             }
-
-            Console.WriteLine($"[Socket] Connected at {terminalIP}:{terminalPort}");
-            Console.WriteLine();
+            string con = $"{terminalIP}:{terminalPort}";
+            CoreSystem.Log($"[Socket] Connected at {con}", $"{con}", ConsoleColor.Yellow, 1);
         }
 
         public void StartStream()
@@ -98,7 +89,7 @@ namespace IronWhisper_CentralController.Core.InputPipe
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Socket] error occurred: {ex.Message}\n{ex.StackTrace}");
+                Console.WriteLine($"[Socket] error occurred: {ex.Message}\n{ex.StackTrace}", $"{ex.Message}\n{ex.StackTrace}", ConsoleColor.Red);
             }
             return null;
         }
@@ -201,10 +192,10 @@ namespace IronWhisper_CentralController.Core.InputPipe
             }
             catch (Exception e)
             {
-                CoreSystem.Log($"[TIS]: {e.Message}");
+                CoreSystem.Log($"[TIS]: {e.Message}", e.Message, ConsoleColor.Red);
             }
 
-            CoreSystem.Log($"[TIS] WSL2 IP Address: {ipAddress}");
+            CoreSystem.Log($"[TIS] WSL2 IP Address: {ipAddress}\n", ipAddress, ConsoleColor.Yellow);
             return ipAddress;
         }
     }

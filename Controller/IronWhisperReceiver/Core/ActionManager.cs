@@ -1,11 +1,6 @@
 ﻿using IronWhisper_CentralController.Core.Actions;
-using IronWhisper_CentralController.Core.Networking;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace IronWhisper_CentralController.Core
 {
@@ -14,7 +9,7 @@ namespace IronWhisper_CentralController.Core
         public static ActionManager Instance;
         public List<CoreAction> Actions;
 
-        public Stack<CoreAction> LogicStack;
+        public List<CoreAction> CurrentActions;
 
         public ActionManager()
         {
@@ -28,16 +23,16 @@ namespace IronWhisper_CentralController.Core
                     Actions.Add(instance);
                 }
             }
-            LogicStack = new Stack<CoreAction>();
+            CurrentActions = new List<CoreAction>();
         }
 
         public async Task ParseCommand(CoreSpeech command)
         {
             List<CoreAction> actionsToRun = new List<CoreAction>();
+            List<Task> tasks = new List<Task>();
 
-            if (LogicStack.Count == 0)
+            if (CurrentActions.Count == 0)
             {
-
                 foreach (var action in Actions)
                 {
                     if (action.Evaluate(command) || action.AlwaysRun)
@@ -54,10 +49,21 @@ namespace IronWhisper_CentralController.Core
                     {
                         field.SetValue(instance, field.GetValue(action));
                     }
-                    await instance.Run(command);
+                    CurrentActions.Add(instance);
+                    tasks.Add(instance.Run(command));
                 }
             }
-            
+            else
+            {
+                foreach (var action in CurrentActions)
+                {
+                    tasks.Add(action.Run(command));
+                }
+            }
+
+            await Task.WhenAll(tasks);
+            CoreSystem.Log("");
+            CurrentActions.RemoveAll(x => x.state == CoreAction.State.Finished);
         }
 
         List<Type> GetActionArchetypes()

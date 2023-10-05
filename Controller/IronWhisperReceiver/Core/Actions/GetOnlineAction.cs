@@ -24,7 +24,7 @@ namespace IronWhisper_CentralController.Core.Actions
             };
         }
 
-        protected override async Task InternalRun(CoreSpeech command, CoreAction ctx = null)
+        protected override async Task InternalRun(CoreSpeech command)
         {
             var onlineDevices = Registry.RegistryCore.Instance.OnlineDevices();
             string output = $"{onlineDevices.Count()} online devices:\n";
@@ -33,7 +33,8 @@ namespace IronWhisper_CentralController.Core.Actions
                 output += $"{device.DisplayName} : {device.networkDevice.Address}\n";
             }
 
-            ExternalMessage = output;
+            CoreSystem.Log("[GetOnline] " + output);
+            ChangeState(State.Finished);
         }
     }
 }

@@ -25,9 +25,15 @@ namespace IronWhisper_CentralController.Core.Actions
             };
         }
 
-        protected override async Task InternalRun(CoreSpeech command, CoreAction ctx = null)
+        protected override async Task InternalRun(CoreSpeech command)
         {
-            NetworkManager.Instance.PingNetworkAsync();
+            var task = NetworkManager.Instance.PingNetworkAsync();
+            if (command.Command.Contains("wait"))
+            {
+                await task;
+            }
+
+            ChangeState(State.Finished);
         }
     }
 }

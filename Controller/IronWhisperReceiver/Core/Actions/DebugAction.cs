@@ -15,6 +15,7 @@ namespace IronWhisper_CentralController.Core.Actions
             Name = "Debug";
             Phrases = Array.Empty<string>();
             AlwaysRun = true;
+            Priority = 0;
         }
 
         protected override async Task InternalRun(CoreSpeech command)
@@ -22,13 +23,10 @@ namespace IronWhisper_CentralController.Core.Actions
             string verboseOutput = "Command Data:\n\n"
                 + $"{JsonConvert.SerializeObject(command, Formatting.Indented)}\n\n";
 
-            switch (CoreSystem.Verbosity)
-            {
-                case 2:
-                    InternalMessage = verboseOutput;
-                    break;
-            }
-            ExternalMessage = ">> " + command.Message;
+            CoreSystem.Log(verboseOutput, 2);
+            CoreSystem.Log("[Debug] >> " + command.Message);
+
+            ChangeState(State.Finished);
         }
     }
 }

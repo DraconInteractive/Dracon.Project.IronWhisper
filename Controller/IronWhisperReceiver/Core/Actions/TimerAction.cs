@@ -13,7 +13,7 @@ namespace IronWhisper_CentralController.Core.Actions
         protected override void InternalInit()
         {
             Name = "Timer";
-            Phrases = new string[] { "set a timer for", "start a timer for", "run a timer for" };
+            Phrases = new string[] { "set a timer", "start a timer", "run a timer" };
         }
 
         public override bool Evaluate(CoreSpeech command)
@@ -23,12 +23,48 @@ namespace IronWhisper_CentralController.Core.Actions
 
         protected override async Task InternalRun(CoreSpeech command)
         {
-            string message = Utilities.ExtractNumberFromText(command.Message).Item1;
+            TimeSpan span = GetSpan(command.Command);
+            if (span != default)
+            {
+                CoreSystem.Log("[Timer] Beginning delayed event call", 2);
+                CoreSystem.Log($"[Timer] Timer set for {span.TotalMinutes} minutes");
+
+                // Discarded as we want the action to finish after setting the timer, not to wait until the timer is complete. 
+                _ = WaitForTimer(span);
+                ChangeState(State.Finished);
+            }
+            else
+            {
+                CoreSystem.Log("[Timer] I can see you want to set a timer. How long should the timer be set for?");
+                ChangeState(State.WaitingForInput);
+            }
+        }
+
+        protected override async Task InternalRunAgain(CoreSpeech speech)
+        {
+            TimeSpan span = GetSpan(speech.Command);
+            if (span != default)
+            {
+                CoreSystem.Log("[Timer] Beginning delayed event call", 2);
+                CoreSystem.Log($"[Timer] Timer set for {span.TotalMinutes} minutes");
+
+                // Discarded as we want the action to finish after setting the timer, not to wait until the timer is complete. 
+                _ = WaitForTimer(span);
+            }
+            else
+            {
+                CoreSystem.Log("[Timer] I'm sorry, I can't seem to get a valid input. You can try and set a timer again if you want to keep trying!");
+            }
+            ChangeState(State.Finished);
+        }
+
+        private TimeSpan GetSpan (string input)
+        {
+            CoreSystem.Log("[Timer] Assessing...", 1);
+            string message = Utilities.ExtractNumberFromText(input).Item1;
 
             Regex regex = new Regex(@"(\d+)\s*(second|minute|hour)(?:s)?", RegexOptions.IgnoreCase);
             Match match = regex.Match(message);
-
-            CoreSystem.Log("[Timer] Assessing...", 1);
 
             if (match.Success)
             {
@@ -48,17 +84,9 @@ namespace IronWhisper_CentralController.Core.Actions
                         break;
                 }
                 TimeSpan _timerDuration = TimeSpan.FromSeconds(secondsToWait);
-                InternalMessage = "Beginning delayed event call";
-                ExternalMessage = $"Timer set for {_timerDuration.TotalMinutes} minutes.";
-                // Discarded as we want the action to finish after setting the timer, not to wait until the timer is complete. 
-                _ = WaitForTimer(_timerDuration);
+                return _timerDuration;
             }
-            else
-            {
-                InternalMessage = "Regex match for numerals and modifier failed";
-                ExternalMessage = "I'm sorry, I didn't understand that. If you want to set a timer, say \"Set a timer for 10 minutes\"";
-            }
-
+            return default;
         }
 
         private async Task WaitForTimer (TimeSpan duration)

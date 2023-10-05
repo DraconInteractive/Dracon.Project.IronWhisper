@@ -49,10 +49,7 @@ namespace IronWhisper_CentralController.Core.Networking
 
         public async Task PingNetworkAsync()
         {
-            if (CoreSystem.Verbosity >= 1)
-            {
-                Console.WriteLine("[Network] Locating devices", 1);
-            }
+            Console.WriteLine("[Network] Locating devices", 1);
 
             devices = new List<NetworkDevice>();
 

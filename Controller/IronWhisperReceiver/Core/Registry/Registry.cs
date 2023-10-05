@@ -358,10 +358,19 @@ namespace IronWhisper_CentralController.Core.Registry
                     detected.Add(ent);
                 }
             }
-            CoreSystem.Log($"[Reg] Detected {detected.Count} entitites. ", 1);
+            CoreSystem.Log($"[Reg] Detected {detected.Count} entitites. ", 2);
             return detected;
         }
 
+        public List<RegCore> AllEntities ()
+        {
+            List<RegCore> entities = new List<RegCore>();
+            entities.AddRange(Terminals);
+            entities.AddRange(AccessPoints);
+            entities.AddRange(Projects);
+            return entities;
+
+        }
         public List<RegDevice> AllDevices()
         {
             List<RegDevice> devices = new List<RegDevice>();
@@ -411,6 +420,11 @@ namespace IronWhisper_CentralController.Core.Registry
         public RegDevice GetDevice(string deviceID)
         {
             return AllDevices().FirstOrDefault(x => x.deviceID == deviceID);
+        }
+
+        public RegCore GetEntity (string entityID)
+        {
+            return AllEntities().FirstOrDefault(x => x.ID == entityID);
         }
     }
 }

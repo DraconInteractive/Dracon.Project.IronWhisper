@@ -1,25 +1,26 @@
 ﻿using IronWhisper_CentralController.Core.InputPipe;
-using IronWhisper_CentralController.Core.InputPipe;
 using IronWhisper_CentralController.Core.Networking;
 using IronWhisper_CentralController.Core.Registry;
-using Newtonsoft.Json;
+using System.Windows.Forms;
+using System.Windows;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController.Core
 {
+    public class CoreConfig
+    {
+        public int Verbosity = 1;
+        public bool LaunchServer = false;
+        public bool ListenUDP = true;
+        public bool SweepNetwork = false;
+        public bool RefreshRegistry = false;
+        public bool InitTCP = true;
+    }
     public class CoreSystem
     {
         public static CoreSystem Instance;
+        public static CoreConfig Config;
 
-        public static int Verbosity = 1;
-        public static bool LaunchServer = false;
-        public static bool SweepNetwork = false;
-        public static bool ListenUDP = true;
-        public static bool RefreshRegistry = false;
         // TODO
         // Identify this 'access point' - add device data json to same appdata folder as registry
         // Move persistence logic to its own class
@@ -69,7 +70,10 @@ namespace IronWhisper_CentralController.Core
 
         public async Task Run()
         {
+            Config = new CoreConfig();
+
             Log("IW-Core v0.1.7a\n-------------------------------------------\n");
+
             Instance = this;
 
             Console.CancelKeyPress += new ConsoleCancelEventHandler(ExitHandler);
@@ -82,7 +86,7 @@ namespace IronWhisper_CentralController.Core
 
             RegistryCore registry;
 
-            if (RefreshRegistry)
+            if (Config.RefreshRegistry)
             {
                 registry = RegistryCore.CreateDefault();
                 registry.Save();
@@ -92,25 +96,26 @@ namespace IronWhisper_CentralController.Core
                 registry = new RegistryCore().Load();
             }
 
-            if (ListenUDP)
+            if (Config.ListenUDP)
             {
                 UDPReceiver.StartListening();
             }
 
-            if (LaunchServer)
+            if (Config.LaunchServer)
             {
                 //TODO Fix
                 new ServerLauncher().Launch();
             }
 
-            if (SweepNetwork)
+            if (Config.SweepNetwork)
             {
                 await networkManager.PingNetworkAsync();
                 Log();
             }
-
-            Log("Creating TCP Sender");
-            var tcpSender = new TCPSender();
+            if (Config.InitTCP)
+            {
+                var tcpSender = new TCPSender();
+            }            
 
             HandleSocket(terminalInputSocket, eventsManager, actionsController);
             
@@ -154,17 +159,86 @@ namespace IronWhisper_CentralController.Core
             Environment.Exit(0);
         }
 
+        // Print newline
         public static void Log(int verbosity = 0)
         {
             Log("", verbosity);
         }
 
+        // Basic log print
         public static void Log(string message, int verbosity = 0, bool writeLine = true)
         {
-            if (Verbosity >= verbosity)
+            if (Config.Verbosity >= verbosity)
             {
                 Console.Write(message + (writeLine ? "\n" : ""));
             }
+        }
+
+        // Print log with word highlight
+        public static void Log(string message, string highlight, ConsoleColor color, int verbosity = 0, bool writeLine = true)
+        {
+            if (Config.Verbosity < verbosity)
+            {
+                return;
+            }
+
+            int currentIndex = 0;
+
+            while (currentIndex < message.Length)
+            {
+                int foundIndex = message.IndexOf(highlight, currentIndex, StringComparison.OrdinalIgnoreCase);
+
+                // If the highlight text isn't found, print the rest of the message and break out of the loop.
+                if (foundIndex == -1)
+                {
+                    Console.Write(message.Substring(currentIndex));
+                    break;
+                }
+
+                // Print text leading up to the highlight in default color.
+                Console.Write(message.Substring(currentIndex, foundIndex - currentIndex));
+
+                // Set the desired highlight color and print the highlighted text.
+                Console.ForegroundColor = color;
+                Console.Write(message.Substring(foundIndex, highlight.Length));
+                Console.ResetColor();
+
+                currentIndex = foundIndex + highlight.Length;
+            }
+
+            if (writeLine)
+            {
+                Console.WriteLine(); // To print a newline after the message.
+            }
+        }
+
+        public static string GetInput(string prompt, Predicate<string> validation, int retries = 0, string retryMessage = "")
+        {
+            int currentRetries = 0;
+            string input = "";
+            if (retryMessage == "")
+            {
+                retryMessage = "Invalid input. Please try again";
+            }
+
+            while (currentRetries <= retries)
+            {
+                Log(prompt);
+                input = Console.ReadLine().Trim();
+                if (validation(input.ToLower()))
+                {
+                    return input;
+                }
+                else
+                {
+                    Log(retryMessage);
+                }
+                if (retries > 0)
+                {
+                    currentRetries++;
+                }
+            }
+            return input;
         }
     }
 }

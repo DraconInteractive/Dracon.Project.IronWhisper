@@ -24,12 +24,13 @@ namespace IronWhisper_CentralController.Core.Actions
             };
         }
 
-        protected override async Task InternalRun(CoreSpeech command, CoreAction ctx = null)
+        protected override async Task InternalRun(CoreSpeech command)
         {
-            CoreSystem.Log("Sending test command");
+            CoreSystem.Log("[TCP] Sending command");
             var device = Registry.RegistryCore.Instance.GetDevice("AP_HOME_MAIN");
             await TCPSender.Instance.SendCommandAsync(device, "Test", x => CoreSystem.Log($"[TCP] Command result: {x}"));
-            CoreSystem.Log("Test command complete");
+            CoreSystem.Log("[TCP] Command complete");
+            ChangeState(State.Finished);
         }
     }
 }

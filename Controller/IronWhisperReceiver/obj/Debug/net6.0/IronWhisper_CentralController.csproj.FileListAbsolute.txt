@@ -15,3 +15,4 @@ C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\ne
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.pdb
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.genruntimeconfig.cache
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\ref\IronWhisper_CentralController.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0\IronWhisper_CentralController.csproj.ResolveComReference.cache

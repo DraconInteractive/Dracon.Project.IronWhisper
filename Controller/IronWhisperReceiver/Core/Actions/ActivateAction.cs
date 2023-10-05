@@ -25,10 +25,12 @@ namespace IronWhisper_CentralController.Core.Actions
             };
         }
 
-        protected override async Task InternalRun(CoreSpeech command, CoreAction ctx = null)
+        protected override async Task InternalRun(CoreSpeech command)
         {
-            InternalMessage = "";
-            ExternalMessage = "Coming online...\nOnline and ready.";
+            CoreSystem.Log("[Boot] Coming online...");
+            await Task.Delay(1500);
+            CoreSystem.Log("[Boot] Online and ready.");
+            ChangeState(State.Finished);
         }
     }
 }

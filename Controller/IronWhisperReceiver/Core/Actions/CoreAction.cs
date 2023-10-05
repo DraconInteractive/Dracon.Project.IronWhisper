@@ -11,20 +11,27 @@ namespace IronWhisper_CentralController.Core.Actions
     {
         public string Name;
         public string[] Phrases;
-        protected string InternalMessage;
-        protected string ExternalMessage;
         public bool AlwaysRun = false;
         public int Priority = 0;
-        public List<Type> ContextOptions;
+        public enum State
+        {
+            NotStarted, 
+            Running,
+            WaitingForInput,
+            Finished
+        }
+        public State state;
+        Action<State> onStateChange;
 
         public CoreAction()
         {
-            ContextOptions = new List<Type>();
+            Priority = 1;
             InternalInit();
             for (int i = 0; i < Phrases.Length; i++)
             {
                 Phrases[i] = Phrases[i].ToLower().Trim();
             }
+            ChangeState(State.NotStarted);
         }
 
         protected virtual void InternalInit ()
@@ -56,14 +63,35 @@ namespace IronWhisper_CentralController.Core.Actions
             return match;
         }
 
-        public async Task Run(CoreSpeech command, CoreAction ctx = null)
+        public async Task Run(CoreSpeech speech)
         {
-            await InternalRun(command, ctx);
+
+            if (state == State.NotStarted)
+            {
+                ChangeState(State.Running);
+                await InternalRun(speech);
+            }
+            else
+            {
+                ChangeState(State.Running);
+                await InternalRunAgain(speech);
+            }
         }
 
-        protected virtual async Task InternalRun(CoreSpeech command, CoreAction ctx)
+        protected virtual async Task InternalRun(CoreSpeech speech)
         {
             
+        }
+
+        protected virtual async Task InternalRunAgain(CoreSpeech speech)
+        {
+
+        }
+
+        protected void ChangeState (State newState)
+        {
+            state = newState;
+            onStateChange?.Invoke(state);
         }
     }
 }

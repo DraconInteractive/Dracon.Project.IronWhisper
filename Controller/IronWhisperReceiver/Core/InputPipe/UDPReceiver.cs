@@ -29,7 +29,7 @@ namespace IronWhisper_CentralController.Core.InputPipe
             UdpClient listener = new(listenPort);
             IPEndPoint groupEP = new(IPAddress.Any, listenPort);
 
-            CoreSystem.Log($"[UDP_ID] Begun listening for device updates on port {listenPort}...", 1);
+            CoreSystem.Log($"[UDP_ID] Begun listening for device updates on port {listenPort}...", listenPort.ToString(), ConsoleColor.Yellow, 1);
 
             try
             {
@@ -44,16 +44,15 @@ namespace IronWhisper_CentralController.Core.InputPipe
                     byte[] bytes = result.Buffer;
                     string message = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
 
-                    //CoreSystem.Log($"[UDP_ID] {result.RemoteEndPoint} : {message}", 2);
                     RegistryCore.Instance.UpdateNetworkDevice(message, result.RemoteEndPoint.Address.ToString(), () =>
                     {
-                        // Send response confirming ID received. 
+                        
                     });
                 }
             }
             catch (Exception e)
             {
-                CoreSystem.Log($"[UDP_ID] Exception: {e.Message}");
+                CoreSystem.Log($"[UDP_ID] Exception: {e.Message}", e.Message, ConsoleColor.Red);
             }
             finally
             {
