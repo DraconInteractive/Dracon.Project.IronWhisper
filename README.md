@@ -18,10 +18,22 @@ Device Registration Refactor
 - Expose api tunnel and port using NGROK
 - change device registration from UDP Broadcast to API reference
 - Terminals provide input through api instead of local socket
-  
+
+Unity Integration
+- Post registration refactor
+- Add 'live interfaces' to the registry
+- Interface identifies itself via api
+- Live Interface Type 1: Game
+  - Game can provide non-terminal input
+  - Game can request configuration files
+- Live Interface Type 2: Editor
+  - Registered projects can expose editor configs
+  - Controller can serve often implemented packages or scripts
+    
 # Ideas
 - Stream audio to device through TCP port. E.g, play TTS on phone, or wireless speaker.
-- 
+- Create a scoped package repository accessible through controller?
+  
 # Notes
 
 to get into mimic, navigate to directory, then say "source .venv/bin/activate" to activate the virtual environment
