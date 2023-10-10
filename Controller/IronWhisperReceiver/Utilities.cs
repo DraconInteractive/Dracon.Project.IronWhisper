@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController
@@ -77,6 +78,13 @@ namespace IronWhisper_CentralController
             }
 
             return (modifiedText.ToString().Trim(), result + currentNumber);
+        }
+
+        public static string RemoveLogDescriptor (string log)
+        {
+            string pattern = @"\[.*?\]";
+            string result = Regex.Replace(log, pattern, ""); // Remove matching substrings
+            return result;
         }
     }
 }

@@ -298,10 +298,10 @@ namespace IronWhisper_CentralController.Core.Registry
                 Projects = def.Projects;
             }
 
-            CoreSystem.Log($"[Registry] Loaded.\nTerminals:\t{Terminals.Count}\nAccess Points:\t{AccessPoints.Count}\nProjects:\t{Projects.Count}\nOnline Devices:\t{OnlineDevices().Count}\n", 1);
+            CoreSystem.Log($"[Registry] Loading...\nTerminals:\t{Terminals.Count}\nAccess Points:\t{AccessPoints.Count}\nProjects:\t{Projects.Count}\nOnline Devices:\t{OnlineDevices().Count}", 1);
             CoreSystem.Log(JsonConvert.SerializeObject(this, Formatting.Indented), 2);
             CoreSystem.Log(2);
-
+            CoreSystem.Log("[Registry] Load: Success\n", "Success", ConsoleColor.Green);
             return this;
         }
 

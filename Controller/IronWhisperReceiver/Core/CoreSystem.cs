@@ -1,6 +1,9 @@
 ﻿using IronWhisper_CentralController.Core.InputPipe;
 using IronWhisper_CentralController.Core.Networking;
 using IronWhisper_CentralController.Core.Registry;
+using IronWhisper_CentralController.Core.Events;
+using IronWhisper_CentralController.Core.Audio.TTS;
+
 using System.Windows.Forms;
 using System.Windows;
 using System;
@@ -15,58 +18,17 @@ namespace IronWhisper_CentralController.Core
         public bool SweepNetwork = false;
         public bool RefreshRegistry = false;
         public bool InitTCP = true;
+        public bool UseMimic3 = true;
+        public bool DeafAccessible = false;
+        public int TTSVerbosity = 1;
     }
+
     public class CoreSystem
     {
         public static CoreSystem Instance;
         public static CoreConfig Config;
 
-        // TODO
-        // Identify this 'access point' - add device data json to same appdata folder as registry
-        // Move persistence logic to its own class
-
-        // TODO
-        // Phase 1. Identification
-        /*
-        1. The server opens a UDP socket to listen for broadcasts
-        2. When connecting to a network, or upon a similar key event, the mobile device broadcasts an identification packet
-        3. It will continue to do this until it receives an 'id confirmed' packet from the server in response
-        4. Both devices are now aware of each other. Stop broadcasting on the mobile device. 
-        5. Open a TCP connection is opened to update the cached data of each device. Close once all data is transferred
-        5. Start a timer on mobile device. After the interval, send an 'im alive' packet to the server. The server is already aware of the device, and this will just update the devices online status.
-        5a. Alternatively, the server could periodically ping the mobile devices IP address in order to check if its still connected. 
-        */
-
-        // Phase 2. Communication
-        /*
-        1. Ascertain the command, encode as a string to create packet
-        2. Open a TCP stream between server and android device
-        3. Server sends packet
-        4. Device receives packet, executes command
-        5. Device collates result, sends to server
-        6. Close TCP stream
-        */
-
-        // Phase 3. Focused persistence
-        /*
-        1. Get command to open persistent stream to device
-        2. Run Phase 2, but the command is to keep the stream open, and phase 2.6 doesnt happen
-        3. Server continues to send commands and receive results over the same stream
-        4. When server shuts down, or command to cease communication is received, send command to device to disconnect and disconnect server. 
-        */
-
-        // TODO
-
-        /*
-        Authenticated Commands. 
-        Most commands will require a passphrase such as a prompt etc, that prefixes it. 
-        "Okay X, do ..." 
-        However, in order to execute subsequent commands, or tiered input, we need an 'open gate' mode
-        When specific command is registered, register all incoming voice as valid input until the close gate command is reached
-        
-        On the inverse, a lock gate command will make even prompt commands not work until a single unlock phrase is given, or the server recieves a manual command to resume. 
-        This is to prevent the misuse of the device due to the lack of subject/speaker identification
-        */
+        // TODO Cache static TTS wav's
 
         public async Task Run()
         {
@@ -78,11 +40,32 @@ namespace IronWhisper_CentralController.Core
 
             Console.CancelKeyPress += new ConsoleCancelEventHandler(ExitHandler);
 
+            // These are all here to create their singleton instances. 
+            // I could use a proper _instance/Instance implementation, but so far im just lazy
             var terminalInputSocket = new TerminalInputSocket();
             var actionsController = new ActionManager();
             var apiManager = new APIManager();
             var networkManager = new NetworkManager();
             var eventsManager = new EventsManager();
+            var ttsManager = new TTSManager();
+
+            if (Config.UseMimic3)
+            {
+                var ttsOnline = await apiManager.GetURLOnline(APIManager.ttsURL);
+                if (ttsOnline)
+                {
+                    Log("[TTS] Setup: Success", "Success", ConsoleColor.Green);
+                    await Speak(CachedTTS.Boot_TTS_Online);
+                    await Task.Delay(500);
+                }
+                else
+                {
+                    Config.UseMimic3 = false;
+                    Log("[TTS] Setup: Failure", "Failure", ConsoleColor.Red);
+                }
+                CoreSystem.Log();
+            }
+
 
             RegistryCore registry;
 
@@ -115,7 +98,7 @@ namespace IronWhisper_CentralController.Core
             if (Config.InitTCP)
             {
                 var tcpSender = new TCPSender();
-            }            
+            }
 
             HandleSocket(terminalInputSocket, eventsManager, actionsController);
             
@@ -128,8 +111,11 @@ namespace IronWhisper_CentralController.Core
         private async Task HandleSocket(TerminalInputSocket socket, EventsManager evt, ActionManager actions)
         {
             Log("[Socket] Connecting to WSL2 terminal...");
+            await Speak(CachedTTS.Boot_WaitForTerminal);
+
             socket.Connect();
             socket.StartStream();
+            await Speak(CachedTTS.Terminal_OnConnected);
 
             while (true)
             {
@@ -162,7 +148,10 @@ namespace IronWhisper_CentralController.Core
         // Print newline
         public static void Log(int verbosity = 0)
         {
-            Log("", verbosity);
+            if (Config.Verbosity >= verbosity)
+            {
+                Log("", verbosity);
+            }
         }
 
         // Basic log print
@@ -183,6 +172,11 @@ namespace IronWhisper_CentralController.Core
             }
 
             int currentIndex = 0;
+
+            if (Config.DeafAccessible && Config.UseMimic3)
+            {
+                TTSManager.Instance.ProcessTTS(Utilities.RemoveLogDescriptor(message));
+            }
 
             while (currentIndex < message.Length)
             {
@@ -210,6 +204,24 @@ namespace IronWhisper_CentralController.Core
             {
                 Console.WriteLine(); // To print a newline after the message.
             }
+        }
+
+        public static void LogError(string message, int verbosity = 0, bool writeLine = true)
+        {
+            Log($"[Error] {message}", "Error", ConsoleColor.Red, verbosity, writeLine);
+        }
+
+        public static async Task Speak(string message, int verbosity = 0)
+        {
+            if (Config.TTSVerbosity >= verbosity)
+            {
+                //await TTSManager.Instance.ProcessTTS(message);
+            }
+        }
+
+        public static async Task Speak (CachedTTS audio)
+        {
+            TTSManager.Instance.PlayAudio(audio);
         }
 
         public static string GetInput(string prompt, Predicate<string> validation, int retries = 0, string retryMessage = "")

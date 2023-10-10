@@ -1,4 +1,5 @@
-﻿using IronWhisper_CentralController.Core.Networking;
+﻿using IronWhisper_CentralController.Core.Events;
+using IronWhisper_CentralController.Core.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;

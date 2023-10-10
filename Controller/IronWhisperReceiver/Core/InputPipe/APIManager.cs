@@ -11,10 +11,15 @@ namespace IronWhisper_CentralController.Core.InputPipe
         public static APIManager Instance;
         private readonly HttpClient _httpClient;
 
+        public static string ttsURL { get; private set; }
+
         public APIManager() : base()
         {
             _httpClient = new HttpClient();
             Instance = this;
+            ttsURL = "http://localhost:59125/api/tts";
+            _httpClient.Timeout = TimeSpan.FromSeconds(10);
+
         }
 
         public APIManager(string baseAddress) : base()
@@ -65,6 +70,34 @@ namespace IronWhisper_CentralController.Core.InputPipe
                 {
                     await response.Content.CopyToAsync(fileStream);
                 }
+            }
+        }
+
+        public async Task<byte[]> GetTTSAudioAsync(string text, string voice = "en_UK/apope_low", float noiseScale = 0.667f, float noise = 0.8f, float lengthScale = 1f, bool ssml = false)
+        {
+            //http://localhost:59125/api/tts?text=This%20is%20a%20speech%20synthesis%20test%21&voice=en_UK%2Fapope_low&noiseScale=0.667&noiseW=0.8&lengthScale=1&ssml=false
+            text = text.Replace(" ", "%20");
+            voice = voice.Replace("/", "%2F");
+            string finalURL = $"{ttsURL}?text={text}&voice={voice}&noiseScale={noiseScale}&noise={noise}&lengthScale={lengthScale}&ssml={ssml}";
+            // Send GET request and get the audio data
+            var response = await _httpClient.GetAsync(finalURL);
+            response.EnsureSuccessStatusCode();
+            byte[] audioData = await response.Content.ReadAsByteArrayAsync();
+
+            return audioData;
+        }
+
+        public async Task<bool> GetURLOnline(string url)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+                return true;
+            }
+            catch (TaskCanceledException)  // This exception is thrown on a timeout
+            {
+                Console.WriteLine("TTS FAIL");
+                return false;  
             }
         }
 

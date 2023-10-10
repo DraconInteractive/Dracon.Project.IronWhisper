@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IronWhisper_CentralController.Core.Audio.TTS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +29,8 @@ namespace IronWhisper_CentralController.Core.Actions
         {
             var onlineDevices = Registry.RegistryCore.Instance.OnlineDevices();
             string output = $"{onlineDevices.Count()} online devices:\n";
+            await TTSManager.Instance.ProcessTTS($"There are {onlineDevices.Count()} online devices.");
+            
             foreach (var device in onlineDevices)
             {
                 output += $"{device.DisplayName} : {device.networkDevice.Address}\n";

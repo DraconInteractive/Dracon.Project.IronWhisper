@@ -16,3 +16,8 @@ C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\ne
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0-windows\IronWhisper_CentralController.pdb
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0-windows\IronWhisper_CentralController.genruntimeconfig.cache
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0-windows\ref\IronWhisper_CentralController.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\boot_tts_online.wav
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\terminal_onconnected.wav
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Boot_WaitForTerminal.wav
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Activate_Complete.wav
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Activate_Prepare.wav

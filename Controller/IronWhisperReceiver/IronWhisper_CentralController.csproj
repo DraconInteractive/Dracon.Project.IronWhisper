@@ -9,12 +9,38 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\TTS Audio\Activate_Complete.wav" />
+    <None Remove="Assets\TTS Audio\Activate_Prepare.wav" />
+    <None Remove="Assets\TTS Audio\boot_tts_online.wav" />
+    <None Remove="Assets\TTS Audio\Boot_WaitForTerminal.wav" />
+    <None Remove="Assets\TTS Audio\terminal_onconnected.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
     <COMReference Include="{215d64d2-031c-33c7-96e3-61794cd1ee61}">
       <WrapperTool>tlbimp</WrapperTool>
       <VersionMinor>4</VersionMinor>
       <VersionMajor>2</VersionMajor>
       <Guid>215d64d2-031c-33c7-96e3-61794cd1ee61</Guid>
     </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\TTS Audio\Boot_WaitForTerminal.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Boot_TTS_Online.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Activate_Complete.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Activate_Prepare.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Terminal_OnConnected.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
