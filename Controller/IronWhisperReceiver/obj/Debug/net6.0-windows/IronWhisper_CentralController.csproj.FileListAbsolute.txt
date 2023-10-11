@@ -21,3 +21,25 @@ C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\ne
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Boot_WaitForTerminal.wav
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Activate_Complete.wav
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Activate_Prepare.wav
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Api.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Engine.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Basics.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.ClientCaching.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Compression.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Conversion.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.ErrorHandling.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.IO.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Layouting.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Pages.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Placeholders.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Practices.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Reflection.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Security.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\GenHTTP.Modules.Webservices.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Microsoft.IO.RecyclableMemoryStream.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\System.IO.Pipelines.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\System.Linq.Async.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\System.Text.Encodings.Web.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\System.Text.Json.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll

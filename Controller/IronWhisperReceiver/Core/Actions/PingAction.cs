@@ -27,7 +27,7 @@ namespace IronWhisper_CentralController.Core.Actions
 
         protected override async Task InternalRun(CoreSpeech command)
         {
-            var task = NetworkManager.Instance.PingNetworkAsync();
+            var task = LocalNetworkManager.Instance.PingNetworkAsync();
             if (command.Command.Contains("wait"))
             {
                 await task;

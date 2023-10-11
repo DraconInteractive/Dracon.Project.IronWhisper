@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -80,9 +81,19 @@ namespace IronWhisper_CentralController.Core.InputPipe
             voice = voice.Replace("/", "%2F");
             string finalURL = $"{ttsURL}?text={text}&voice={voice}&noiseScale={noiseScale}&noise={noise}&lengthScale={lengthScale}&ssml={ssml}";
             // Send GET request and get the audio data
-            var response = await _httpClient.GetAsync(finalURL);
-            response.EnsureSuccessStatusCode();
-            byte[] audioData = await response.Content.ReadAsByteArrayAsync();
+            byte[] audioData = Array.Empty<byte>();
+            try
+            {
+                var response = await _httpClient.GetAsync(finalURL);
+                response.EnsureSuccessStatusCode();
+                audioData = await response.Content.ReadAsByteArrayAsync();
+            }
+            catch
+            {
+                CoreSystem.LogError("TTS Failed. Disabling system.");
+                CoreSystem.Config.UseMimic3 = false;
+            }
+            
 
             return audioData;
         }
@@ -96,8 +107,18 @@ namespace IronWhisper_CentralController.Core.InputPipe
             }
             catch (TaskCanceledException)  // This exception is thrown on a timeout
             {
-                Console.WriteLine("TTS FAIL");
+                Console.WriteLine("TTS FAIL - Timeout");
                 return false;  
+            }
+            catch (SocketException)
+            {
+                Console.WriteLine("TTS FAIL - Socket");
+                return false;
+            }
+            catch
+            {
+                Console.WriteLine("TTS FAIL - Unknown");
+                return false;
             }
         }
 

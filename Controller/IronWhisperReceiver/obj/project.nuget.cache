@@ -1,10 +1,33 @@
 {
   "version": 2,
-  "dgSpecHash": "HqDBeoS5RIcLg43iEUKdgvKXFckCwMnguYlGtCoLDbcIhPp6X0cB5VRqwwZlUGXf9unlmUkE4D9d8ZEwSsyw6w==",
+  "dgSpecHash": "yQUu4sqhPx/5TzhpL85wvkHkXC+f445m8s6KPhpWF7qEa53VYela8wTmTWl62f0PN9csh/t3ZY0cD7hluk7xGg==",
   "success": true,
   "projectFilePath": "C:\\Users\\pmc10\\Documents\\IronWhisper\\Controller\\IronWhisperReceiver\\IronWhisper_CentralController.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\pmc10\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.api\\7.0.0\\genhttp.api.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.core\\7.0.0\\genhttp.core.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.engine\\7.0.0\\genhttp.engine.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.basics\\7.0.0\\genhttp.modules.basics.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.clientcaching\\7.0.0\\genhttp.modules.clientcaching.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.compression\\7.0.0\\genhttp.modules.compression.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.conversion\\7.0.0\\genhttp.modules.conversion.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.errorhandling\\7.0.0\\genhttp.modules.errorhandling.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.io\\7.0.0\\genhttp.modules.io.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.layouting\\7.0.0\\genhttp.modules.layouting.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.pages\\7.0.0\\genhttp.modules.pages.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.placeholders\\7.0.0\\genhttp.modules.placeholders.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.practices\\7.0.0\\genhttp.modules.practices.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.reflection\\7.0.0\\genhttp.modules.reflection.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.security\\7.0.0\\genhttp.modules.security.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\genhttp.modules.webservices\\7.0.0\\genhttp.modules.webservices.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\microsoft.io.recyclablememorystream\\2.3.2\\microsoft.io.recyclablememorystream.2.3.2.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\system.io.pipelines\\7.0.0\\system.io.pipelines.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\system.linq.async\\6.0.1\\system.linq.async.6.0.1.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\system.text.encodings.web\\7.0.0\\system.text.encodings.web.7.0.0.nupkg.sha512",
+    "C:\\Users\\pmc10\\.nuget\\packages\\system.text.json\\7.0.3\\system.text.json.7.0.3.nupkg.sha512"
   ],
   "logs": []
 }

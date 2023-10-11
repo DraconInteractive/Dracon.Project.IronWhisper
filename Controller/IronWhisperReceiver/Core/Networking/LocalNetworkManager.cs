@@ -6,43 +6,12 @@ using Util = IronWhisper_CentralController.Core.Networking.NetworkUtilities;
 
 namespace IronWhisper_CentralController.Core.Networking
 {
-    public class NetworkDevice
+    public class LocalNetworkManager
     {
-        public string Address;
-        public string HostName;
-        public string Port;
-        public DateTime lastUpdateTime;
-        public bool Online => (DateTime.Now - lastUpdateTime).TotalMinutes < 5;
-
-        public void UpdateDetails(NetworkDevice details)
-        {
-            if (!string.IsNullOrEmpty(details.Address))
-            {
-                Address = details.Address;
-            }
-            if (!string.IsNullOrEmpty(details.HostName))
-            {
-                HostName = details.HostName;
-            }
-            if (!string.IsNullOrEmpty(details.Port))
-            {
-                Port = details.Port;
-            }
-            lastUpdateTime = DateTime.Now;
-        }
-
-        public NetworkDevice()
-        {
-
-        }
-    }
-
-    public class NetworkManager
-    {
-        public static NetworkManager Instance;
+        public static LocalNetworkManager Instance;
         public List<NetworkDevice> devices;
 
-        public NetworkManager ()
+        public LocalNetworkManager ()
         {
             Instance = this;
         }

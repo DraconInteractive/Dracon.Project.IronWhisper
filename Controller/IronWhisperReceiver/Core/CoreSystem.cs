@@ -7,20 +7,29 @@ using IronWhisper_CentralController.Core.Audio.TTS;
 using System.Windows.Forms;
 using System.Windows;
 using System;
+using IronWhisper_CentralController.Core.Networking.REST;
 
 namespace IronWhisper_CentralController.Core
 {
     public class CoreConfig
     {
         public int Verbosity = 1;
-        public bool LaunchServer = false;
-        public bool ListenUDP = true;
-        public bool SweepNetwork = false;
+        public bool LaunchServer = false; // R
+        public bool ListenUDP = true; // D
+        public bool SweepNetwork = false; // R
         public bool RefreshRegistry = false;
-        public bool InitTCP = true;
-        public bool UseMimic3 = true;
+        public bool InitTCP = true; // D
+        public bool UseMimic3 = false; // dir -> source .venv/bin/activate -> mimic3-server --preload-voice en_UK/apope_low --num-threads 2
         public bool DeafAccessible = false;
-        public int TTSVerbosity = 1;
+        public int TTSVerbosity = 0;
+
+        public enum InputMethod
+        {
+            Socket,
+            REST,
+            Manual
+        }
+        public InputMethod Input;
     }
 
     public class CoreSystem
@@ -34,7 +43,7 @@ namespace IronWhisper_CentralController.Core
         {
             Config = new CoreConfig();
 
-            Log("IW-Core v0.1.7a\n-------------------------------------------\n");
+            Log("IW-Core v0.1.8a\n-------------------------------------------\n");
 
             Instance = this;
 
@@ -45,9 +54,12 @@ namespace IronWhisper_CentralController.Core
             var terminalInputSocket = new TerminalInputSocket();
             var actionsController = new ActionManager();
             var apiManager = new APIManager();
-            var networkManager = new NetworkManager();
+            var networkManager = new LocalNetworkManager();
             var eventsManager = new EventsManager();
             var ttsManager = new TTSManager();
+            var restManager = new RESTManager();
+            var inputHandler = new InputHandler();
+
 
             if (Config.UseMimic3)
             {
@@ -63,7 +75,7 @@ namespace IronWhisper_CentralController.Core
                     Config.UseMimic3 = false;
                     Log("[TTS] Setup: Failure", "Failure", ConsoleColor.Red);
                 }
-                CoreSystem.Log();
+                Log();
             }
 
 
@@ -84,6 +96,8 @@ namespace IronWhisper_CentralController.Core
                 UDPReceiver.StartListening();
             }
 
+            // Deprecated, to be removed
+            /*
             if (Config.LaunchServer)
             {
                 //TODO Fix
@@ -95,10 +109,17 @@ namespace IronWhisper_CentralController.Core
                 await networkManager.PingNetworkAsync();
                 Log();
             }
+            */
+
             if (Config.InitTCP)
             {
+                Log("Starting TCP handler...");
                 var tcpSender = new TCPSender();
             }
+
+            // Using REST API means no socket handler. Disabling until a shared input handler can be made (should support manual input, and programmatic input)
+            Log("Starting rest server");
+            restManager.LaunchServer();
 
             HandleSocket(terminalInputSocket, eventsManager, actionsController);
             
