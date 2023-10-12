@@ -1,4 +1,5 @@
-﻿using IronWhisper_CentralController.Core.Networking;
+﻿using IronWhisper_CentralController.Core.Audio.TTS;
+using IronWhisper_CentralController.Core.Networking;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,6 +28,22 @@ namespace IronWhisper_CentralController.Core.InputPipe
             if (!string.IsNullOrEmpty(wslIP))
             {
                 terminalIP = wslIP;
+            }
+        }
+
+        public async Task RunLoop ()
+        {
+            CoreSystem.Log("[Socket] Connecting to WSL2 terminal...");
+            await CoreSystem.Speak(CachedTTS.Boot_WaitForTerminal);
+
+            Connect();
+            StartStream();
+            await CoreSystem.Speak(CachedTTS.Terminal_OnConnected);
+
+            while (true)
+            {
+                CheckSocket();
+                await Task.Delay(50);
             }
         }
 
@@ -72,26 +89,22 @@ namespace IronWhisper_CentralController.Core.InputPipe
             stream = client.GetStream();
         }
 
-        public CoreSpeech SocketTick()
+        public void CheckSocket()
         {
             // TODO - add | onto end of each command to allow for delayed commands to be separated
             try
             {
                 if (stream.DataAvailable)
                 {
-                    // Receive and display the response from the server
                     byte[] buffer = new byte[1024];
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                    //string response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                    var command = DeserializeData(buffer);
-                    return command;
+                    DeserializeData(buffer);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[Socket] error occurred: {ex.Message}\n{ex.StackTrace}", $"{ex.Message}\n{ex.StackTrace}", ConsoleColor.Red);
             }
-            return null;
         }
 
         public void CloseStream()
@@ -106,52 +119,13 @@ namespace IronWhisper_CentralController.Core.InputPipe
             client.Close();
         }
 
-        public CoreSpeech DeserializeData(byte[] serializedData)
+        public void DeserializeData(byte[] serializedData)
         {
             string serializedString = Encoding.UTF8.GetString(serializedData);
             string[] identifierSplit = serializedString.Split("**");
             string[] messageSplit = identifierSplit[1].Split(">>");
 
-
-            string id = identifierSplit[0];
-            if (id == "NS")
-            {
-                return new CoreSpeech(voicePrompt, messageSplit[0]);
-            }
-            else if (id == "SP")
-            {
-                string[] tokenStrings = messageSplit[1].Split('&');
-                List<Token> tokens = new List<Token>();
-
-                foreach (string tokenString in tokenStrings)
-                {
-                    if (string.IsNullOrEmpty(tokenString))
-                    {
-                        continue;
-                    }
-
-                    string[] fields = tokenString.Split('|');
-                    if (fields.Length < 4)
-                    {
-                        // Not enough fields
-                        continue;
-                    }
-
-                    Token token = new Token
-                    {
-                        Text = fields[0],
-                        Lemma = fields[1],
-                        Pos = fields[2],
-                        Dep = fields[3]
-                    };
-                    tokens.Add(token);
-                }
-
-
-                return new TokenSpeech(voicePrompt, messageSplit[0], tokens.ToArray());
-            }
-
-            return null;
+            InputHandler.Instance.RegisterInput(messageSplit[0]);
         }
 
         public static string FindWSLInternalIP ()

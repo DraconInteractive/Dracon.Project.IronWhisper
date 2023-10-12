@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -85,6 +87,46 @@ namespace IronWhisper_CentralController
             string pattern = @"\[.*?\]";
             string result = Regex.Replace(log, pattern, ""); // Remove matching substrings
             return result;
+        }
+
+        public static List<Type> GetArchetypes(Type parentType)
+        {
+            List<Type> archetypes = new List<Type>();
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (Type type in assembly.GetTypes())
+                {
+                    if (type.IsSubclassOf(parentType))
+                    {
+                        archetypes.Add(type);
+                    }
+                }
+            }
+            return archetypes;
+        }
+
+        public static async Task CreateCommandWindowWithPrompt(string prompt)
+        {
+            Process process = new();
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                WindowStyle = ProcessWindowStyle.Normal,
+                FileName = "cmd",
+                Arguments = $"/c start cmd.exe /k {prompt}",
+                UseShellExecute = true,
+                CreateNoWindow = false,
+                RedirectStandardError = false
+            };
+
+            process.StartInfo = startInfo;
+            process.Start();
+
+            await process.WaitForExitAsync();
+        }
+
+        public static async Task CreateWSLWindowWithPrompt(string prompt)
+        {
+            await CreateCommandWindowWithPrompt($"wsl -e bash -c \"{prompt}\"");
         }
     }
 }

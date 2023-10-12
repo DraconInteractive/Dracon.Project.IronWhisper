@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,19 +18,61 @@ namespace IronWhisper_CentralController.Core.Networking.REST
     {
         public async Task LaunchServer ()
         {
+            if (CoreSystem.Config.LaunchNGROK)
+            {
+                KillProcessByName("cmd");
+                KillProcessByName("ngrok");
+                await CreateTunnel();
+            }
+            
             Host.Create()
                 .Handler(new APIHandlerBuilder())
-                .Run();
+                .Start();
+        }
+
+        private static async Task CreateTunnel ()
+        {
+            CoreSystem.Log("Enter NGROK domain: ");
+            CoreSystem.Log(">>", ">>", ConsoleColor.Yellow);
+            string line = Console.ReadLine();
+
+            Utilities.CreateCommandWindowWithPrompt($"ngrok http --domain {line} 8080");
+        }
+
+        private static void KillProcessByName(string processName)
+        {
+            foreach (var process in Process.GetProcessesByName(processName))
+            {
+                try
+                {
+                    process.Kill();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to kill process {processName}. Error: {ex.Message}");
+                }
+            }
         }
     }
 
     public class APIHandler : IHandler
     {
+        public List<IMiniAPIHandler> MiniHandlers;
+
         private readonly IHandler _content;
 
         public APIHandler(IHandler content)
         {
             _content = content;
+            InitMiniHandlers();
+        }
+
+        private void InitMiniHandlers ()
+        {
+            MiniHandlers = new List<IMiniAPIHandler>();
+            MiniHandlers.Add(new RootHandler());
+            MiniHandlers.Add(new TestHandler());
+            MiniHandlers.Add(new ManualInputHandler());
         }
 
         public IHandler Parent { get; }
@@ -40,17 +84,35 @@ namespace IronWhisper_CentralController.Core.Networking.REST
 
         public ValueTask<IResponse?> HandleAsync(IRequest request)
         {
+            CoreSystem.Log(request.Target.Path.ToString());
+            var handler = MiniHandlers.FirstOrDefault(x => x.EndpointPath() == request.Target.Path.ToString());
+
+            if (handler != null)
+            {
+                var r = handler.HandleAsync(request);
+                CoreSystem.Log("[REST][Handler] Path: " + request.Target.Path.ToString(), 2);
+                return r;
+            }
+            else
+            {
+                return HandleDefault(request);
+            }
+        }
+
+        public ValueTask<IResponse?> HandleDefault(IRequest request)
+        {
             var parameters = request.Query;
             var content = request.Content;
             var path = request.Target.Path;
 
             var response = request.Respond()
-                                  .Content(new JsonContent("Hello world", JsonSerializerOptions.Default))
+                                  .Content(new JsonContent("Invalid endpoint target!", JsonSerializerOptions.Default))
                                   .Type(new FlexibleContentType(ContentType.TextPlain))
                                   .Build();
 
             return new ValueTask<IResponse?>(response);
         }
+
 
         public ValueTask PrepareAsync()
         {

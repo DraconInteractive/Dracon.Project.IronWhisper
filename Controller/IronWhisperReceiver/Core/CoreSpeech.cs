@@ -18,6 +18,8 @@ namespace IronWhisper_CentralController.Core
 
         public CoreSpeech (string prompt, string message)
         {
+            if (message == null) return;
+
             Message = message;
             Command = message.Replace(prompt, "").ToLower();
 

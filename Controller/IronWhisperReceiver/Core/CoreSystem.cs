@@ -11,25 +11,26 @@ using IronWhisper_CentralController.Core.Networking.REST;
 
 namespace IronWhisper_CentralController.Core
 {
+    // TODO    
+    // Implement core loop functionality
     public class CoreConfig
     {
         public int Verbosity = 1;
-        public bool LaunchServer = false; // R
         public bool ListenUDP = true; // D
-        public bool SweepNetwork = false; // R
         public bool RefreshRegistry = false;
         public bool InitTCP = true; // D
+
         public bool UseMimic3 = false; // dir -> source .venv/bin/activate -> mimic3-server --preload-voice en_UK/apope_low --num-threads 2
-        public bool DeafAccessible = false;
+        public bool BlindAccessible = false;
         public int TTSVerbosity = 0;
 
-        public enum InputMethod
-        {
-            Socket,
-            REST,
-            Manual
-        }
-        public InputMethod Input;
+        public bool useTerminalSocket = true;
+        public bool useRestAPI = true;
+        public bool useManualInput = true;
+
+        public bool LaunchNGROK = false;
+        public bool LaunchTerminal = true;
+        public string Version = "v0.1.9a";
     }
 
     public class CoreSystem
@@ -37,13 +38,11 @@ namespace IronWhisper_CentralController.Core
         public static CoreSystem Instance;
         public static CoreConfig Config;
 
-        // TODO Cache static TTS wav's
-
         public async Task Run()
         {
             Config = new CoreConfig();
 
-            Log("IW-Core v0.1.8a\n-------------------------------------------\n");
+            Log($"IW-Core {Config.Version}\n-------------------------------------------\n");
 
             Instance = this;
 
@@ -51,7 +50,6 @@ namespace IronWhisper_CentralController.Core
 
             // These are all here to create their singleton instances. 
             // I could use a proper _instance/Instance implementation, but so far im just lazy
-            var terminalInputSocket = new TerminalInputSocket();
             var actionsController = new ActionManager();
             var apiManager = new APIManager();
             var networkManager = new LocalNetworkManager();
@@ -78,7 +76,6 @@ namespace IronWhisper_CentralController.Core
                 Log();
             }
 
-
             RegistryCore registry;
 
             if (Config.RefreshRegistry)
@@ -96,59 +93,62 @@ namespace IronWhisper_CentralController.Core
                 UDPReceiver.StartListening();
             }
 
-            // Deprecated, to be removed
-            /*
-            if (Config.LaunchServer)
-            {
-                //TODO Fix
-                new ServerLauncher().Launch();
-            }
-
-            if (Config.SweepNetwork)
-            {
-                await networkManager.PingNetworkAsync();
-                Log();
-            }
-            */
-
             if (Config.InitTCP)
             {
                 Log("Starting TCP handler...");
                 var tcpSender = new TCPSender();
             }
 
-            // Using REST API means no socket handler. Disabling until a shared input handler can be made (should support manual input, and programmatic input)
-            Log("Starting rest server");
-            restManager.LaunchServer();
+            inputHandler.onInputReceived += async x => await actionsController.ParseCommand(x);
 
-            HandleSocket(terminalInputSocket, eventsManager, actionsController);
-            
-            while (true)
+            if (Config.useRestAPI)
             {
-                await Task.Delay(100);
+                // Using REST API means no socket handler. Disabling until a shared input handler can be made (should support manual input, and programmatic input)
+                Log("Starting rest server");
+                restManager.LaunchServer();
             }
-        }
+            if (Config.useTerminalSocket)
+            {
+                Log("Opening WSL instance");
+                // TODO: change this to a relative path, or environment variable. 
+                string windowsFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                //string wslPath = $"/mnt/c{windowsFolderPath.Replace("C:", "").Replace("\\", "/")}/IronWhisper/Whisper-Terminal";
+                string path = Environment.GetEnvironmentVariable("WSLTerminalPath", EnvironmentVariableTarget.User);
+                Log("Path: " + path);
+                string wslCommand = $"cd {path} && ./command -t 8";
 
-        private async Task HandleSocket(TerminalInputSocket socket, EventsManager evt, ActionManager actions)
-        {
-            Log("[Socket] Connecting to WSL2 terminal...");
-            await Speak(CachedTTS.Boot_WaitForTerminal);
+                Utilities.CreateWSLWindowWithPrompt(wslCommand);
 
-            socket.Connect();
-            socket.StartStream();
-            await Speak(CachedTTS.Terminal_OnConnected);
+                // Wait a bit for WSL to launch
+                await Task.Delay(500);
 
+                // Setup socket, including getting WSL IP
+                var terminalInputSocket = new TerminalInputSocket();
+
+                terminalInputSocket.RunLoop();
+            }
+
+
+            // we need a core loop still, that this sits inside. Or just remove the events system (will break timer though)
+            // So, add a 'core loop' class that runs a while loop and calls an action inside it. Classes can register and deregister from the core loop. 
+            // hence, socket can register, events can register, etc
+            while (eventsManager.EventsAvailable())
+            {
+                var ev = eventsManager.DequeueEvent();
+                await ev.Consume();
+            }
+
+            Log("Core Loop: Success", "Success", ConsoleColor.Green);
             while (true)
             {
-                var speech = socket.SocketTick();
-                if (speech != null)
+                if (Config.useManualInput)
                 {
-                    await actions.ParseCommand(speech);
+                    string input = Console.ReadLine();
+                    inputHandler.RegisterInput(input);
                 }
-                while (evt.EventsAvailable())
+                else
                 {
-                    var ev = evt.DequeueEvent();
-                    await ev.Consume();
+                    await Task.Delay(100);
                 }
             }
         }
@@ -194,7 +194,7 @@ namespace IronWhisper_CentralController.Core
 
             int currentIndex = 0;
 
-            if (Config.DeafAccessible && Config.UseMimic3)
+            if (Config.BlindAccessible && Config.UseMimic3)
             {
                 TTSManager.Instance.ProcessTTS(Utilities.RemoveLogDescriptor(message));
             }
@@ -234,14 +234,22 @@ namespace IronWhisper_CentralController.Core
 
         public static async Task Speak(string message, int verbosity = 0)
         {
+            if (!Config.UseMimic3)
+            {
+                return;
+            }
             if (Config.TTSVerbosity >= verbosity)
             {
-                //await TTSManager.Instance.ProcessTTS(message);
+                await TTSManager.Instance.ProcessTTS(message);
             }
         }
 
         public static async Task Speak (CachedTTS audio)
         {
+            if (!Config.UseMimic3)
+            {
+                return;
+            }
             TTSManager.Instance.PlayAudio(audio);
         }
 
