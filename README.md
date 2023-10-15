@@ -8,6 +8,14 @@ AI Steps:
 4. TTS. Using the Mimic3 TTS tool, the AI responds verbally to the user.
 
 # TODO's
+
+API
+- Create a data structure for instructions etc to be fed to devices.
+- Return this structure as part of the response to the device update call
+- Create a new endpoint to consume part of, or all, of the data, allowing a device to confirm that it has received it.
+- Idea; I need a device to response quickly to certain events. Aka, if a timer is set for 3 minutes, and the device checks every 5, it wont work.
+    - What if i combine the http approach with a TCP ping? The device is already registering its IP via an update, the controller can connect, advise of need to update, and disconnect. 
+  
 Client instance 
 - add 'client' mode to the controller. It will act as a node, or transfer station for commands and actions.
 - Example flow,
