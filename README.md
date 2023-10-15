@@ -14,8 +14,6 @@ Mimic3
  - "get online" action: create wavs, link and call, add dynamic call links
 
 Device Registration Refactor
-- Create rest api interface in central controller
-- Expose api tunnel and port using NGROK
 - change device registration from UDP Broadcast to API reference
 - Terminals provide input through api instead of local socket
 
