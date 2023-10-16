@@ -9,11 +9,10 @@ AI Steps:
 
 # TODO's
 
-Managers
-- Instead of creating all the managers 1-by-1, instead make manager classes derive from a BaseManager class with a virtual CreateInstance method.
-- Each manager implements method separately, just like current
-- Replace manager creation at start with reflection instancing of all BaseManager derivatives (the same as the BaseAction handling)
-
+Update REST client with new log events
+- Requires either SSE or WebSocket implementation
+- GenHTTP has no WebSocket implementation right now, so it either needs to be on top or wait for that
+  
 Actions
 - Add an 'enabled' bool to all actions, so debug/testing actions can be deactivated
   
