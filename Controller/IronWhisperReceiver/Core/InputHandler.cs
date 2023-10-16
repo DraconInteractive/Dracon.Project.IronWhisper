@@ -1,11 +1,10 @@
-﻿using IronWhisper_CentralController.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisper_CentralController
+namespace IronWhisper_CentralController.Core
 {
     public class InputHandler
     {
@@ -21,7 +20,7 @@ namespace IronWhisper_CentralController
             Instance = this;
         }
 
-        public void RegisterInput (string message)
+        public void RegisterInput(string message)
         {
             var speech = new CoreSpeech(queryPrompt, message);
             lastInputReceived = speech;

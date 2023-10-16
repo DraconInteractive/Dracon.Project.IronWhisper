@@ -51,6 +51,7 @@ namespace IronWhisper_CentralController.Core.Actions
 
         protected bool PhrasesContainsPartial(CoreSpeech command)
         {
+            if (command == null || command.Message == null) return false;
             bool match = false;
             foreach (var phrase in Phrases)
             {

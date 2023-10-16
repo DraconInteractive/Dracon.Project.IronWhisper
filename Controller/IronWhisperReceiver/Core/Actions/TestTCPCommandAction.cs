@@ -1,5 +1,6 @@
 ﻿using IronWhisper_CentralController.Core.InputPipe;
 using IronWhisper_CentralController.Core.Networking;
+using IronWhisper_CentralController.Core.Networking.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace IronWhisper_CentralController.Core.Actions
         {
             CoreSystem.Log("[TCP] Sending command");
             var device = Registry.RegistryCore.Instance.GetDevice("AP_HOME_MAIN");
-            await TCPSender.Instance.SendCommandAsync(device, "Test", x => CoreSystem.Log($"[TCP] Command result: {x}"));
+            await SocketManager.Instance.SendTCP_Command(device, "test", x => CoreSystem.Log($"[TCP] Command result: {x}"));
             CoreSystem.Log("[TCP] Command complete");
             ChangeState(State.Finished);
         }

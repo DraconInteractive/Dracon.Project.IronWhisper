@@ -390,7 +390,7 @@ namespace IronWhisper_CentralController.Core.Registry
             return AllDevices().Where(x => x.networkDevice.Online).ToList();
         }
 
-        public void UpdateNetworkDevice(string deviceID, string remoteAddress, Action deviceRecognised)
+        public bool UpdateNetworkDevice(string deviceID, string remoteAddress)
         {
             foreach (var device in AllDevices())
             {
@@ -402,13 +402,14 @@ namespace IronWhisper_CentralController.Core.Registry
                     }
                     CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} identified. Retrieving update.", 2);
                     var hostname = Networking.NetworkUtilities.GetHostName(remoteAddress);
-                    device.networkDevice.UpdateDetails(new Networking.NetworkDevice () { Address = remoteAddress, HostName = hostname});
+                    device.networkDevice.UpdateDetails(new NetworkDevice () { Address = remoteAddress, HostName = hostname});
                     CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} update complete.", 2);
                     Save();
-                    deviceRecognised?.Invoke();
-                    return;
+                    return true;
                 }
             }
+
+            return false;
         }
 
         public bool IsRegisteredNetworkDevice(string ip = "", string hostname = "", string deviceID = "")

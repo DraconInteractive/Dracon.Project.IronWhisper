@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Windows;
 using System;
 using IronWhisper_CentralController.Core.Networking.REST;
+using IronWhisper_CentralController.Core.Networking.Sockets;
 
 namespace IronWhisper_CentralController.Core
 {
@@ -52,12 +53,11 @@ namespace IronWhisper_CentralController.Core
             // I could use a proper _instance/Instance implementation, but so far im just lazy
             var actionsController = new ActionManager();
             var apiManager = new APIManager();
-            var networkManager = new LocalNetworkManager();
             var eventsManager = new EventsManager();
             var ttsManager = new TTSManager();
             var restManager = new RESTManager();
             var inputHandler = new InputHandler();
-
+            var socketManager = new SocketManager();
 
             if (Config.UseMimic3)
             {
@@ -90,13 +90,7 @@ namespace IronWhisper_CentralController.Core
 
             if (Config.ListenUDP)
             {
-                UDPReceiver.StartListening();
-            }
-
-            if (Config.InitTCP)
-            {
-                Log("Starting TCP handler...");
-                var tcpSender = new TCPSender();
+                socketManager.StartListening_IDBroadcast();
             }
 
             inputHandler.onInputReceived += async x => await actionsController.ParseCommand(x);
@@ -128,16 +122,6 @@ namespace IronWhisper_CentralController.Core
                 terminalInputSocket.RunLoop();
             }
 
-
-            // we need a core loop still, that this sits inside. Or just remove the events system (will break timer though)
-            // So, add a 'core loop' class that runs a while loop and calls an action inside it. Classes can register and deregister from the core loop. 
-            // hence, socket can register, events can register, etc
-            while (eventsManager.EventsAvailable())
-            {
-                var ev = eventsManager.DequeueEvent();
-                await ev.Consume();
-            }
-
             Log("Core Loop: Success", "Success", ConsoleColor.Green);
             while (true)
             {
@@ -150,6 +134,11 @@ namespace IronWhisper_CentralController.Core
                 {
                     await Task.Delay(100);
                 }
+                while (eventsManager.EventsAvailable())
+                {
+                    var ev = eventsManager.DequeueEvent();
+                    await ev.Consume();
+                }
             }
         }
 
@@ -157,11 +146,6 @@ namespace IronWhisper_CentralController.Core
         {
             Log("Ctrl-C pressed. Exiting");
             args.Cancel = true;
-
-            if (ServerLauncher.Instance != null && ServerLauncher.Instance.process != null)
-            {
-                ServerLauncher.Instance.Close();
-            }
 
             Environment.Exit(0);
         }

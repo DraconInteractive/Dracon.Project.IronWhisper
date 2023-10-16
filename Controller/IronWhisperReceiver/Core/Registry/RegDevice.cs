@@ -9,12 +9,12 @@ namespace IronWhisper_CentralController.Core.Registry
     public class RegDevice : RegCore
     {
         public string deviceID;
-        public Networking.NetworkDevice networkDevice;
+        public NetworkDevice networkDevice;
 
         public RegDevice () : base()
         {
             deviceID = "TEMP";
-            networkDevice = new Networking.NetworkDevice
+            networkDevice = new NetworkDevice
             {
                 lastUpdateTime = DateTime.Now
             };

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronWhisper_CentralController.Core.Networking
+namespace IronWhisper_CentralController.Core.Registry
 {
     public class NetworkDevice
     {
