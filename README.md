@@ -13,9 +13,6 @@ Update REST client with new log events
 - Requires either SSE or WebSocket implementation
 - GenHTTP has no WebSocket implementation right now, so it either needs to be on top or wait for that
   
-Actions
-- Add an 'enabled' bool to all actions, so debug/testing actions can be deactivated
-  
 API
 - Create a data structure for instructions etc to be fed to devices.
 - Return this structure as part of the response to the device update call
