@@ -25,12 +25,11 @@ namespace IronWhisper_CentralController.Core
         public bool BlindAccessible = false;
         public int TTSVerbosity = 0;
 
-        public bool useTerminalSocket = false;
+        public bool useTerminalSocket = true;
         public bool useRestAPI = true;
         public bool useManualInput = true;
 
-        public bool LaunchNGROK = false;
-        public bool LaunchTerminal = true;
+        public bool LaunchNGROK = true;
         public string Version = "v0.1.9a";
     }
 

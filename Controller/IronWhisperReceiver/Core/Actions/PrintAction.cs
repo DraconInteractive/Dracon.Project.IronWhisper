@@ -88,7 +88,7 @@ namespace IronWhisper_CentralController.Core.Actions
             CoreSystem.Log($"{e.DisplayName} --  {e.ID}", e.DisplayName, ConsoleColor.Yellow);
             if (e is RegDevice d)
             {
-                CoreSystem.Log($" >> {d.networkDevice.Address}");
+                CoreSystem.Log($" >> {d.networkDevice.Address} >> {(d.networkDevice.Online ? "Online" : "Offline")}");
             }
             CoreSystem.Log("Tags:");
 
@@ -114,17 +114,17 @@ namespace IronWhisper_CentralController.Core.Actions
             CoreSystem.Log("\nAccess Points:");
             foreach (var ap in reg.AccessPoints)
             {
-                CoreSystem.Log($"\t{ap.DisplayName.PadRight(30)}{ap.SpeechTags[0].PadRight(20)}{ap.ID}");
+                CoreSystem.Log($"  {ap.DisplayName.PadRight(30)}{ap.SpeechTags[0].PadRight(20)}{(ap.networkDevice.Online ? "Online" : "Offline").PadRight(10)}{ap.ID}");
             }
             CoreSystem.Log("\nTerminals:");
             foreach (var term in reg.Terminals)
             {
-                CoreSystem.Log($"\t{term.DisplayName.PadRight(30)}{term.SpeechTags[0].PadRight(20)}{term.ID}");
+                CoreSystem.Log($"  {term.DisplayName.PadRight(30)}{term.SpeechTags[0].PadRight(20)}{(term.networkDevice.Online ? "Online" : "Offline").PadRight(10)}{term.ID}");
             }
             CoreSystem.Log("\nProjects:");
             foreach (var proj in reg.Projects)
             {
-                CoreSystem.Log($"\t{proj.DisplayName.PadRight(30)}{proj.SpeechTags[0].PadRight(20)}{proj.ID}");
+                CoreSystem.Log($"  {proj.DisplayName.PadRight(30)}{proj.SpeechTags[0].PadRight(20)}{proj.ID}");
             }
             CoreSystem.Log();
         }

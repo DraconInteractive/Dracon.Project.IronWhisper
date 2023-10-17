@@ -22,12 +22,12 @@ namespace IronWhisper_CentralController.Core
         {
             if (message == null) return;
 
-            Message = message;
+            Message = message.TrimEnd('\0');
             Command = message.Replace(prompt, "").ToLower();
 
             foreach (var p in _punctuation)
             {
-                Command = Command.Replace(p, "").TrimEnd('\0');
+                Command = Command.Replace(p, "");
             }
 
             Message = Message.Trim();
