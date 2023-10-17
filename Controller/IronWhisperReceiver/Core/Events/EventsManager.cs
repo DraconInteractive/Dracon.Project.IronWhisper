@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController.Core.Events
 {
-    public class EventsManager
+    public class EventsManager : CoreManager
     {
         public static EventsManager Instance;
         public Queue<CoreEvent> eventQueue;
@@ -31,23 +31,5 @@ namespace IronWhisper_CentralController.Core.Events
         {
             eventQueue.Enqueue(ev);
         }
-    }
-
-    public class CoreEvent
-    {
-        public virtual async Task Consume()
-        {
-
-        }
-    }
-
-    public class TimerEvent : CoreEvent
-    {
-        public TimeSpan duration;
-        public override async Task Consume()
-        {
-            string plural = duration.TotalMinutes > 0 ? "minutes" : "minute";
-            Console.WriteLine($"Your {duration.TotalMinutes} {plural} timer is finished!");
-        }
-    }
+    } 
 }

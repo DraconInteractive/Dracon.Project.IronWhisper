@@ -6,20 +6,21 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using GenHTTP.Modules.IO;
 
 namespace IronWhisper_CentralController.Core.Networking.REST
 {
     public class TestHandler : IMiniAPIHandler
     {
-        public string EndpointPath()
+        public override string EndpointPath()
         {
             return "/test";
         }
 
-        public ValueTask<IResponse?> HandleAsync(IRequest request)
+        public override ValueTask<IResponse?> HandleAsync(IRequest request)
         {
             var response = request.Respond()
-                                  .Content(new JsonContent($"Test!", JsonSerializerOptions.Default))
+                                  .Content("Test!")
                                   .Type(new FlexibleContentType(ContentType.TextPlain))
                                   .Build();
 

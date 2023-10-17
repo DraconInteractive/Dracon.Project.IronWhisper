@@ -25,7 +25,7 @@ namespace IronWhisper_CentralController.Core
         public bool BlindAccessible = false;
         public int TTSVerbosity = 0;
 
-        public bool useTerminalSocket = true;
+        public bool useTerminalSocket = false;
         public bool useRestAPI = true;
         public bool useManualInput = true;
 
@@ -39,41 +39,45 @@ namespace IronWhisper_CentralController.Core
         public static CoreSystem Instance;
         public static CoreConfig Config;
 
+        public static List<string> Logs = new();
+
         public async Task Run()
         {
             Config = new CoreConfig();
 
-            Log($"IW-Core {Config.Version}\n-------------------------------------------\n");
+            Log($"IW-Core {Config.Version}");
+            Log("-------------------------------------------\n");
 
             Instance = this;
 
             Console.CancelKeyPress += new ConsoleCancelEventHandler(ExitHandler);
 
-            // These are all here to create their singleton instances. 
-            // I could use a proper _instance/Instance implementation, but so far im just lazy
-            var actionsController = new ActionManager();
-            var apiManager = new APIManager();
-            var eventsManager = new EventsManager();
-            var ttsManager = new TTSManager();
-            var restManager = new RESTManager();
-            var inputHandler = new InputHandler();
-            var socketManager = new SocketManager();
+            var managerTypes = Utilities.GetArchetypes(typeof(CoreManager));
+            foreach (Type type in managerTypes)
+            {
+                Activator.CreateInstance(type);
+            }
 
             if (Config.UseMimic3)
             {
-                var ttsOnline = await apiManager.GetURLOnline(APIManager.ttsURL);
+                TTSManager.InitializeCacheDictionary();
+
+                var ttsOnline = await APIManager.Instance.GetURLOnline(APIManager.ttsURL);
                 if (ttsOnline)
                 {
-                    Log("[TTS] Setup: Success", "Success", ConsoleColor.Green);
+                    LogSystemStatus("Mimic3", SystemStatus.Online);
                     await Speak(CachedTTS.Boot_TTS_Online);
                     await Task.Delay(500);
                 }
                 else
                 {
                     Config.UseMimic3 = false;
-                    Log("[TTS] Setup: Failure", "Failure", ConsoleColor.Red);
+                    LogSystemStatus("Mimic3", SystemStatus.Offline);
                 }
-                Log();
+            }
+            else
+            {
+                LogSystemStatus("Mimic3", SystemStatus.Disabled);
             }
 
             RegistryCore registry;
@@ -87,56 +91,68 @@ namespace IronWhisper_CentralController.Core
             {
                 registry = new RegistryCore().Load();
             }
+            LogSystemStatus("Registry", SystemStatus.Online);
+
 
             if (Config.ListenUDP)
             {
-                socketManager.StartListening_IDBroadcast();
+                SocketManager.Instance.StartListening_IDBroadcast();
+                LogSystemStatus("UDP Broadcast Receiver", SystemStatus.Online);
+            }
+            else
+            {
+                LogSystemStatus("UDP Broadcast Receiver", SystemStatus.Disabled);
             }
 
-            inputHandler.onInputReceived += async x => await actionsController.ParseCommand(x);
+            InputHandler.Instance.onInputReceived += async x => await ActionManager.Instance.ParseCommand(x);
 
             if (Config.useRestAPI)
             {
-                // Using REST API means no socket handler. Disabling until a shared input handler can be made (should support manual input, and programmatic input)
-                Log("Starting rest server");
-                restManager.LaunchServer();
+                _ = RESTManager.Instance.LaunchServer();
             }
+            else
+            {
+                LogSystemStatus("REST Server", SystemStatus.Disabled);
+            }
+
             if (Config.useTerminalSocket)
             {
-                Log("Opening WSL instance");
-                // TODO: change this to a relative path, or environment variable. 
                 string windowsFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                //string wslPath = $"/mnt/c{windowsFolderPath.Replace("C:", "").Replace("\\", "/")}/IronWhisper/Whisper-Terminal";
-                string path = Environment.GetEnvironmentVariable("WSLTerminalPath", EnvironmentVariableTarget.User);
-                Log("Path: " + path);
+                string path = Environment.GetEnvironmentVariable("WSLTerminalPath", EnvironmentVariableTarget.User) ?? "";
                 string wslCommand = $"cd {path} && ./command -t 8";
 
-                Utilities.CreateWSLWindowWithPrompt(wslCommand);
+                _ = Utilities.CreateWSLWindowWithPrompt(wslCommand);
 
                 // Wait a bit for WSL to launch
                 await Task.Delay(500);
 
-                // Setup socket, including getting WSL IP
-                var terminalInputSocket = new TerminalInputSocket();
-
-                terminalInputSocket.RunLoop();
+                _ = SocketManager.Instance.StartWSLLoop();
+                LogSystemStatus("Whisper", SystemStatus.Online);
+            }
+            else
+            {
+                LogSystemStatus("Whisper", SystemStatus.Disabled);
             }
 
-            Log("Core Loop: Success", "Success", ConsoleColor.Green);
+            Log();
+            Log("System viable. Beginning core loop.");
+            Log("-------------------------------------------\n");
+
             while (true)
             {
                 if (Config.useManualInput)
                 {
-                    string input = Console.ReadLine();
-                    inputHandler.RegisterInput(input);
+                    string input = Console.ReadLine() ?? "";
+                    Log("Console: " + input);
+                    InputHandler.Instance.RegisterInput(input, "Console");
                 }
                 else
                 {
                     await Task.Delay(100);
                 }
-                while (eventsManager.EventsAvailable())
+                while (EventsManager.Instance.EventsAvailable())
                 {
-                    var ev = eventsManager.DequeueEvent();
+                    var ev = EventsManager.Instance.DequeueEvent();
                     await ev.Consume();
                 }
             }
@@ -165,6 +181,11 @@ namespace IronWhisper_CentralController.Core
             if (Config.Verbosity >= verbosity)
             {
                 Console.Write(message + (writeLine ? "\n" : ""));
+                Logs.Add(message);
+                while (Logs.Count > 100)
+                {
+                    Logs.RemoveAt(0);
+                }
             }
         }
 
@@ -174,6 +195,12 @@ namespace IronWhisper_CentralController.Core
             if (Config.Verbosity < verbosity)
             {
                 return;
+            }
+
+            Logs.Add(message);
+            while (Logs.Count > 100)
+            {
+                Logs.RemoveAt(0);
             }
 
             int currentIndex = 0;
@@ -216,6 +243,35 @@ namespace IronWhisper_CentralController.Core
             Log($"[Error] {message}", "Error", ConsoleColor.Red, verbosity, writeLine);
         }
 
+        public enum SystemStatus
+        {
+            Online,
+            Offline,
+            Disabled
+        }
+        public static void LogSystemStatus (string system, SystemStatus status)
+        {
+            string statusSymbol = "";
+            ConsoleColor color = ConsoleColor.Gray;
+            switch (status)
+            {
+                case SystemStatus.Online:
+                    statusSymbol = "✓";
+                    color = ConsoleColor.Green;
+                    break;
+                case SystemStatus.Offline:
+                    statusSymbol = "x";
+                    color = ConsoleColor.Red;
+                    break;
+                case SystemStatus.Disabled:
+                    statusSymbol = "-";
+                    color = ConsoleColor.DarkGray;
+                    break;
+            }
+
+            Log($"[{statusSymbol}] {system}", statusSymbol, color);
+        }
+
         public static async Task Speak(string message, int verbosity = 0)
         {
             if (!Config.UseMimic3)
@@ -237,33 +293,6 @@ namespace IronWhisper_CentralController.Core
             TTSManager.Instance.PlayAudio(audio);
         }
 
-        public static string GetInput(string prompt, Predicate<string> validation, int retries = 0, string retryMessage = "")
-        {
-            int currentRetries = 0;
-            string input = "";
-            if (retryMessage == "")
-            {
-                retryMessage = "Invalid input. Please try again";
-            }
-
-            while (currentRetries <= retries)
-            {
-                Log(prompt);
-                input = Console.ReadLine().Trim();
-                if (validation(input.ToLower()))
-                {
-                    return input;
-                }
-                else
-                {
-                    Log(retryMessage);
-                }
-                if (retries > 0)
-                {
-                    currentRetries++;
-                }
-            }
-            return input;
-        }
+        
     }
 }

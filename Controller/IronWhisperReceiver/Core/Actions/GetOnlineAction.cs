@@ -39,5 +39,10 @@ namespace IronWhisper_CentralController.Core.Actions
             CoreSystem.Log("[GetOnline] " + output);
             ChangeState(State.Finished);
         }
+
+        public override string HelpInformation()
+        {
+            return "[GetOnline] \"How many devices are online?\", \"Get online devices\", \"Find all online devices\"";
+        }
     }
 }

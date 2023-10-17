@@ -2,20 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController.Core.Registry
 {
-    public class RegistryCore
+    public class RegistryCore : CoreManager
     {
         public static RegistryCore Instance;
-        public List<RegAccessPoint> AccessPoints = new List<RegAccessPoint>();
-        public List<RegTerminal> Terminals = new List<RegTerminal>();
-        public List<RegProject> Projects = new List<RegProject>();
+        public List<RegAccessPoint> AccessPoints = new();
+        public List<RegTerminal> Terminals = new();
+        public List<RegProject> Projects = new();
 
-        private static string folderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IronWhisper");
-        private static string filePath => Path.Combine(folderPath, "registry.json");
+        private static string FolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IronWhisper");
+        private static string FilePath => Path.Combine(FolderPath, "registry.json");
 
         public RegistryCore()
         {
@@ -275,16 +276,15 @@ namespace IronWhisper_CentralController.Core.Registry
         {
             ValidateFile();
             string data = JsonConvert.SerializeObject(this, Formatting.Indented);
-            CoreSystem.Log("[Registry] Saving to: " + filePath, 2);
-            File.WriteAllText(filePath, data);
+            CoreSystem.Log("[Registry] Saving to: " + FilePath, 2);
+            File.WriteAllText(FilePath, data);
         }
 
         public RegistryCore Load()
         {
             if (ValidateFile())
             {
-                CoreSystem.Log($"[Registry] Loading from: {filePath}", 2);
-                string data = File.ReadAllText(filePath);
+                string data = File.ReadAllText(FilePath);
                 var reg = JsonConvert.DeserializeObject<RegistryCore>(data);
                 AccessPoints = reg.AccessPoints;
                 Terminals = reg.Terminals;
@@ -297,11 +297,6 @@ namespace IronWhisper_CentralController.Core.Registry
                 Terminals = def.Terminals;
                 Projects = def.Projects;
             }
-
-            CoreSystem.Log($"[Registry] Loading...\nTerminals:\t{Terminals.Count}\nAccess Points:\t{AccessPoints.Count}\nProjects:\t{Projects.Count}\nOnline Devices:\t{OnlineDevices().Count}", 1);
-            CoreSystem.Log(JsonConvert.SerializeObject(this, Formatting.Indented), 2);
-            CoreSystem.Log(2);
-            CoreSystem.Log("[Registry] Load: Success\n", "Success", ConsoleColor.Green);
             return this;
         }
 
@@ -309,23 +304,23 @@ namespace IronWhisper_CentralController.Core.Registry
         {
             if (ValidateFile())
             {
-                CoreSystem.Log($"[Registry] Loading (non-alloc) from: {filePath}", 1);
-                string data = File.ReadAllText(filePath);
+                CoreSystem.Log($"[Registry] Loading (non-alloc) from: {FilePath}", 1);
+                string data = File.ReadAllText(FilePath);
                 Console.WriteLine(data);
             }
         }
 
         private static bool ValidateFile()
         {
-            var path = folderPath;
+            var path = FolderPath;
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
                 return false;
             }
-            if (!File.Exists(filePath))
+            if (!File.Exists(FilePath))
             {
-                File.WriteAllText(filePath, "{}");
+                File.WriteAllText(FilePath, "{}");
                 return false;
             }
             return true;
@@ -364,7 +359,7 @@ namespace IronWhisper_CentralController.Core.Registry
 
         public List<RegCore> AllEntities ()
         {
-            List<RegCore> entities = new List<RegCore>();
+            List<RegCore> entities = new();
             entities.AddRange(Terminals);
             entities.AddRange(AccessPoints);
             entities.AddRange(Projects);
@@ -373,7 +368,7 @@ namespace IronWhisper_CentralController.Core.Registry
         }
         public List<RegDevice> AllDevices()
         {
-            List<RegDevice> devices = new List<RegDevice>();
+            List<RegDevice> devices = new();
             foreach (var device in AccessPoints)
             {
                 devices.Add(device);
@@ -412,18 +407,23 @@ namespace IronWhisper_CentralController.Core.Registry
             return false;
         }
 
+        public bool UpdateNetworkDevice(string deviceID, IPAddress remoteAddress)
+        {
+            return UpdateNetworkDevice(deviceID, remoteAddress.ToString());
+        }
+
         public bool IsRegisteredNetworkDevice(string ip = "", string hostname = "", string deviceID = "")
         {
             bool match = AllDevices().Any(x => x.networkDevice.Address == ip || x.networkDevice.HostName == hostname || x.deviceID == deviceID);
             return match;
         }
 
-        public RegDevice GetDevice(string deviceID)
+        public RegDevice? GetDevice(string deviceID)
         {
             return AllDevices().FirstOrDefault(x => x.deviceID == deviceID);
         }
 
-        public RegCore GetEntity (string entityID)
+        public RegCore? GetEntity (string entityID)
         {
             return AllEntities().FirstOrDefault(x => x.ID == entityID);
         }

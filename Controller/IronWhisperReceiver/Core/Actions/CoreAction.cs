@@ -27,11 +27,24 @@ namespace IronWhisper_CentralController.Core.Actions
         {
             Priority = 1;
             InternalInit();
-            for (int i = 0; i < Phrases.Length; i++)
+            if (Phrases != null)
             {
-                Phrases[i] = Phrases[i].ToLower().Trim();
+                for (int i = 0; i < Phrases.Length; i++)
+                {
+                    Phrases[i] = Phrases[i].ToLower().Trim();
+                }
             }
+            else
+            {
+                CoreSystem.LogError($"Invalid phrase structure in '{Name}' action");
+            }
+            
             ChangeState(State.NotStarted);
+        }
+
+        public virtual bool Enabled ()
+        {
+            return true;
         }
 
         protected virtual void InternalInit ()
@@ -87,6 +100,11 @@ namespace IronWhisper_CentralController.Core.Actions
         protected virtual async Task InternalRunAgain(CoreSpeech speech)
         {
 
+        }
+
+        public virtual string HelpInformation ()
+        {
+            return "This action has no help information: " + Name;
         }
 
         protected void ChangeState (State newState)

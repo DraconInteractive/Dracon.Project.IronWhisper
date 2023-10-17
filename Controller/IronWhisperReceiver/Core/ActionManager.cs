@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace IronWhisper_CentralController.Core
 {
-    public class ActionManager
+    public class ActionManager : CoreManager
     {
         public static ActionManager Instance;
         public List<CoreAction> Actions;
@@ -33,7 +33,7 @@ namespace IronWhisper_CentralController.Core
 
             if (CurrentActions.Count == 0)
             {
-                foreach (var action in Actions)
+                foreach (var action in Actions.Where(x => x.Enabled()))
                 {
                     if (action.Evaluate(command) || action.AlwaysRun)
                     {
@@ -68,7 +68,7 @@ namespace IronWhisper_CentralController.Core
 
         List<Type> GetActionArchetypes()
         {
-            List<Type> archetypes = new List<Type>();
+            List<Type> archetypes = new();
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 foreach (Type type in assembly.GetTypes())

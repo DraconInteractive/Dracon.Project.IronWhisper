@@ -24,9 +24,14 @@ namespace IronWhisper_CentralController.Core.Actions
                 + $"{JsonConvert.SerializeObject(command, Formatting.Indented)}\n\n";
 
             CoreSystem.Log(verboseOutput, 2);
-            CoreSystem.Log("[Debug] >> " + command.Message);
+            CoreSystem.Log($"[Debug] [{command.Source}] >> {command.Message}");
 
             ChangeState(State.Finished);
+        }
+
+        public override string HelpInformation()
+        {
+            return "[Debug] - This action always happens!";
         }
     }
 }

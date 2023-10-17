@@ -22,6 +22,11 @@ namespace IronWhisper_CentralController.Core.Actions
             return PhrasesContainsPartial(command);
         }
 
+        public override string HelpInformation()
+        {
+            return "[Timer] \"Start a timer for 10 minutes\", \"Set a timer for 5 seconds\", \"Run a timer for 3 hours\"";
+        }
+
         protected override async Task InternalRun(CoreSpeech command)
         {
             TimeSpan span = GetSpan(command.Command);

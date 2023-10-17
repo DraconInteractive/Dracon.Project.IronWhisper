@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController.Core.Networking.Sockets
 {
-    public class SocketManager
+    public class SocketManager : CoreManager
     {
         public static SocketManager Instance;
 
@@ -30,6 +30,9 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
         public SocketManager()
         {
             Instance = this;
+            idBroadcastCTS = new CancellationTokenSource();
+            commandCTS = new CancellationTokenSource();
+            wslCTS = new CancellationTokenSource();
         }
 
         public void StartListening_IDBroadcast ()
@@ -52,51 +55,49 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
             commandCTS.Cancel();
         }
 
-        private async Task ReceiveIDBroadcasts (CancellationToken cts)
+        private async Task ReceiveIDBroadcasts (CancellationToken token)
         {
             UdpClient listener = new(idBroadcastPort);
             IPEndPoint groupEP = new(IPAddress.Any, idBroadcastPort);
-
-            CoreSystem.Log($"[UDP_ID] Begun listening for device updates on port {idBroadcastPort}...", idBroadcastPort.ToString(), ConsoleColor.Yellow, 1);
 
             try
             {
                 while (true)
                 {
-                    if (cts.IsCancellationRequested)
+                    if (token.IsCancellationRequested)
                     {
-                        CoreSystem.Log("[UDP_ID] Stopping UDP receiver...", 1);
+                        CoreSystem.Log("[UDP] Stopping broadcast receiver...", 1);
                         break;
                     }
-                    UdpReceiveResult result = await listener.ReceiveAsync();
+                    UdpReceiveResult result = await listener.ReceiveAsync(token);
                     byte[] bytes = result.Buffer;
                     string message = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
 
-                    RegistryCore.Instance.UpdateNetworkDevice(message, result.RemoteEndPoint.Address.ToString());
+                    RegistryCore.Instance.UpdateNetworkDevice(message, result.RemoteEndPoint.Address);
                 }
             }
             catch (Exception e)
             {
-                CoreSystem.Log($"[UDP_ID] Exception: {e.Message}", e.Message, ConsoleColor.Red);
+                CoreSystem.LogError($"[UDP] {e.Message}");
             }
             finally
             {
                 listener.Close();
             }
-            CoreSystem.Log("[UDP_ID] Stopped listening", 1);
+            CoreSystem.Log("[UDP] Stopped", 1);
         }
 
-        private async Task SendCommand(RegDevice rDevice, string command, Action<string> onCommandResult, CancellationToken cancellationToken)
+        private async Task SendCommand(RegDevice rDevice, string command, Action<string> onCommandResult, CancellationToken token)
         {
             // Create tcp client
-            TcpClient client = new TcpClient();
+            TcpClient client = new();
             CoreSystem.Log($"[TCP][Command] Connecting to {rDevice.networkDevice.Address}:{commandPort}", $"{rDevice.networkDevice.Address}:{commandPort}", ConsoleColor.Yellow);
             client.Connect(rDevice.networkDevice.Address, commandPort);
 
             // setup read/right
             NetworkStream stream = client.GetStream();
-            StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-            StreamWriter writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = true };
+            StreamReader reader = new(stream, Encoding.UTF8);
+            StreamWriter writer = new(stream, Encoding.UTF8) { AutoFlush = true };
 
             CoreSystem.Log("[TCP][Command] Sending...");
 
@@ -110,7 +111,7 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
             try
             {
                 // Wait for data from client
-                while (client.Connected && !cancellationToken.IsCancellationRequested && !resultReceived)
+                while (client.Connected && !token.IsCancellationRequested && !resultReceived)
                 {
                     if (stream.DataAvailable)
                     {
@@ -135,7 +136,7 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
                     {
                         CoreSystem.Log(".", writeLine: false);
 
-                        await Task.Delay(250);
+                        await Task.Delay(250, token);
                     }
                 }
             }
@@ -156,7 +157,6 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
         {
             var token = wslCTS.Token;
 
-            CoreSystem.Log("[Socket] Connecting to WSL2 terminal...");
             await CoreSystem.Speak(CachedTTS.Boot_WaitForTerminal);
 
             TcpClient client = new TcpClient();
@@ -183,8 +183,7 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
                 }
             }
             string con = $"{terminalIP}:{wslTerminalPort}";
-            CoreSystem.Log($"[Socket] Connected at {con}", $"{con}", ConsoleColor.Yellow, 1);
-
+            //CoreSystem.Log($"[Whisper] Connected at {con}", $"{con}", ConsoleColor.Yellow, 1);
             stream = client.GetStream();
 
             await CoreSystem.Speak(CachedTTS.Terminal_OnConnected);
@@ -242,7 +241,7 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
         {
             string distroName = "Ubuntu";  // Replace this with your WSL distro name
 
-            Process process = new Process();
+            Process process = new();
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 WindowStyle = ProcessWindowStyle.Hidden,
@@ -279,7 +278,7 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
                 CoreSystem.Log($"[WSL]: {e.Message}", e.Message, ConsoleColor.Red);
             }
 
-            CoreSystem.Log($"[WSL] WSL2 IP Address: {ipAddress}\n", ipAddress, ConsoleColor.Yellow);
+            //CoreSystem.Log($"[Whisper] Terminal IP: {ipAddress}\n", ipAddress, ConsoleColor.Yellow);
             return ipAddress;
         }
 
@@ -289,7 +288,7 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
             string[] identifierSplit = serializedString.Split("**");
             string[] messageSplit = identifierSplit[1].Split(">>");
 
-            InputHandler.Instance.RegisterInput(messageSplit[0]);
+            InputHandler.Instance.RegisterInput(messageSplit[0], "Whisper");
         }
     }
 }

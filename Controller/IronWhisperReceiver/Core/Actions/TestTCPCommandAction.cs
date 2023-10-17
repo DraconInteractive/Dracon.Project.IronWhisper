@@ -24,6 +24,10 @@ namespace IronWhisper_CentralController.Core.Actions
                 "send a test command"
             };
         }
+        public override string HelpInformation()
+        {
+            return "[TCP] \"Send a test command\"";
+        }
 
         protected override async Task InternalRun(CoreSpeech command)
         {

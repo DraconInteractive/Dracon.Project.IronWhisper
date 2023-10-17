@@ -6,24 +6,23 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using GenHTTP.Modules.IO;
+using Newtonsoft.Json;
 
-namespace IronWhisper_CentralController.Core.Networking.REST
+namespace IronWhisper_CentralController.Core.Networking.REST.Handlers
 {
-    public class RootHandler : IMiniAPIHandler
+    public class LogHandler : IMiniAPIHandler
     {
         public override string EndpointPath()
         {
-            return "/";
+            return "/log";
         }
 
         public override ValueTask<IResponse?> HandleAsync(IRequest request)
         {
-            string responseStr = $"IronWhisper REST Terminal - {CoreSystem.Config.Version}";
             var response = request.Respond()
-                                  .Content(responseStr)
-                                  .Type(new FlexibleContentType(ContentType.TextPlain))
-                                  .Build();
+                                 .Content(new JsonContent(CoreSystem.Logs, JsonSerializerOptions.Default))
+                                 .Type(new FlexibleContentType(ContentType.ApplicationJson))
+                                 .Build();
 
             return new ValueTask<IResponse?>(response);
         }

@@ -35,5 +35,10 @@ namespace IronWhisper_CentralController.Core.Actions
             TTSManager.Instance.PlayAudio(CachedTTS.Activate_Complete);
             ChangeState(State.Finished);
         }
+
+        public override string HelpInformation()
+        {
+            return "[Activate] \"Come online\", \"Wake up!\", \"Let's do this\"";
+        }
     }
 }

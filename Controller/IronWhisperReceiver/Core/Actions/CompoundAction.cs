@@ -18,29 +18,28 @@ namespace IronWhisper_CentralController.Core.Actions
             Name = "Compound";
             Phrases = new string[]
             {
-                "try a compound action",
-                "enter the matrix",
-                "into the matrix"
+                "try a compound action"
             };
         }
 
-        protected override async Task InternalRun(CoreSpeech command)
+        protected override Task InternalRun(CoreSpeech command)
         {
             // There is no way to get new speech here, so we have to change the foundation...
             CoreSystem.Log("[Compound] Starting compound action...");
             CoreSystem.Log("[Compound] Please say something , that I will intercept!");
             ChangeState(State.WaitingForInput);
+            return Task.CompletedTask;
         }
 
         bool firstRetry = true;
-        protected override async Task InternalRunAgain(CoreSpeech command)
+        protected override Task InternalRunAgain(CoreSpeech command)
         {
             if (firstRetry)
             {
                 CoreSystem.Log($"[Compound] \'{command.Message}\' huh? Interesting...");
                 firstRetry = false;
                 ChangeState(State.WaitingForInput);
-                return;
+                return Task.CompletedTask;
             }
 
             if (command.Command == "goodbye")
@@ -53,6 +52,12 @@ namespace IronWhisper_CentralController.Core.Actions
                 CoreSystem.Log($"[Compound] I see you said \'{command.Command}\', cool!\nYou can say 'goodbye' if you want to end this interaction :)", command.Message, ConsoleColor.Gray);
                 ChangeState(State.WaitingForInput);
             }
+            return Task.CompletedTask;
+        }
+
+        public override string HelpInformation()
+        {
+            return "[Compound] \"Try a compound action\"";
         }
     }
 }

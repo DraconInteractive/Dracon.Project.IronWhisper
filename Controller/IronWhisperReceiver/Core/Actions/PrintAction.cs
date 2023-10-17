@@ -28,6 +28,11 @@ namespace IronWhisper_CentralController.Core.Actions
             };
         }
 
+        public override string HelpInformation()
+        {
+            return "[Print] \"Find information...\", \"Tell me about...\", \"Get details on...\". You can ask for information about 'an entity' or 'the registry' if needed.";
+        }
+
         protected override async Task InternalRun(CoreSpeech command)
         {
             if (command.Entities == null || command.Entities.Length == 0)
@@ -35,7 +40,7 @@ namespace IronWhisper_CentralController.Core.Actions
                 var reg = RegistryCore.Instance;
                 if (command.Command.Contains("an entity"))
                 {
-                    string name = CoreSystem.GetInput("[Print] Enter entity ID: ", x => reg.GetEntity(x) != null, 1, "[Print] I can't find an entity by that ID. Try once again");
+                    string name = await InputHandler.GetInput("[Print] Enter entity ID: ", x => reg.GetEntity(x) != null, 1, "[Print] I can't find an entity by that ID. Try once again");
                     var ent = reg.GetEntity(name);
                     if (ent == null)
                     {
@@ -50,7 +55,7 @@ namespace IronWhisper_CentralController.Core.Actions
                 else if (command.Command.Contains("the registry"))
                 {
                     string[] options = new string[] { "y", "n", "yes", "no" };
-                    string confirmation = CoreSystem.GetInput("[Print] Show registry information? [y/n]", x => options.Contains(x)).ToLower();
+                    string confirmation = await InputHandler.GetInput("[Print] Show registry information? [y/n]", x => options.Contains(x));
                     if (confirmation == "y" || confirmation == "yes")
                     {
                         // print registry
@@ -109,17 +114,17 @@ namespace IronWhisper_CentralController.Core.Actions
             CoreSystem.Log("\nAccess Points:");
             foreach (var ap in reg.AccessPoints)
             {
-                CoreSystem.Log($"\t{ap.DisplayName.PadRight(30)}{ap.SpeechTags[0].PadRight(20)}{ap.networkDevice.Address}");
+                CoreSystem.Log($"\t{ap.DisplayName.PadRight(30)}{ap.SpeechTags[0].PadRight(20)}{ap.ID}");
             }
             CoreSystem.Log("\nTerminals:");
             foreach (var term in reg.Terminals)
             {
-                CoreSystem.Log($"\t{term.DisplayName.PadRight(30)}{term.SpeechTags[0].PadRight(20)}{term.networkDevice.Address}");
+                CoreSystem.Log($"\t{term.DisplayName.PadRight(30)}{term.SpeechTags[0].PadRight(20)}{term.ID}");
             }
             CoreSystem.Log("\nProjects:");
             foreach (var proj in reg.Projects)
             {
-                CoreSystem.Log($"\t{proj.DisplayName.PadRight(30)}{proj.SpeechTags[0].PadRight(20)}");
+                CoreSystem.Log($"\t{proj.DisplayName.PadRight(30)}{proj.SpeechTags[0].PadRight(20)}{proj.ID}");
             }
             CoreSystem.Log();
         }

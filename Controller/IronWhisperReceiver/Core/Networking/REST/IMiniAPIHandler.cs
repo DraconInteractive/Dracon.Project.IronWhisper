@@ -9,9 +9,13 @@ using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController.Core.Networking.REST
 {
-    public interface IMiniAPIHandler
+    public class IMiniAPIHandler
     {
-        public ValueTask<IResponse?> HandleAsync(IRequest request);
-        public string EndpointPath();
+        public virtual ValueTask<IResponse?> HandleAsync(IRequest request)
+        {
+            return default;
+        }
+
+        public virtual string EndpointPath() => "/";
     }
 }

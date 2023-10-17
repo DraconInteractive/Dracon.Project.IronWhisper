@@ -16,7 +16,9 @@ namespace IronWhisper_CentralController.Core
         public string Command;
         public RegCore[] Entities;
 
-        public CoreSpeech (string prompt, string message)
+        public string Source;
+
+        public CoreSpeech (string prompt, string message, string source = "")
         {
             if (message == null) return;
 
@@ -30,6 +32,7 @@ namespace IronWhisper_CentralController.Core
 
             Message = Message.Trim();
             Command = Command.Trim();
+            Source = source;
 
             Entities = RegistryCore.Instance.ParseEntities(Command).ToArray();
         }
@@ -40,9 +43,16 @@ namespace IronWhisper_CentralController.Core
         public Token[] tokens;
 
 
-        public TokenSpeech(string prompt, string message, Token[] _tokens = null) : base (prompt, message)
+        public TokenSpeech(string prompt, string message, Token[]? _tokens = null) : base(prompt, message)
         {
-            tokens = _tokens;
+            if (_tokens == null)
+            {
+                tokens = Array.Empty<Token>();
+            }
+            else
+            {
+                tokens = _tokens;
+            }
         }
     }
 

@@ -11,12 +11,12 @@ namespace IronWhisper_CentralController.Core.Networking.REST
 {
     public class ManualInputHandler : IMiniAPIHandler
     {
-        public string EndpointPath()
+        public override string EndpointPath()
         {
             return "/input";
         }
 
-        public ValueTask<IResponse?> HandleAsync(IRequest request)
+        public override ValueTask<IResponse?> HandleAsync(IRequest request)
         {
             var parameters = request.Query;
             var content = request.Content;
@@ -24,7 +24,7 @@ namespace IronWhisper_CentralController.Core.Networking.REST
 
             if (parameters.ContainsKey("input"))
             {
-                InputHandler.Instance.RegisterInput(parameters["input"]);
+                InputHandler.Instance.RegisterInput(parameters["input"], "REST");
             }
 
             var response = request.Respond()

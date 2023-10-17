@@ -11,11 +11,19 @@ using GenHTTP.Api.Protocol;
 using GenHTTP.Engine;
 using GenHTTP.Modules.Conversion.Providers.Json;
 using Newtonsoft.Json;
+using static IronWhisper_CentralController.Core.CoreSystem;
 
 namespace IronWhisper_CentralController.Core.Networking.REST
 {
-    public class RESTManager
+    public class RESTManager : CoreManager
     {
+        public static RESTManager Instance;
+
+        public RESTManager ()
+        {
+            Instance = this;
+        }
+
         public async Task LaunchServer ()
         {
             if (CoreSystem.Config.LaunchNGROK)
@@ -23,20 +31,23 @@ namespace IronWhisper_CentralController.Core.Networking.REST
                 KillProcessByName("cmd");
                 KillProcessByName("ngrok");
                 await CreateTunnel();
+                CoreSystem.Log("NGROK: Online", "Online", ConsoleColor.Green);
             }
             
             Host.Create()
                 .Handler(new APIHandlerBuilder())
                 .Start();
+
+            CoreSystem.LogSystemStatus("REST Server", SystemStatus.Online);
         }
 
         private static async Task CreateTunnel ()
         {
             CoreSystem.Log("Enter NGROK domain: ");
             CoreSystem.Log(">>", ">>", ConsoleColor.Yellow);
-            string line = Console.ReadLine();
+            string line = Console.ReadLine() ?? "";
 
-            Utilities.CreateCommandWindowWithPrompt($"ngrok http --domain {line} 8080");
+            await Utilities.CreateCommandWindowWithPrompt($"ngrok http --domain {line} 8080");
         }
 
         private static void KillProcessByName(string processName)
@@ -70,9 +81,14 @@ namespace IronWhisper_CentralController.Core.Networking.REST
         private void InitMiniHandlers ()
         {
             MiniHandlers = new List<IMiniAPIHandler>();
-            MiniHandlers.Add(new RootHandler());
-            MiniHandlers.Add(new TestHandler());
-            MiniHandlers.Add(new ManualInputHandler());
+            var handlerTypes = Utilities.GetArchetypes(typeof(IMiniAPIHandler));
+            foreach (Type type in handlerTypes)
+            {
+                if (Activator.CreateInstance(type) is IMiniAPIHandler h)
+                {
+                    MiniHandlers.Add(h);
+                }
+            }
         }
 
         public IHandler Parent { get; }
@@ -84,7 +100,7 @@ namespace IronWhisper_CentralController.Core.Networking.REST
 
         public ValueTask<IResponse?> HandleAsync(IRequest request)
         {
-            CoreSystem.Log(request.Target.Path.ToString());
+            //CoreSystem.Log(request.Target.Path.ToString());
             var handler = MiniHandlers.FirstOrDefault(x => x.EndpointPath() == request.Target.Path.ToString());
 
             if (handler != null)

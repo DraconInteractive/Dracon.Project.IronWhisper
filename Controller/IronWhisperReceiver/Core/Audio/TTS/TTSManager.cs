@@ -17,7 +17,7 @@ namespace IronWhisper_CentralController.Core.Audio.TTS
         Terminal_OnConnected
     }
 
-    public class TTSManager
+    public class TTSManager : CoreManager
     {
         public static TTSManager Instance;
 
@@ -26,11 +26,11 @@ namespace IronWhisper_CentralController.Core.Audio.TTS
         public TTSManager ()
         {
             Instance = this;
-            InitializeCacheDictionary();
         }
 
-        private static void InitializeCacheDictionary()
+        public static void InitializeCacheDictionary()
         {
+            CoreSystem.Log("  Populating cache...");
             string audioFilesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/TTS Audio");
             bool foundAll = true;
             foreach (CachedTTS ttsEnum in Enum.GetValues(typeof(CachedTTS)))
@@ -44,17 +44,14 @@ namespace IronWhisper_CentralController.Core.Audio.TTS
                 }
                 else
                 {
-                    CoreSystem.LogError($"Audio file not found for {ttsEnum}: {filePath}");
+                    CoreSystem.LogError($"  Audio file not found for {ttsEnum}: {filePath}");
                     foundAll = false;
                 }
             }
-            if (foundAll)
+            if (!foundAll)
             {
-                CoreSystem.Log($"[TTS] Cache population: Success", "Success", ConsoleColor.Green, 1);
-            }
-            else
-            {
-                CoreSystem.Log($"[TTS] Cache population: Failure", "Failure", ConsoleColor.Red, 1);
+                CoreSystem.Log($"  Cache population: Failure\n", "Failure", ConsoleColor.Red, 1);
+                CoreSystem.Log("  Switching to full dynamism...");
             }
         }
 
@@ -67,6 +64,8 @@ namespace IronWhisper_CentralController.Core.Audio.TTS
 
         public void PlayAudio(byte[] audioData)
         {
+            if (!CoreSystem.Config.UseMimic3) return;
+
             // Play the audio
             using (var stream = new MemoryStream(audioData))
             {
@@ -77,6 +76,8 @@ namespace IronWhisper_CentralController.Core.Audio.TTS
 
         public void PlayAudio(string fileName)
         {
+            if (!CoreSystem.Config.UseMimic3) return;
+
             string audioFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/TTS Audio", fileName);
             try
             {
@@ -94,6 +95,8 @@ namespace IronWhisper_CentralController.Core.Audio.TTS
 
         public void PlayAudio(CachedTTS audioRef)
         {
+            if (!CoreSystem.Config.UseMimic3) return;
+
             string filePath = CachedAudio[audioRef];
             PlayAudio(filePath);
         }
