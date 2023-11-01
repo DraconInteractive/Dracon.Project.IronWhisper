@@ -9,7 +9,6 @@ namespace IronWhisper_CentralController.Core.Registry
     public class NetworkDevice
     {
         public string Address;
-        public string HostName;
         public string Port;
         public DateTime lastUpdateTime;
         public bool Online => (DateTime.Now - lastUpdateTime).TotalMinutes < 5;
@@ -19,10 +18,6 @@ namespace IronWhisper_CentralController.Core.Registry
             if (!string.IsNullOrEmpty(details.Address))
             {
                 Address = details.Address;
-            }
-            if (!string.IsNullOrEmpty(details.HostName))
-            {
-                HostName = details.HostName;
             }
             if (!string.IsNullOrEmpty(details.Port))
             {

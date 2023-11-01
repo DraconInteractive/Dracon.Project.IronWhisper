@@ -68,7 +68,7 @@ namespace IronWhisper_CentralController.Core.Networking.REST
 
     public class APIHandler : IHandler
     {
-        public List<IMiniAPIHandler> MiniHandlers;
+        public List<CoreAPIHandler> MiniHandlers;
 
         private readonly IHandler _content;
 
@@ -80,11 +80,11 @@ namespace IronWhisper_CentralController.Core.Networking.REST
 
         private void InitMiniHandlers ()
         {
-            MiniHandlers = new List<IMiniAPIHandler>();
-            var handlerTypes = Utilities.GetArchetypes(typeof(IMiniAPIHandler));
+            MiniHandlers = new List<CoreAPIHandler>();
+            var handlerTypes = Utilities.GetArchetypes(typeof(CoreAPIHandler));
             foreach (Type type in handlerTypes)
             {
-                if (Activator.CreateInstance(type) is IMiniAPIHandler h)
+                if (Activator.CreateInstance(type) is CoreAPIHandler h)
                 {
                     MiniHandlers.Add(h);
                 }

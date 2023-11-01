@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController.Core.Networking.REST
 {
-    public class IMiniAPIHandler
+    public class CoreAPIHandler
     {
         public virtual ValueTask<IResponse?> HandleAsync(IRequest request)
         {

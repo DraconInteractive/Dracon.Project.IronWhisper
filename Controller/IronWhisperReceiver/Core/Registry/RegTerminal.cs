@@ -14,7 +14,7 @@ namespace IronWhisper_CentralController.Core.Registry
         public List<string> AccessPoints;
 
         [JsonIgnore]
-        public List<RegAccessPoint> AccessPointData => RegistryCore.Instance.AccessPoints.Where(x => AccessPoints.Contains(x.ID)).ToList();
+        public List<RegAccessPoint> AccessPointData => RegistryManager.Instance.AccessPoints.Where(x => AccessPoints.Contains(x.ID)).ToList();
 
         public RegTerminal()
         {

@@ -32,7 +32,7 @@ namespace IronWhisper_CentralController.Core.Actions
         protected override async Task InternalRun(CoreSpeech command)
         {
             CoreSystem.Log("[TCP] Sending command");
-            var device = Registry.RegistryCore.Instance.GetDevice("AP_HOME_MAIN");
+            var device = Registry.RegistryManager.Instance.GetDevice("AP_HOME_MAIN");
             await SocketManager.Instance.SendTCP_Command(device, "test", x => CoreSystem.Log($"[TCP] Command result: {x}"));
             CoreSystem.Log("[TCP] Command complete");
             ChangeState(State.Finished);

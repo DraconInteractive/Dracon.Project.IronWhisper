@@ -73,7 +73,7 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
                     byte[] bytes = result.Buffer;
                     string message = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
 
-                    RegistryCore.Instance.UpdateNetworkDevice(message, result.RemoteEndPoint.Address);
+                    RegistryManager.Instance.UpdateNetworkDevice(message, result.RemoteEndPoint.Address);
                 }
             }
             catch (Exception e)
@@ -288,7 +288,7 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
             string[] identifierSplit = serializedString.Split("**");
             string[] messageSplit = identifierSplit[1].Split(">>");
 
-            InputHandler.Instance.RegisterInput(messageSplit[0], "Whisper");
+            InputHandler.Instance.RegisterStandardInput(messageSplit[0], "Whisper");
         }
     }
 }

@@ -23,7 +23,7 @@ namespace IronWhisper_CentralController.Core
             if (message == null) return;
 
             Message = message.TrimEnd('\0');
-            Command = message.Replace(prompt, "").ToLower();
+            Command = message.Replace(prompt, "").ToLower(); 
 
             foreach (var p in _punctuation)
             {
@@ -34,7 +34,7 @@ namespace IronWhisper_CentralController.Core
             Command = Command.Trim();
             Source = source;
 
-            Entities = RegistryCore.Instance.ParseEntities(Command).ToArray();
+            Entities = RegistryManager.Instance.ParseEntities(Command).ToArray();
         }
     }
 

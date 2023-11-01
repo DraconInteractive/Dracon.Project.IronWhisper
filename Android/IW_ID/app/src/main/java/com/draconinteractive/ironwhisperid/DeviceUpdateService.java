@@ -11,10 +11,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketTimeoutException;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.os.Handler;
@@ -24,10 +21,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 
-public class UDPSenderService extends Service {
+public class DeviceUpdateService extends Service {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private final int interval = 30 * 1000; // seconds to milliseconds
     private final AtomicBoolean isOnlineUpdateRunning = new AtomicBoolean(false);
 
     @Override
@@ -103,56 +99,18 @@ public class UDPSenderService extends Service {
             {
                 try
                 {
-                    DeviceIDUtil.sendUDPBroadcast(DeviceIDUtil.getCustomDeviceId(UDPSenderService.this), 9876);
+                    String id = DeviceUtilities.getCustomDeviceId(DeviceUpdateService.this);
+                    String url = "https://connect.draconai.com.au/device";
+                    //DeviceIDUtil.sendUDPBroadcast(id, 9876);
+                    DeviceUtilities.sendHttpGetRequest(id, url);
                 }
                 finally {
                     isOnlineUpdateRunning.set(false);
                 }
             }
+            // seconds to milliseconds
+            int interval = 30 * 1000;
             handler.postDelayed(this, interval);
         }
     };
-
-    private volatile boolean isListening = false;
-    private DatagramSocket listeningSocket;
-
-    private void startListening(int port, long timeout) {
-        isListening = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    listeningSocket = new DatagramSocket(port);
-                    listeningSocket.setSoTimeout((int) timeout); // Set the socket timeout
-                    byte[] buffer = new byte[1024];
-                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
-                    while (isListening) {
-                        try {
-                            listeningSocket.receive(packet);
-                            String receivedData = new String(packet.getData(), 0, packet.getLength());
-                            // Handle the received data here
-                        } catch (SocketTimeoutException e) {
-                            // Socket timed out, stop listening
-                            break;
-                        }
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (listeningSocket != null && !listeningSocket.isClosed()) {
-                        listeningSocket.close();
-                    }
-                }
-            }
-        }).start();
-    }
-
-    private void stopListening() {
-        isListening = false;
-        if (listeningSocket != null && !listeningSocket.isClosed()) {
-            listeningSocket.close();
-        }
-    }
 }

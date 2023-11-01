@@ -1,6 +1,7 @@
 package com.draconinteractive.ironwhisperid;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,8 +15,7 @@ public class DebugActivity extends AppCompatActivity {
         // setContentView(R.layout.activity_debug);
 
         // Start the service
-        Intent serviceIntent = new Intent(this, UDPSenderService.class);
-        startService(serviceIntent);
+        DeviceUtilities.startSenderService(this);
 
         // Optionally, you can also immediately finish this activity if you don't want it to display anything
         // finish();

@@ -37,7 +37,7 @@ namespace IronWhisper_CentralController.Core.Actions
         {
             if (command.Entities == null || command.Entities.Length == 0)
             {
-                var reg = RegistryCore.Instance;
+                var reg = RegistryManager.Instance;
                 if (command.Command.Contains("an entity"))
                 {
                     string name = await InputHandler.GetInput("[Print] Enter entity ID: ", x => reg.GetEntity(x) != null, 1, "[Print] I can't find an entity by that ID. Try once again");
@@ -96,19 +96,13 @@ namespace IronWhisper_CentralController.Core.Actions
             {
                 CoreSystem.Log($"  --  {t}");
             }
-            CoreSystem.Log("Capabilities:");
-
-            foreach (var c in e.Capabilities)
-            {
-                CoreSystem.Log($"  --  {c}");
-            }
 
             CoreSystem.Log();
         }
 
         private void PrintRegistry ()
         {
-            var reg = RegistryCore.Instance;
+            var reg = RegistryManager.Instance;
             CoreSystem.Log("[Print] Heres the high level information. Search for a specific entity or device for more detail.\n");
             CoreSystem.Log($"Terminals:\t{reg.Terminals.Count}\nAccess Points:\t{reg.AccessPoints.Count}\nProjects:\t{reg.Projects.Count}\nOnline Devices:\t{reg.OnlineDevices().Count}");
             CoreSystem.Log("\nAccess Points:");

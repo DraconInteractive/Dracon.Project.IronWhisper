@@ -17,20 +17,20 @@ namespace IronWhisper_CentralController.Core
     public class CoreConfig
     {
         public int Verbosity = 1;
-        public bool ListenUDP = true; // D
         public bool RefreshRegistry = false;
-        public bool InitTCP = true; // D
 
         public bool UseMimic3 = false; // dir -> source .venv/bin/activate -> mimic3-server --preload-voice en_UK/apope_low --num-threads 2
         public bool BlindAccessible = false;
         public int TTSVerbosity = 0;
 
         public bool useTerminalSocket = true;
+        public bool useUDPIDSocket = true;
+        public bool useTCPCommandSocket = true;
         public bool useRestAPI = true;
         public bool useManualInput = true;
 
-        public bool LaunchNGROK = true;
-        public string Version = "v0.1.9a";
+        public bool LaunchNGROK = false;
+        public string Version = "v0.2.0a";
     }
 
     public class CoreSystem
@@ -79,21 +79,38 @@ namespace IronWhisper_CentralController.Core
                 LogSystemStatus("Mimic3", SystemStatus.Disabled);
             }
 
-            RegistryCore registry;
+            RegistryManager registry;
 
             if (Config.RefreshRegistry)
             {
-                registry = RegistryCore.CreateDefault();
+                registry = RegistryManager.CreateDefault();
                 registry.Save();
             }
             else
             {
-                registry = new RegistryCore().Load();
+                registry = new RegistryManager().Load();
             }
-            LogSystemStatus("Registry", SystemStatus.Online);
 
+            bool allConfigsValid = true;
+            foreach (var config in registry.ConfigFiles)
+            {
+                bool valid = await config.Validate();
+                if (!valid)
+                {
+                    allConfigsValid = false;
+                }
+            }
 
-            if (Config.ListenUDP)
+            if (allConfigsValid)
+            {
+                LogSystemStatus("Registry", SystemStatus.Online);
+            }
+            else
+            {
+                LogSystemStatus("Registry", SystemStatus.Error);
+            }
+
+            if (Config.useUDPIDSocket)
             {
                 SocketManager.Instance.StartListening_IDBroadcast();
                 LogSystemStatus("UDP Broadcast Receiver", SystemStatus.Online);
@@ -139,21 +156,12 @@ namespace IronWhisper_CentralController.Core
 
             while (true)
             {
-                if (Config.useManualInput)
-                {
-                    string input = Console.ReadLine() ?? "";
-                    Log("Console: " + input);
-                    InputHandler.Instance.RegisterInput(input, "Console");
-                }
-                else
-                {
-                    await Task.Delay(100);
-                }
                 while (EventsManager.Instance.EventsAvailable())
                 {
                     var ev = EventsManager.Instance.DequeueEvent();
                     await ev.Consume();
                 }
+                await Task.Delay(100);
             }
         }
 
@@ -246,7 +254,8 @@ namespace IronWhisper_CentralController.Core
         {
             Online,
             Offline,
-            Disabled
+            Disabled,
+            Error
         }
         public static void LogSystemStatus (string system, SystemStatus status)
         {
@@ -265,6 +274,10 @@ namespace IronWhisper_CentralController.Core
                 case SystemStatus.Disabled:
                     statusSymbol = "-";
                     color = ConsoleColor.DarkGray;
+                    break;
+                case SystemStatus.Error:
+                    statusSymbol = "=";
+                    color = ConsoleColor.Red;
                     break;
             }
 

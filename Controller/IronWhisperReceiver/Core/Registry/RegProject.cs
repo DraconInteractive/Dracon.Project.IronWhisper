@@ -15,15 +15,17 @@ namespace IronWhisper_CentralController.Core.Registry
         public string Path;
         public bool isGitRepository;
         public string Description;
-        public List<string> Notes = new List<string>();
+        public List<string> Notes;
+        public List<RegConfig> Configs;
 
         public RegProject ()
         {
-            Files = new List<RegFile>();
+            Files = new();
             Path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             isGitRepository = false;
             Description = "This is a project";
-            Notes = new List<string>();
+            Notes = new();
+            Configs = new();
         }
     }
 }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController.Core.Networking.REST.Handlers
 {
-    public class DeviceHandler : IMiniAPIHandler
+    public class DeviceHandler : CoreAPIHandler
     {
         public override string EndpointPath()
         {
@@ -26,14 +26,13 @@ namespace IronWhisper_CentralController.Core.Networking.REST.Handlers
             var path = request.Target.Path;
 
             IResponse response;
-
             if (parameters.ContainsKey("id"))
             {
-                var deviceAddress = request.Client.IPAddress;
-                bool registerSuccess = RegistryCore.Instance.UpdateNetworkDevice(parameters["id"], deviceAddress);
+                var deviceAddress = request.Client.IPAddress.ToString();
+                RegistryManager.Instance.UpdateNetworkDevice(parameters["id"], deviceAddress);
 
                 ResponsePacket packet = new ResponsePacket();
-                packet.isValidID = registerSuccess;
+
                 // get content, register device details
                 if (parameters.ContainsKey("events"))
                 {

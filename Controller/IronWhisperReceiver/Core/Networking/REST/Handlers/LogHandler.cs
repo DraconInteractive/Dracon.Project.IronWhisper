@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace IronWhisper_CentralController.Core.Networking.REST.Handlers
 {
-    public class LogHandler : IMiniAPIHandler
+    public class LogHandler : CoreAPIHandler
     {
         public override string EndpointPath()
         {

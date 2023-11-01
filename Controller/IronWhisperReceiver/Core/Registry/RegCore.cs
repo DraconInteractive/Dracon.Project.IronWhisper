@@ -12,17 +12,13 @@ namespace IronWhisper_CentralController.Core.Registry
         public string DisplayName;
         public List<string> SpeechTags;
         public List<string> Tags = new List<string>();
-        public List<string> Capabilities = new List<string>();
-        public List<RegModuleCore> Modules = new List<RegModuleCore>();
 
         public RegCore()
         {
-            ID = "No ID";
+            ID = Guid.NewGuid().ToString();
             DisplayName = "____";
             SpeechTags = new List<string>();
             Tags = new List<string>();
-            Capabilities = new List<string>();
-            Modules = new List<RegModuleCore>();
         }
 
         public bool SpeechMatch (string speech)

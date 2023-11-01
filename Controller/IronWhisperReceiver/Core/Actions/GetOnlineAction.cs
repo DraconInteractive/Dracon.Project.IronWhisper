@@ -27,7 +27,7 @@ namespace IronWhisper_CentralController.Core.Actions
 
         protected override async Task InternalRun(CoreSpeech command)
         {
-            var onlineDevices = Registry.RegistryCore.Instance.OnlineDevices();
+            var onlineDevices = Registry.RegistryManager.Instance.OnlineDevices();
             string output = $"{onlineDevices.Count()} online devices:\n";
             await TTSManager.Instance.ProcessTTS($"There are {onlineDevices.Count()} online devices.");
             

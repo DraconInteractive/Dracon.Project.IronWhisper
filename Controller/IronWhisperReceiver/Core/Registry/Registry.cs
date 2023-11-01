@@ -8,39 +8,33 @@ using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController.Core.Registry
 {
-    public class RegistryCore : CoreManager
+    public class RegistryManager : CoreManager
     {
-        public static RegistryCore Instance;
+        public static RegistryManager Instance { get; private set; }
         public List<RegAccessPoint> AccessPoints = new();
         public List<RegTerminal> Terminals = new();
         public List<RegProject> Projects = new();
+        public List<RegConfig> ConfigFiles = new();
 
-        private static string FolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IronWhisper");
+        public static string FolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IronWhisper");
         private static string FilePath => Path.Combine(FolderPath, "registry.json");
 
-        public RegistryCore()
+        public RegistryManager()
         {
             Instance = this;
         }
 
-        public static RegistryCore CreateDefault()
+        public static RegistryManager CreateDefault()
         {
             CoreSystem.Log("[Registry] Creating default", 1);
-            RegistryCore registry = new();
+            RegistryManager registry = new();
             RegTerminal mainTerminal = new()
             {
-                ID = Guid.NewGuid().ToString(),
                 DisplayName = "Terminal - Main",
                 Tags = new List<string>()
                 {
                     "Home",
                     "WSL"
-                },
-                Capabilities = new List<string>()
-                {
-                    "Speech",
-                    "Networked",
-                    "Spacy"
                 },
                 SpeechTags = new List<string>() { "home terminal" },
                 deviceID = "TERMINAL_HOME_MAIN"
@@ -48,7 +42,6 @@ namespace IronWhisper_CentralController.Core.Registry
 
             RegAccessPoint mainHomeAP = new()
             {
-                ID = Guid.NewGuid().ToString(),
                 DisplayName = "Home PC - Main",
                 Tags = new List<string>()
                 {
@@ -65,21 +58,12 @@ namespace IronWhisper_CentralController.Core.Registry
                     "main computer",
                     "main pc"
                 },
-                Capabilities = new List<string>()
-                {
-                    "Windows",
-                    "Unity",
-                    "Networked",
-                    "Camera",
-                    "Speaker"
-                },
                 Owner = "Peter Carey",
                 deviceID = "AP_HOME_MAIN"
             };
 
             RegAccessPoint homeServerAP = new()
             {
-                ID = Guid.NewGuid().ToString(),
                 DisplayName = "Home PC - Server",
                 Tags = new List<string>()
                 {
@@ -95,22 +79,12 @@ namespace IronWhisper_CentralController.Core.Registry
                     "work computer",
                     "work pc"
                 },
-                Capabilities = new List<string>()
-                {
-                    "Windows",
-                    "Unity",
-                    "Networked",
-                    "REST",
-                    "Server",
-                    "Speaker"
-                },
                 Owner = "Peter Carey",
                 deviceID = "AP_HOME_SECONDARY"
             };
 
             RegAccessPoint homeLaptopAP = new()
             {
-                ID = Guid.NewGuid().ToString(),
                 DisplayName = "Home PC - Laptop",
                 Tags = new List<string>()
                 {
@@ -121,15 +95,8 @@ namespace IronWhisper_CentralController.Core.Registry
                 SpeechTags = new List<string>()
                 {
                     "home laptop",
-                    "my laptop"
-                },
-                Capabilities = new List<string>()
-                {
-                    "Portable",
-                    "Windows",
-                    "Unity",
-                    "Networked",
-                    "Speaker"
+                    "my laptop",
+                    "the laptop"
                 },
                 Owner = "Peter Carey",
                 deviceID = "AP_HOME_LAPTOP"
@@ -137,7 +104,6 @@ namespace IronWhisper_CentralController.Core.Registry
 
             RegAccessPoint homeTabletAP = new()
             {
-                ID = Guid.NewGuid().ToString(),
                 DisplayName = "Home Tablet - S8 Ultra",
                 Tags = new List<string>()
                 {
@@ -151,21 +117,12 @@ namespace IronWhisper_CentralController.Core.Registry
                     "my tablet",
                     "the tablet"
                 },
-                Capabilities = new List<string>()
-                {
-                    "Portable",
-                    "Android",
-                    "Touchscreen",
-                    "Networked",
-                    "Speaker"
-                },
                 Owner = "Peter Carey",
                 deviceID = "AP_HOME_TABLET"
             };
 
             RegAccessPoint mobileAP = new()
             {
-                ID = Guid.NewGuid().ToString(),
                 DisplayName = "Mobile Phone - S22 Ultra",
                 Tags = new List<string>()
                 {
@@ -179,22 +136,32 @@ namespace IronWhisper_CentralController.Core.Registry
                     "my phone",
                     "the phone"
                 },
-                Capabilities = new List<string>()
-                {
-                    "Portable",
-                    "Android",
-                    "Touchscreen",
-                    "Networked",
-                    "Speech",
-                    "Speaker"
-                },
                 Owner = "Peter Carey",
                 deviceID = "AP_HOME_MOBILE"
             };
 
+            RegConfig testConfig = new ()
+            {
+                DisplayName = "Test Configuration File",
+                fileName = "testConfig.json",
+                Tags = new()
+                {
+                    "Test"
+                }
+            };
+
+            RegConfig testConfig2 = new()
+            {
+                DisplayName = "Second Test Configuration File",
+                fileName = "testConfig2.json",
+                Tags = new()
+                {
+                    "Test"
+                }
+            };
+
             RegProject projectFIFA = new()
             {
-                ID = Guid.NewGuid().ToString(),
                 DisplayName = "FIFA AI League",
                 Description = "FutureVerse / FIFA collaboration on an ML soccer-manager game.",
                 isGitRepository = true,
@@ -204,18 +171,14 @@ namespace IronWhisper_CentralController.Core.Registry
                     "FV",
                     "ML"
                 },
-                Capabilities = new List<string>()
-                {
-                    "Windows",
-                    "Unity",
-                    "Android",
-                    "Linux",
-                    "iOS"
-                },
                 SpeechTags = new List<string>()
                 {
                     "ai league",
                     "fifa"
+                },
+                Configs = new List<RegConfig>()
+                {
+                    testConfig
                 }
             };
 
@@ -225,7 +188,6 @@ namespace IronWhisper_CentralController.Core.Registry
                 DisplayName = "Iron Whisper",
                 Description = "AI Assistant, full pipeline from command input to action execution and subsequent feedback to the user",
                 isGitRepository = true,
-                Notes = new List<string>(),
                 Path = "C:/Users/pmc10/Documents/IronWhisper/",
                 Tags = new List<string>()
                 {
@@ -234,23 +196,9 @@ namespace IronWhisper_CentralController.Core.Registry
                     "C++",
                     "C#"
                 },
-                Capabilities = new List<string>()
-                {
-                    "Windows",
-                    "Linux",
-                    "Speech"
-                },
-                Files = new List<RegFile>(),
-                Modules = new List<RegModuleCore>(),
-                SpeechTags = new List<string>() { "iron whisper" }
+                SpeechTags = new List<string>() { "iron whisper" },
+                Configs = new List<RegConfig>() { testConfig, testConfig2 }
             };
-
-            RegModuleCore unityCoreModule = new RegModuleCore()
-            {
-
-            };
-
-            projectFIFA.Modules.Add(unityCoreModule);
 
             registry.Projects.Add(projectFIFA);
             registry.Projects.Add(projectIronWhisper);
@@ -260,6 +208,9 @@ namespace IronWhisper_CentralController.Core.Registry
             registry.AccessPoints.Add(homeLaptopAP);
             registry.AccessPoints.Add(homeTabletAP);
             registry.AccessPoints.Add(mobileAP);
+
+            registry.ConfigFiles.Add(testConfig);
+            registry.ConfigFiles.Add(testConfig2);
 
             mainTerminal.AccessPoints.AddRange(registry.AccessPoints.Select(x => x.ID));
 
@@ -280,15 +231,16 @@ namespace IronWhisper_CentralController.Core.Registry
             File.WriteAllText(FilePath, data);
         }
 
-        public RegistryCore Load()
+        public RegistryManager Load()
         {
             if (ValidateFile())
             {
                 string data = File.ReadAllText(FilePath);
-                var reg = JsonConvert.DeserializeObject<RegistryCore>(data);
+                var reg = JsonConvert.DeserializeObject<RegistryManager>(data);
                 AccessPoints = reg.AccessPoints;
                 Terminals = reg.Terminals;
                 Projects = reg.Projects;
+                ConfigFiles = reg.ConfigFiles;
             }
             else
             {
@@ -296,6 +248,7 @@ namespace IronWhisper_CentralController.Core.Registry
                 AccessPoints = def.AccessPoints;
                 Terminals = def.Terminals;
                 Projects = def.Projects;
+                ConfigFiles = def.ConfigFiles;
             }
             return this;
         }
@@ -385,7 +338,7 @@ namespace IronWhisper_CentralController.Core.Registry
             return AllDevices().Where(x => x.networkDevice.Online).ToList();
         }
 
-        public bool UpdateNetworkDevice(string deviceID, string remoteAddress)
+        public void UpdateNetworkDevice(string deviceID, string remoteAddress)
         {
             foreach (var device in AllDevices())
             {
@@ -395,26 +348,22 @@ namespace IronWhisper_CentralController.Core.Registry
                     {
                         CoreSystem.Log($"[UDP_ID] {deviceID} has come online", 1);
                     }
-                    CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} identified. Retrieving update.", 2);
-                    var hostname = Networking.NetworkUtilities.GetHostName(remoteAddress);
-                    device.networkDevice.UpdateDetails(new NetworkDevice () { Address = remoteAddress, HostName = hostname});
-                    CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} update complete.", 2);
+                    CoreSystem.Log($"[UDP_ID] [Registry] {deviceID} identified. RemoteAddress: {remoteAddress}", 2);
+                    device.networkDevice.UpdateDetails(new NetworkDevice() { Address = remoteAddress });
                     Save();
-                    return true;
                 }
             }
-
-            return false;
         }
 
-        public bool UpdateNetworkDevice(string deviceID, IPAddress remoteAddress)
+        public void UpdateNetworkDevice(string deviceID, IPAddress remoteAddress)
         {
-            return UpdateNetworkDevice(deviceID, remoteAddress.ToString());
+            UpdateNetworkDevice(deviceID, remoteAddress.ToString());
         }
+
 
         public bool IsRegisteredNetworkDevice(string ip = "", string hostname = "", string deviceID = "")
         {
-            bool match = AllDevices().Any(x => x.networkDevice.Address == ip || x.networkDevice.HostName == hostname || x.deviceID == deviceID);
+            bool match = AllDevices().Any(x => x.networkDevice.Address == ip || x.deviceID == deviceID);
             return match;
         }
 
@@ -426,6 +375,16 @@ namespace IronWhisper_CentralController.Core.Registry
         public RegCore? GetEntity (string entityID)
         {
             return AllEntities().FirstOrDefault(x => x.ID == entityID);
+        }
+
+        public RegConfig? GetConfig (string fileName)
+        {
+            return ConfigFiles.FirstOrDefault(x => x.fileName == fileName);
+        }
+
+        public RegConfig[]? GetProjectConfigs (string projectName)
+        {
+            return Projects.FirstOrDefault(x => x.DisplayName == projectName)?.Configs.ToArray();
         }
     }
 }

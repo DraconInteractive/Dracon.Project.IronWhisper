@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IronWhisper_CentralController.Core.Networking.REST
 {
-    public class ManualInputHandler : IMiniAPIHandler
+    public class ManualInputHandler : CoreAPIHandler
     {
         public override string EndpointPath()
         {
@@ -24,7 +24,7 @@ namespace IronWhisper_CentralController.Core.Networking.REST
 
             if (parameters.ContainsKey("input"))
             {
-                InputHandler.Instance.RegisterInput(parameters["input"], "REST");
+                InputHandler.Instance.RegisterStandardInput(parameters["input"], "REST");
             }
 
             var response = request.Respond()

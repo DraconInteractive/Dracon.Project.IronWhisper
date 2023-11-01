@@ -10,7 +10,7 @@ using GenHTTP.Modules.IO;
 
 namespace IronWhisper_CentralController.Core.Networking.REST
 {
-    public class TestHandler : IMiniAPIHandler
+    public class TestHandler : CoreAPIHandler
     {
         public override string EndpointPath()
         {
