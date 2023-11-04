@@ -129,5 +129,15 @@ namespace IronWhisper_CentralController
             await CreateCommandWindowWithPrompt($"wsl -e bash -c \"{prompt}\"");
         }
     }
+
+    public static class ListExt
+    {
+        public static T GetRandom<T>(this List<T> list)
+        {
+            var ran = new Random();
+            int r = ran.Next(list.Count);
+            return list[r];
+        }
+    }
 }
 

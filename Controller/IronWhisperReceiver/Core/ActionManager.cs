@@ -7,9 +7,11 @@ namespace IronWhisper_CentralController.Core
     public class ActionManager : CoreManager
     {
         public static ActionManager Instance;
+        
         public List<CoreAction> Actions;
-
         public List<CoreAction> CurrentActions;
+
+        public bool Gated { get; private set; }
 
         public ActionManager()
         {
@@ -24,6 +26,8 @@ namespace IronWhisper_CentralController.Core
                 }
             }
             CurrentActions = new List<CoreAction>();
+
+            Gated = true;
         }
 
         public async Task ParseCommand(CoreSpeech command)
@@ -31,11 +35,15 @@ namespace IronWhisper_CentralController.Core
             List<CoreAction> actionsToRun = new List<CoreAction>();
             List<Task> tasks = new List<Task>();
 
+
             if (CurrentActions.Count == 0)
             {
-                foreach (var action in Actions.Where(x => x.Enabled()))
+                foreach (var action in Actions.Where(x => x.Enabled))
                 {
-                    if (action.Evaluate(command) || action.AlwaysRun)
+                    bool gated = Gated && action.UseGate && !command.ContainsPrompt;
+                    bool viable = action.Evaluate(command) && !gated;
+                   
+                    if (viable || action.AlwaysRun)
                     {
                         actionsToRun.Add(action);
                     }
@@ -80,6 +88,16 @@ namespace IronWhisper_CentralController.Core
                 }
             }
             return archetypes;
+        }
+
+        public void CloseGate()
+        {
+            Gated = true;
+        }
+
+        public void OpenGate()
+        {
+            Gated = false;
         }
     }
 }

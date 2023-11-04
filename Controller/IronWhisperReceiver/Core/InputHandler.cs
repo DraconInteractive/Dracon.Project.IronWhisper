@@ -16,7 +16,7 @@ namespace IronWhisper_CentralController.Core
 
         public static InputHandler Instance;
 
-        private const string queryPrompt = "Okay critter";
+        private const string queryPrompt = "okay critter";
 
         public Action<CoreSpeech> onInputReceived;
 
@@ -52,6 +52,7 @@ namespace IronWhisper_CentralController.Core
                 await Task.Delay(100);
             }
         }
+
         public void RegisterStandardInput(string message, string source)
         {
             var speech = new CoreSpeech(queryPrompt, message, source);

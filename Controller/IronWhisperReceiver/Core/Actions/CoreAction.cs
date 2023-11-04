@@ -12,6 +12,8 @@ namespace IronWhisper_CentralController.Core.Actions
         public string Name;
         public string[] Phrases;
         public bool AlwaysRun = false;
+        public bool UseGate;
+        public bool Enabled;
         public int Priority = 0;
         public enum State
         {
@@ -22,6 +24,7 @@ namespace IronWhisper_CentralController.Core.Actions
         }
         public State state;
         Action<State> onStateChange;
+
 
         public CoreAction()
         {
@@ -38,13 +41,9 @@ namespace IronWhisper_CentralController.Core.Actions
             {
                 CoreSystem.LogError($"Invalid phrase structure in '{Name}' action");
             }
-            
+            UseGate = true;
+            Enabled = true;
             ChangeState(State.NotStarted);
-        }
-
-        public virtual bool Enabled ()
-        {
-            return true;
         }
 
         protected virtual void InternalInit ()

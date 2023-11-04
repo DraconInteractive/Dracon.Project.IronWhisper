@@ -1,8 +1,3 @@
-C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Boot_WaitForTerminal.wav
-C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Boot_TTS_Online.wav
-C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Activate_Complete.wav
-C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Activate_Prepare.wav
-C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Terminal_OnConnected.wav
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\IronWhisper_CentralController.exe
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\IronWhisper_CentralController.deps.json
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\IronWhisper_CentralController.runtimeconfig.json
@@ -43,3 +38,38 @@ C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\ne
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0-windows\IronWhisper_CentralController.pdb
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0-windows\IronWhisper_CentralController.genruntimeconfig.cache
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\obj\Debug\net6.0-windows\ref\IronWhisper_CentralController.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_Initializing.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_LabsTTSIs.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_Mimic3Is.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_RegistryIs.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_RestAPIIs.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_TTSActivated.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_UDPIs.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_WhisperAIIs.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Status_Disabled.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Status_Offline.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Status_Online.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Status_OnlineAndReady.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\NAudio.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\NAudio.Asio.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\NAudio.Core.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\NAudio.Midi.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\NAudio.Wasapi.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\NAudio.WinForms.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\NAudio.WinMM.dll
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_LaunchingTunnel.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_System_Registry.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_System_RestAPI.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_System_WhisperSpeechDetection.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Action_CloseGate.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Action_OpenGate.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Boot_MinReq.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_1.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_2.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_3.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_4.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_Afternoon.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_Evening.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_Morning.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_Name1.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_Name2.mp3

@@ -29,7 +29,7 @@ namespace IronWhisper_CentralController.Core.Actions
         {
             var onlineDevices = Registry.RegistryManager.Instance.OnlineDevices();
             string output = $"{onlineDevices.Count()} online devices:\n";
-            await TTSManager.Instance.ProcessTTS($"There are {onlineDevices.Count()} online devices.");
+            await TTSManager.ProcessTTS($"There are {onlineDevices.Count()} online devices.");
             
             foreach (var device in onlineDevices)
             {

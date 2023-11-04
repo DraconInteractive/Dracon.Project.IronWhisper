@@ -10,6 +10,8 @@ using GenHTTP.Api.Content;
 using GenHTTP.Api.Protocol;
 using GenHTTP.Engine;
 using GenHTTP.Modules.Conversion.Providers.Json;
+using IronWhisper_CentralController.Core.Audio.TTS;
+using IronWhisper_CentralController.Core.InputPipe;
 using Newtonsoft.Json;
 using static IronWhisper_CentralController.Core.CoreSystem;
 
@@ -26,27 +28,32 @@ namespace IronWhisper_CentralController.Core.Networking.REST
 
         public async Task LaunchServer ()
         {
-            if (CoreSystem.Config.LaunchNGROK)
-            {
-                KillProcessByName("cmd");
-                KillProcessByName("ngrok");
-                await CreateTunnel();
-                CoreSystem.Log("NGROK: Online", "Online", ConsoleColor.Green);
-            }
-            
             Host.Create()
                 .Handler(new APIHandlerBuilder())
                 .Start();
 
-            CoreSystem.LogSystemStatus("REST Server", SystemStatus.Online);
+            await Task.Delay(500);
+            if (Config.useNGROK)
+            {
+                KillProcessByName("cmd");
+                KillProcessByName("ngrok");
+                await CreateTunnel();
+                LogSystemStatus("NGROK", SystemStatus.Online);
+            }
+            else
+            {
+                LogSystemStatus("NGROK", SystemStatus.Disabled);
+            }
         }
 
         private static async Task CreateTunnel ()
         {
-            CoreSystem.Log("Enter NGROK domain: ");
-            CoreSystem.Log(">>", ">>", ConsoleColor.Yellow);
+            /*
+            Log("Enter NGROK domain: ");
+            Log(">>", ">>", ConsoleColor.Yellow);
             string line = Console.ReadLine() ?? "";
-
+            */
+            string line = "connect.draconai.com.au";
             await Utilities.CreateCommandWindowWithPrompt($"ngrok http --domain {line} 8080");
         }
 

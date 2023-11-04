@@ -7,20 +7,19 @@ using Newtonsoft.Json;
 
 namespace IronWhisper_CentralController.Core.InputPipe
 {
-    public class APIManager
+    public class APIManager : CoreManager
     {
         public static APIManager Instance;
         private readonly HttpClient _httpClient;
 
         public static string ttsURL { get; private set; }
 
-        public APIManager() : base()
+        public APIManager()
         {
             _httpClient = new HttpClient();
             Instance = this;
             ttsURL = "http://localhost:59125/api/tts";
-            _httpClient.Timeout = TimeSpan.FromSeconds(10);
-
+            _httpClient.Timeout = TimeSpan.FromSeconds(5);
         }
 
         public APIManager(string baseAddress) : base()
@@ -107,17 +106,17 @@ namespace IronWhisper_CentralController.Core.InputPipe
             }
             catch (TaskCanceledException)  // This exception is thrown on a timeout
             {
-                Console.WriteLine("TTS FAIL - Timeout");
+                Console.WriteLine("GET FAIL - Timeout");
                 return false;  
             }
             catch (SocketException)
             {
-                Console.WriteLine("TTS FAIL - Socket");
+                Console.WriteLine("GET FAIL - Socket");
                 return false;
             }
             catch
             {
-                Console.WriteLine("TTS FAIL - Unknown");
+                Console.WriteLine("GET FAIL - Unknown");
                 return false;
             }
         }

@@ -17,6 +17,7 @@ namespace IronWhisper_CentralController.Core
         public RegCore[] Entities;
 
         public string Source;
+        public bool ContainsPrompt;
 
         public CoreSpeech (string prompt, string message, string source = "")
         {
@@ -24,6 +25,11 @@ namespace IronWhisper_CentralController.Core
 
             Message = message.TrimEnd('\0');
             Command = message.Replace(prompt, "").ToLower(); 
+
+            if (message.ToLower().Contains(prompt))
+            {
+                ContainsPrompt = true;
+            }
 
             foreach (var p in _punctuation)
             {

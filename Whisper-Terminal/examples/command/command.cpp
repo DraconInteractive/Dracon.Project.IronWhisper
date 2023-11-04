@@ -10,6 +10,7 @@
 #include "common.h"
 #include "whisper.h"
 #include "NonBlockingTCPServer.h"
+#include "commandAPI.h"
 
 #include <iostream>
 #include <sstream>
@@ -22,8 +23,9 @@
 #include <thread>
 #include <vector>
 #include <map>
-#include<signal.h>
-#include<unistd.h>
+#include <signal.h>
+#include <unistd.h>
+#include <curl/curl.h>
 
 #ifdef CSPACY
 #include <spacy/spacy>
@@ -46,7 +48,7 @@ struct whisper_params {
     bool print_special = false;
     bool print_energy  = false;
     bool no_timestamps = true;
-
+    bool useRest       = true;
     std::string language  = "en";
     std::string model     = "models/ggml-base.en.bin";
     std::string fname_out;
@@ -107,6 +109,12 @@ std::vector<uint8_t> spacy_process(const std::string &txt, const Spacy::Nlp &nlp
 }
 #endif
 
+void sendRest(const char* messageToSend)
+{
+    std::string url = "https://connect.draconai.com.au/terminal?source=WSLWhisper&input=";
+    CommandAPI::SendGetRequest(url, messageToSend);
+}
+
 void socket_tick() {
     server.acceptConnections();
     server.receiveDataFromClients(); 
@@ -132,6 +140,7 @@ bool whisper_params_parse(int argc, char ** argv, whisper_params & params) {
         else if (arg == "-tr"  || arg == "--translate")     { params.translate     = true; }
         else if (arg == "-ps"  || arg == "--print-special") { params.print_special = true; }
         else if (arg == "-pe"  || arg == "--print-energy")  { params.print_energy  = true; }
+        else if (arg == "-r"   || arg == "--rest")          { params.useRest       = true; }
         else if (arg == "-l"   || arg == "--language")      { params.language      = argv[++i]; }
         else if (arg == "-m"   || arg == "--model")         { params.model         = argv[++i]; }
         else if (arg == "-f"   || arg == "--file")          { params.fname_out     = argv[++i]; }
@@ -163,6 +172,7 @@ void whisper_print_usage(int /*argc*/, char ** argv, const whisper_params & para
     fprintf(stderr, "  -tr,        --translate      [%-7s] translate from source language to english\n",   params.translate ? "true" : "false");
     fprintf(stderr, "  -ps,        --print-special  [%-7s] print special tokens\n",                        params.print_special ? "true" : "false");
     fprintf(stderr, "  -pe,        --print-energy   [%-7s] print sound energy (for debugging)\n",          params.print_energy ? "true" : "false");
+    fprintf(stderr, "  -r,         --rest           [%-7s] use rest API for terminal output\n",            params.useRest ? "true" : "false");
     fprintf(stderr, "  -l LANG,    --language LANG  [%-7s] spoken language\n",                             params.language.c_str());
     fprintf(stderr, "  -m FNAME,   --model FNAME    [%-7s] model path\n",                                  params.model.c_str());
     fprintf(stderr, "  -f FNAME,   --file FNAME     [%-7s] text output file name\n",                       params.fname_out.c_str());
@@ -289,14 +299,22 @@ int process_general_transcription(struct whisper_context *ctx, audio_async &audi
             // Clear the audio buffer
             audio.clear();
 
-            socket_tick();
-            #ifdef CSPACY
-                server.sendDataToClients(spacy_process(txt, nlp));
-            #else
+            if (params.useRest)
+            {  
+                sendRest(txt.c_str());
+            }
+            else
+            {
+                socket_tick();
+
                 std::string d = "NS**" + txt;
                 fprintf(stdout, "Sending data: %s\n", d.c_str());
+#ifdef CSPACY
+                server.sendDataToClients(spacy_process(txt, nlp));
+#else
                 server.sendDataToClients(d.c_str());
-            #endif
+#endif
+            }
 
             fflush(stdout);
         }
@@ -327,7 +345,7 @@ int main(int argc, char ** argv) {
     auto nlp = spacy.load("en_core_web_sm");
     fprintf(stdout, "spacy loaded\n");
 #endif
-
+      
     // socket init  
     server.setupServer(31050); 
     fprintf(stderr, "[socket] communication opened. Port: 31050\n");

@@ -19,7 +19,6 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
         private const int wslTerminalPort = 31050;
         private const int commandPort = 24765;
         private const string Termination = "*&*";
-        private const string voicePrompt = "Okay,";
 
         private CancellationTokenSource idBroadcastCTS;
         private CancellationTokenSource commandCTS;
@@ -37,6 +36,7 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
 
         public void StartListening_IDBroadcast ()
         {
+            idBroadcastCTS = new CancellationTokenSource();
             ReceiveIDBroadcasts(idBroadcastCTS.Token);
         }
 
@@ -152,12 +152,9 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
 
         }
 
-
         public async Task StartWSLLoop ()
         {
             var token = wslCTS.Token;
-
-            await CoreSystem.Speak(CachedTTS.Boot_WaitForTerminal);
 
             TcpClient client = new TcpClient();
             NetworkStream stream;
@@ -179,14 +176,12 @@ namespace IronWhisper_CentralController.Core.Networking.Sockets
                 var result = TryWSLConnect(client);
                 if (!result)
                 {
-                    Thread.Sleep(100);
+                    await Task.Delay(100);
                 }
             }
             string con = $"{terminalIP}:{wslTerminalPort}";
             //CoreSystem.Log($"[Whisper] Connected at {con}", $"{con}", ConsoleColor.Yellow, 1);
             stream = client.GetStream();
-
-            await CoreSystem.Speak(CachedTTS.Terminal_OnConnected);
 
             while (true)
             {

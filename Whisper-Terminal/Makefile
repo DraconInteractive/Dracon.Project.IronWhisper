@@ -300,10 +300,10 @@ stream: examples/stream/stream.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o $(WHIS
 	$(CXX) $(CXXFLAGS) examples/stream/stream.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o $(WHISPER_OBJ) -o stream $(CC_SDL) $(LDFLAGS)
 
 command: examples/command/command.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o $(WHISPER_OBJ)
-	$(CXX) $(CXXFLAGS) examples/command/NonBlockingTCPServer.cpp examples/command/command.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o $(WHISPER_OBJ) -o command $(CC_SDL) $(LDFLAGS) -lspacy
+	$(CXX) $(CXXFLAGS) examples/command/NonBlockingTCPServer.cpp examples/command/commandAPI.cpp examples/command/command.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o $(WHISPER_OBJ) -o command $(CC_SDL) $(LDFLAGS) -lspacy -lcurl
 
 spacycommand: examples/command/command.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o $(WHISPER_OBJ)
-	$(CXX) $(CXXFLAGS) $(SPACYFLAGS) examples/command/NonBlockingTCPServer.cpp examples/command/command.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o $(WHISPER_OBJ) -o spacycommand $(CC_SDL) $(LDFLAGS) -lspacy
+	$(CXX) $(CXXFLAGS) $(SPACYFLAGS) examples/command/NonBlockingTCPServer.cpp examples/command/commandAPI.cpp examples/command/command.cpp $(SRC_COMMON) $(SRC_COMMON_SDL) ggml.o $(WHISPER_OBJ) -o spacycommand $(CC_SDL) $(LDFLAGS) -lspacy
 
 all-commands: command spacycommand
 

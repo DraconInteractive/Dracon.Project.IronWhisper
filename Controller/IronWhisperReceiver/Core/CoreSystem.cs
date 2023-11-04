@@ -19,18 +19,21 @@ namespace IronWhisper_CentralController.Core
         public int Verbosity = 1;
         public bool RefreshRegistry = false;
 
+        public bool UseTTSCache = true;
         public bool UseMimic3 = false; // dir -> source .venv/bin/activate -> mimic3-server --preload-voice en_UK/apope_low --num-threads 2
         public bool BlindAccessible = false;
         public int TTSVerbosity = 0;
 
+        public bool useWSLLauncher = false;
+        public bool useNGROK = true;
+
         public bool useTerminalSocket = true;
-        public bool useUDPIDSocket = true;
-        public bool useTCPCommandSocket = true;
+        public bool useUDPIDSocket = false;
+        public bool useTCPCommandSocket = false;
         public bool useRestAPI = true;
         public bool useManualInput = true;
 
-        public bool LaunchNGROK = false;
-        public string Version = "v0.2.0a";
+        public string Version = "v0.2.2a";
     }
 
     public class CoreSystem
@@ -57,16 +60,31 @@ namespace IronWhisper_CentralController.Core
                 Activator.CreateInstance(type);
             }
 
+            if (Config.UseTTSCache)
+            {
+                bool foundAll = TTSManager.InitializeCacheDictionary();
+                if (foundAll)
+                {
+                    LogSystemStatus("TTS Cache", SystemStatus.Online);
+                    TTSManager.PlayAudio(CachedTTS.Labs_Boot_Initializing);
+                }
+                else
+                {
+                    Config.UseTTSCache = false;
+                    LogSystemStatus("TTS Cache", SystemStatus.Offline);
+                }
+            }
+            else
+            {
+                LogSystemStatus("TTS Cache", SystemStatus.Disabled);
+            }
+
             if (Config.UseMimic3)
             {
-                TTSManager.InitializeCacheDictionary();
-
                 var ttsOnline = await APIManager.Instance.GetURLOnline(APIManager.ttsURL);
                 if (ttsOnline)
                 {
                     LogSystemStatus("Mimic3", SystemStatus.Online);
-                    await Speak(CachedTTS.Boot_TTS_Online);
-                    await Task.Delay(500);
                 }
                 else
                 {
@@ -101,58 +119,60 @@ namespace IronWhisper_CentralController.Core
                 }
             }
 
-            if (allConfigsValid)
-            {
-                LogSystemStatus("Registry", SystemStatus.Online);
-            }
-            else
-            {
-                LogSystemStatus("Registry", SystemStatus.Error);
-            }
+            LogSystemStatus("Registry", allConfigsValid ? SystemStatus.Online : SystemStatus.Error);
 
             if (Config.useUDPIDSocket)
             {
                 SocketManager.Instance.StartListening_IDBroadcast();
-                LogSystemStatus("UDP Broadcast Receiver", SystemStatus.Online);
-            }
-            else
-            {
-                LogSystemStatus("UDP Broadcast Receiver", SystemStatus.Disabled);
             }
 
+            LogSystemStatus("UDP Broadcast Receiver", Config.useUDPIDSocket ? SystemStatus.Online : SystemStatus.Disabled);
+
+            // Create input bind here since its needed for NGROK input. Could probs be earlier. 
             InputHandler.Instance.onInputReceived += async x => await ActionManager.Instance.ParseCommand(x);
+
+            LogSystemStatus("Manual Input", Config.useManualInput ? SystemStatus.Online : SystemStatus.Error);
+
 
             if (Config.useRestAPI)
             {
-                _ = RESTManager.Instance.LaunchServer();
+                await RESTManager.Instance.LaunchServer();
             }
-            else
-            {
-                LogSystemStatus("REST Server", SystemStatus.Disabled);
-            }
+
+            LogSystemStatus("REST Server", Config.useRestAPI ? SystemStatus.Online : SystemStatus.Disabled);
 
             if (Config.useTerminalSocket)
             {
-                string windowsFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                string path = Environment.GetEnvironmentVariable("WSLTerminalPath", EnvironmentVariableTarget.User) ?? "";
-                string wslCommand = $"cd {path} && ./command -t 8";
+                if (Config.useWSLLauncher)
+                {
+                    string windowsFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    string path = Environment.GetEnvironmentVariable("WSLTerminalPath", EnvironmentVariableTarget.User) ?? "";
+                    string wslCommand = $"cd {path} && ./command -t 8";
 
-                _ = Utilities.CreateWSLWindowWithPrompt(wslCommand);
+                    _ = Utilities.CreateWSLWindowWithPrompt(wslCommand);
 
-                // Wait a bit for WSL to launch
-                await Task.Delay(500);
+                    // Wait a bit for WSL to launch
+                    await Task.Delay(500);
+
+                }
+
+                LogSystemStatus("WSL Launcher", Config.useWSLLauncher ? SystemStatus.Online : SystemStatus.Disabled);
 
                 _ = SocketManager.Instance.StartWSLLoop();
-                LogSystemStatus("Whisper", SystemStatus.Online);
             }
-            else
-            {
-                LogSystemStatus("Whisper", SystemStatus.Disabled);
-            }
+
+            LogSystemStatus("Whisper", Config.useTerminalSocket ? SystemStatus.Online : SystemStatus.Disabled);
+
+
+            await TTSManager.PlayAudio(CachedTTS.Labs_Boot_MinReq);
 
             Log();
             Log("System viable. Beginning core loop.");
             Log("-------------------------------------------\n");
+
+            await Task.Delay(500);
+
+            await TTSManager.PlayGreeting();
 
             while (true)
             {
@@ -214,7 +234,7 @@ namespace IronWhisper_CentralController.Core
 
             if (Config.BlindAccessible && Config.UseMimic3)
             {
-                TTSManager.Instance.ProcessTTS(Utilities.RemoveLogDescriptor(message));
+                TTSManager.ProcessTTS(Utilities.RemoveLogDescriptor(message));
             }
 
             while (currentIndex < message.Length)
@@ -245,6 +265,12 @@ namespace IronWhisper_CentralController.Core
             }
         }
 
+        // Set color for entire word
+        public static void Log(string message, ConsoleColor color, int verbosity = 0, bool writeLine = true)
+        {
+            Log(message, message, color, verbosity, writeLine);
+        }
+
         public static void LogError(string message, int verbosity = 0, bool writeLine = true)
         {
             Log($"[Error] {message}", "Error", ConsoleColor.Red, verbosity, writeLine);
@@ -257,6 +283,7 @@ namespace IronWhisper_CentralController.Core
             Disabled,
             Error
         }
+
         public static void LogSystemStatus (string system, SystemStatus status)
         {
             string statusSymbol = "";
@@ -286,25 +313,10 @@ namespace IronWhisper_CentralController.Core
 
         public static async Task Speak(string message, int verbosity = 0)
         {
-            if (!Config.UseMimic3)
-            {
-                return;
-            }
             if (Config.TTSVerbosity >= verbosity)
             {
-                await TTSManager.Instance.ProcessTTS(message);
+                await TTSManager.ProcessTTS(message);
             }
         }
-
-        public static async Task Speak (CachedTTS audio)
-        {
-            if (!Config.UseMimic3)
-            {
-                return;
-            }
-            TTSManager.Instance.PlayAudio(audio);
-        }
-
-        
     }
 }

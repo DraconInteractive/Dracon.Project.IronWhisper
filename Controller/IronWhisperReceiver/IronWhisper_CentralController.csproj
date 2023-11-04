@@ -19,6 +19,47 @@
     <None Remove="Assets\TTS Audio\Activate_Prepare.wav" />
     <None Remove="Assets\TTS Audio\boot_tts_online.wav" />
     <None Remove="Assets\TTS Audio\Boot_WaitForTerminal.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Action_CloseGate.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Action_OpenGate.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_Initializing.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_Initializing.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_LabsTTSIs.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_LabsTTSIs.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_LaunchingTunnel.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_Mimic3Is.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_Mimic3Is.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_MinReq.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_MinReqOnline.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_RegistryIs.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_RegistryIs.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_RestAPIIs.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_RestAPIIs.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_TTSActivated.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_TTSActivated.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_UDPIs.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_UDPIs.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_WhisperAIIs.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Boot_WhisperAIIs.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Greeting_1.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Greeting_2.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Greeting_3.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Greeting_4.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Greeting_Afternoon.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Greeting_Evening.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Greeting_Morning.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Greeting_Name1.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Greeting_Name2.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Status_Disabled.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Status_Disabled.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Status_Offline.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Status_Offline.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Status_Online.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Status_Online.wav" />
+    <None Remove="Assets\TTS Audio\Labs_Status_OnlineAndReady.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_Status_OnlineAndReady.wav" />
+    <None Remove="Assets\TTS Audio\Labs_System_Registry.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_System_RestAPI.mp3" />
+    <None Remove="Assets\TTS Audio\Labs_System_WhisperSpeechDetection.mp3" />
     <None Remove="Assets\TTS Audio\terminal_onconnected.wav" />
   </ItemGroup>
 
@@ -32,19 +73,88 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\TTS Audio\Boot_WaitForTerminal.wav">
+    <Content Include="Assets\TTS Audio\Labs_Action_CloseGate.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\TTS Audio\Boot_TTS_Online.wav">
+    <Content Include="Assets\TTS Audio\Labs_Action_OpenGate.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\TTS Audio\Activate_Complete.wav">
+    <Content Include="Assets\TTS Audio\Labs_Boot_Initializing.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\TTS Audio\Activate_Prepare.wav">
+    <Content Include="Assets\TTS Audio\Labs_Boot_LabsTTSIs.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\TTS Audio\Terminal_OnConnected.wav">
+    <Content Include="Assets\TTS Audio\Labs_Boot_LaunchingTunnel.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Boot_Mimic3Is.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Boot_MinReq.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Boot_RegistryIs.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Boot_RestAPIIs.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Boot_TTSActivated.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Boot_UDPIs.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Boot_WhisperAIIs.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Greeting_1.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Greeting_2.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Greeting_3.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Greeting_4.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Greeting_Afternoon.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Greeting_Evening.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Greeting_Morning.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Greeting_Name1.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Greeting_Name2.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Status_Disabled.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Status_Offline.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Status_Online.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_Status_OnlineAndReady.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_System_Registry.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_System_RestAPI.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TTS Audio\Labs_System_WhisperSpeechDetection.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -52,6 +162,7 @@
   <ItemGroup>
     <PackageReference Include="GenHTTP.Core" Version="7.0.0" />
     <PackageReference Include="GenHTTP.Modules.Webservices" Version="7.0.0" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
