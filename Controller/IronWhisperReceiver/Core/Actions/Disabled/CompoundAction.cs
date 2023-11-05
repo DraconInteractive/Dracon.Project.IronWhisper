@@ -23,13 +23,12 @@ namespace IronWhisper_CentralController.Core.Actions
             Enabled = false;
         }
 
-        protected override Task InternalRun(CoreSpeech command)
+        protected override async Task InternalRun(CoreSpeech command)
         {
             // There is no way to get new speech here, so we have to change the foundation...
             CoreSystem.Log("[Compound] Starting compound action...");
             CoreSystem.Log("[Compound] Please say something , that I will intercept!");
             ChangeState(State.WaitingForInput);
-            return Task.CompletedTask;
         }
 
         bool firstRetry = true;

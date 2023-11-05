@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IronWhisper_CentralController.Core.Registry;
-using IronWhisper_CentralController.Core.InputPipe;
 
 namespace IronWhisper_CentralController.Core
 {
@@ -24,9 +23,14 @@ namespace IronWhisper_CentralController.Core
             if (message == null) return;
 
             Message = message.TrimEnd('\0');
-            Command = message.Replace(prompt, "").ToLower(); 
+            Command = message.Replace(prompt, "").ToLower();
 
-            if (message.ToLower().Contains(prompt))
+            string promptCheck = message.ToLower();
+            foreach (var p in _punctuation)
+            {
+                promptCheck = promptCheck.Replace(p, "");
+            }
+            if (promptCheck.Contains(prompt))
             {
                 ContainsPrompt = true;
             }

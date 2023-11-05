@@ -12,7 +12,6 @@ namespace IronWhisper_CentralController.Core.Actions
     {
         public override bool Evaluate(CoreSpeech command)
         {
-            CoreSystem.Log("OGA: " + command.Message + " | " + command.Command + " | " + command.ContainsPrompt + " | " + ActionManager.Instance.Gated + " | " + UseGate);
             return PhrasesContainsPartial(command);
         }
 

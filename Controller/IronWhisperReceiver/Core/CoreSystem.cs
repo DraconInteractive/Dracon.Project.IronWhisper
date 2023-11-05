@@ -1,5 +1,4 @@
-﻿using IronWhisper_CentralController.Core.InputPipe;
-using IronWhisper_CentralController.Core.Networking;
+﻿using IronWhisper_CentralController.Core.Networking;
 using IronWhisper_CentralController.Core.Registry;
 using IronWhisper_CentralController.Core.Events;
 using IronWhisper_CentralController.Core.Audio.TTS;
@@ -27,7 +26,7 @@ namespace IronWhisper_CentralController.Core
         public bool useWSLLauncher = false;
         public bool useNGROK = true;
 
-        public bool useTerminalSocket = true;
+        public bool useTerminalSocket = false;
         public bool useUDPIDSocket = false;
         public bool useTCPCommandSocket = false;
         public bool useRestAPI = true;
@@ -81,7 +80,7 @@ namespace IronWhisper_CentralController.Core
 
             if (Config.UseMimic3)
             {
-                var ttsOnline = await APIManager.Instance.GetURLOnline(APIManager.ttsURL);
+                var ttsOnline = await APIManager.Instance.IsOnline(APIManager.ttsURL);
                 if (ttsOnline)
                 {
                     LogSystemStatus("Mimic3", SystemStatus.Online);

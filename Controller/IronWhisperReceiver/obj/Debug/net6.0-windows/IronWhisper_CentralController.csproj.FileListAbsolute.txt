@@ -73,3 +73,5 @@ C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\ne
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_Morning.mp3
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_Name1.mp3
 C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_Greeting_Name2.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_LLM_WhatInput.mp3
+C:\Users\pmc10\Documents\IronWhisper\Controller\IronWhisperReceiver\bin\Debug\net6.0-windows\Assets\TTS Audio\Labs_LLM_Response.mp3

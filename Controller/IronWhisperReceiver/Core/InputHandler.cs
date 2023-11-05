@@ -16,7 +16,7 @@ namespace IronWhisper_CentralController.Core
 
         public static InputHandler Instance;
 
-        private const string queryPrompt = "okay critter";
+        private const string queryPrompt = "okay david";
 
         public Action<CoreSpeech> onInputReceived;
 

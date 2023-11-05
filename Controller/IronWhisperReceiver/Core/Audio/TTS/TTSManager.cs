@@ -1,4 +1,4 @@
-﻿using IronWhisper_CentralController.Core.InputPipe;
+﻿using IronWhisper_CentralController.Core.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +37,8 @@ namespace IronWhisper_CentralController.Core.Audio.TTS
         Labs_Greeting_Evening,
         Labs_Greeting_Name1,
         Labs_Greeting_Name2,
+        Labs_LLM_WhatInput,
+        Labs_LLM_Response,
     }
 
     public class TTSManager : CoreManager
